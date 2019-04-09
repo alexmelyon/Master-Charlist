@@ -1,6 +1,7 @@
 package com.helloandroid.session
 
 import android.content.Context
+import android.graphics.Paint
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.Editable
@@ -12,6 +13,7 @@ import android.widget.TextView
 import com.helloandroid.R
 import kotlinx.android.synthetic.main.session_item_comment.view.*
 import kotlinx.android.synthetic.main.session_item_int.view.*
+import kotlinx.android.synthetic.main.simple_list_item_2_with_header.view.*
 import org.jetbrains.anko.layoutInflater
 import org.jetbrains.anko.sdk15.listeners.onClick
 
@@ -47,6 +49,10 @@ class SessionDiffsAdapter(val context: Context, val editable: Boolean) : Recycle
                 val view = parent.context.layoutInflater.inflate(R.layout.session_item_int, parent, false)
                 return ItemIntViewHolder(view)
             }
+            SessionItemType.ITEM_EFFECT -> {
+                val view = parent.context.layoutInflater.inflate(android.R.layout.simple_list_item_2, parent, false)
+                return ItemEffectViewHolder(view)
+            }
             SessionItemType.ITEM_COMMENT -> {
                 val view = parent.context.layoutInflater.inflate(R.layout.session_item_comment, parent, false)
                 return ItemCommentViewHolder(view)
@@ -69,16 +75,24 @@ class SessionDiffsAdapter(val context: Context, val editable: Boolean) : Recycle
                 holder.title.text = items[position].title
                 holder.desc.text = items[position].desc
                 holder.value.text = items[position].value.toString()
-                holder.minusButton.visibility = if(editable) View.VISIBLE else View.INVISIBLE
+                holder.minusButton.visibility = if (editable) View.VISIBLE else View.INVISIBLE
                 holder.minusButton.onClick { view ->
                     val correctPosition = holder.adapterPosition
                     onItemMinus(items[correctPosition].index, type)
                 }
-                holder.plusButton.visibility = if(editable) View.VISIBLE else View.INVISIBLE
+                holder.plusButton.visibility = if (editable) View.VISIBLE else View.INVISIBLE
                 holder.plusButton.onClick { view ->
                     val correctPosition = holder.adapterPosition
                     onItemPlus(items[correctPosition].index, type)
                 }
+            }
+            SessionItemType.ITEM_EFFECT -> {
+                holder as ItemEffectViewHolder
+                holder.title.text = items[position].title
+                if(items[position].value < 0) {
+                    holder.title.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+                }
+                holder.desc.text = items[position].desc
             }
             SessionItemType.ITEM_COMMENT -> {
                 holder as ItemCommentViewHolder
@@ -119,6 +133,11 @@ class SessionDiffsAdapter(val context: Context, val editable: Boolean) : Recycle
         val value = view.value
         val minusButton = view.minusButton
         val plusButton = view.plusButton
+    }
+
+    class ItemEffectViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val title = view.text1
+        val desc = view.text2
     }
 
     class ItemCommentViewHolder(view: View) : RecyclerView.ViewHolder(view) {

@@ -15,6 +15,7 @@ import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.helloandroid.MainActivity
 import com.helloandroid.R
 import com.helloandroid.list_characters.ListCharactersController
+import com.helloandroid.list_effects.ListEffectsController
 import com.helloandroid.list_games.WORLD_KEY
 import com.helloandroid.list_sessions.GAME_KEY
 import com.helloandroid.list_sessions.ListSessionsController
@@ -77,12 +78,14 @@ class GamePagerController(args: Bundle) : Controller(args) {
 
         world = db.worldDao().getWorldById(args.getLong(WORLD_KEY))
         game = db.gameDao().getAll(args.getLong(GAME_KEY), world.id)
-        listCharactersController = ListCharactersController(world. id, game.id)
+        listCharactersController = ListCharactersController(world.id, game.id)
         screenToController = listOf(
             "Characters" to listCharactersController,
             "Sessions" to ListSessionsController(world.id, game.id).apply {
                 delegate = WeakReference(listCharactersController)
-            })
+            },
+            "Effects" to ListEffectsController(world.id, game.id)
+        )
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {

@@ -82,6 +82,8 @@ class ListCharactersController(args: Bundle) : Controller(args), ListCharactersC
                 .filter { closedSessions.contains(it.sessionGroup) }
                 .sumBy { it.value }
 
+            // TODO Effects
+
             val skills = db.skillDao().getAll(world.id, archived = false)
             val skillDiffs = db.skillDiffDao().getAllByCharacter(world.id, game.id, character.id, archived = false)
                 .asSequence()

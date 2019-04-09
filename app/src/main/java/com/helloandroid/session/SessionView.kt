@@ -1,11 +1,13 @@
 package com.helloandroid.session
 
+import android.app.ProgressDialog.show
 import android.content.DialogInterface
 import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import com.helloandroid.MainActivity
+import com.helloandroid.utils.showAlertEditDialog
 import org.jetbrains.anko._FrameLayout
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import javax.inject.Inject
@@ -62,7 +64,7 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
 
     override fun showAddSomethingDialog() {
         AlertDialog.Builder(activity)
-            .setItems(arrayOf("Add Healthpoints", "Add Skill", "Add Thing", "Add Comment"), DialogInterface.OnClickListener { dialog, which ->
+            .setItems(arrayOf("Add Healthpoints", "Add Skill", "Add Thing", "Add Effect", "Add Comment"), DialogInterface.OnClickListener { dialog, which ->
                 controller.onAddItemClicked(which)
             })
             .show()
@@ -99,6 +101,20 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
                         controller.addCharacterThingDiff(character, thing)
                     }).show()
             }).show()
+    }
+
+    override fun showAddEffectDialog(characterNames: List<String>, effectNames: List<String>) {
+        AlertDialog.Builder(activity)
+            .setTitle("Select character")
+            .setItems(characterNames.toTypedArray(), DialogInterface.OnClickListener { dialog, character ->
+                AlertDialog.Builder(activity)
+                    .setTitle("Select effect")
+                    .setItems(effectNames.toTypedArray(), DialogInterface.OnClickListener { dialog, effect ->
+                        controller.addCharacterEffectDiff(character, effect)
+                    })
+                    .show()
+            })
+            .show()
     }
 
     override fun showAddComment() {
@@ -145,6 +161,13 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
                 dialog.dismiss()
             })
             .show()
+        editText.requestFocus()
+    }
+
+    override fun showCreateEffectDialog() {
+        activity.showAlertEditDialog("Effect name:") { name ->
+            controller.createEffect(name)
+        }
     }
 
     override fun showCloseSessionDialog(name: String) {

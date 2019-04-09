@@ -22,7 +22,9 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
     val SESSION_ADD_HP = 0
     val SESSION_ADD_SKILL = 1
     val SESSION_ADD_THING = 2
-    val SESSION_ADD_COMMENT = 3
+    val SESSION_ADD_EFFECT = 3
+    val SESSION_REMOVE_EFFECT = 4
+    val SESSION_ADD_COMMENT = 5
 
     @Inject
     lateinit var view: SessionContract.View
@@ -56,6 +58,11 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
             .map { SessionItem(it.id, it.time, SessionItemType.ITEM_SKILL, getSkill(it.skillGroup).name, getCharacter(it.characterGroup).name, it.value, it.characterGroup) })
         itemsWrapper.addAll(db.thingDiffDao().getAllBySession(world.id, game.id, session.id, archived = false)
             .map { SessionItem(it.id, it.time, SessionItemType.ITEM_THING, getThing(it.thingGroup).name, getCharacter(it.characterGroup).name, it.value, it.characterGroup) })
+        itemsWrapper.addAll(db.effectDiffDao().getAllBySession(world.id, game.id, session.id, archived = false)
+            .map {
+                val intValue = if(it.value) 1 else -1
+                SessionItem(it.id, it.time, SessionItemType.ITEM_EFFECT, getEffect(it.effectGroup).name, getCharacter(it.characterGroup).name, intValue, it.characterGroup)
+            })
         itemsWrapper.addAll(db.commentDiffDao().getAll(world.id, game.id, session.id, archived = false)
             .map { SessionItem(it.id, it.time, SessionItemType.ITEM_COMMENT, "", "", 0, -1, it.comment) })
     }
@@ -71,6 +78,10 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
     fun getThing(thingId: Long): Thing {
         val things = getThings()
         return things.single { it.id == thingId }
+    }
+    fun getEffect(effectid: Long): Effect {
+        val effects = getEffects()
+        return effects.single { it.id == effectid }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
@@ -111,6 +122,9 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
                 view.showCreateThingDialog()
                 return true
             }
+            R.id.session_create_effect -> {
+                view.showCreateEffectDialog()
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -124,7 +138,6 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
     }
 
     override fun onAddItemClicked(which: Int) {
-        // TODO Create New skill, New thing, New character
         val characterNames = getCharacters().map { it.name }
         when(which) {
             SESSION_ADD_HP -> view.showAddHpDialog(characterNames)
@@ -135,6 +148,13 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
             SESSION_ADD_THING -> {
                 val thingNames = getThings().map { it.name }
                 view.showAddThingDialog(characterNames, thingNames)
+            }
+            SESSION_ADD_EFFECT -> {
+                val effectNames = getEffects().map { it.name }
+                view.showAddEffectDialog(characterNames, effectNames)
+            }
+            SESSION_REMOVE_EFFECT -> {
+                // TODO
             }
             SESSION_ADD_COMMENT -> view.showAddComment()
         }
@@ -223,6 +243,20 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
         view.itemAddedAt(item.index, item)
     }
 
+    override fun addCharacterEffectDiff(character: Int, effect: Int) {
+        val selectedCharacter = getCharacters()[character]
+        val selectedEffect = getEffects()[effect]
+        selectedEffect.lastUsed = Calendar.getInstance().time
+        db.effectDao().update(selectedEffect)
+        val effectDiff = EffectDiff(true, Calendar.getInstance().time, selectedCharacter.id, selectedEffect.id, session.id, game.id, world.id)
+        val id = db.effectDiffDao().insert(effectDiff)
+        effectDiff.id = id
+
+        val item = SessionItem(effectDiff.id, effectDiff.time, SessionItemType.ITEM_EFFECT, selectedEffect.name, selectedCharacter.name, 1, selectedCharacter.id)
+        itemsWrapper.add(item)
+        view.itemAddedAt(item.index, item)
+    }
+
     override fun addCommentDiff() {
         val commentDiff = CommentDiff("", Calendar.getInstance().time, session.id, game.id, world.id)
         val id = db.commentDiffDao().insert(commentDiff)
@@ -243,12 +277,19 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
         val skill = Skill(name, world.id, Calendar.getInstance().time, archived = false)
         val id = db.skillDao().insert(skill)
         skill.id = id
+        // TODO Сразу добавлять?
     }
 
     override fun createThing(name: String) {
         val thing = Thing(name, world.id, Calendar.getInstance().time, archived = false)
         val id = db.thingDao().insert(thing)
         thing.id = id
+    }
+
+    override fun createEffect(name: String) {
+        val effect = Effect(name, world.id, Calendar.getInstance().time, archived = false)
+        val id = db.effectDao().insert(effect)
+        effect.id = id
     }
 
     private fun getCharacters(): List<GameCharacter> {
@@ -263,6 +304,11 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
 
     private fun getThings(): List<Thing> {
         return db.thingDao().getAll(world.id, archived = false)
+            .sortedBy { it.name }
+    }
+
+    private fun getEffects(): List<Effect> {
+        return db.effectDao().getAll(world.id, archived = false)
             .sortedBy { it.name }
     }
 

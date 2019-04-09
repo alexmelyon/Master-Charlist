@@ -15,11 +15,13 @@ interface SessionContract {
         fun showAddHpDialog(characterNames: List<String>)
         fun showAddSkillDialog(characterNames: List<String>, skillNames: List<String>)
         fun showAddThingDialog(characterNames: List<String>, thingNames: List<String>)
+        fun showAddEffectDialog(characterNames: List<String>, effectNames: List<String>)
         fun showAddComment()
         fun showCloseSessionDialog(name: String)
         fun showCreateCharacterDialog()
         fun showCreateSkillDialog()
         fun showCreateThingDialog()
+        fun showCreateEffectDialog()
     }
     interface Controller {
         fun getTitle(): String
@@ -37,6 +39,8 @@ interface SessionContract {
         fun createCharacter(name: String)
         fun createSkill(name: String)
         fun createThing(name: String)
+        fun createEffect(name: String)
+        fun addCharacterEffectDiff(character: Int, effect: Int)
     }
 }
 
@@ -44,6 +48,7 @@ enum class SessionItemType {
     ITEM_HP,
     ITEM_SKILL,
     ITEM_THING,
+    ITEM_EFFECT,
     ITEM_COMMENT
 }
 
