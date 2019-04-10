@@ -52,31 +52,43 @@ class TutorialActivity : TutorialActivity() {
         addFragment(
             Step.Builder().setTitle("Create sessions")
                 .setBackgroundColor(Color.parseColor("#7e57c2"))
-                .setDrawable(R.drawable.tutorial_4_create_session)
+                .setDrawable(R.drawable.tutorial_4_open_sessions)
                 .build()
         )
         addFragment(
             Step.Builder().setTitle("Add HP to characters")
                 .setBackgroundColor(Color.parseColor("#5c6bc0"))
-                .setDrawable(R.drawable.tutorial_5_add_hp)
+                .setDrawable(R.drawable.tutorial_5_create_session)
                 .build()
         )
         addFragment(
             Step.Builder().setTitle("Create skills")
                 .setBackgroundColor(Color.parseColor("#42a5f5"))
-                .setDrawable(R.drawable.tutorial_6_create_skill)
+                .setDrawable(R.drawable.tutorial_6_add_hp)
                 .build()
         )
         addFragment(
             Step.Builder().setTitle("Close the session")
                 .setBackgroundColor(Color.parseColor("#29b6f6"))
-                .setDrawable(R.drawable.tutorial_7_close_session)
+                .setDrawable(R.drawable.tutorial_7_create_skill)
                 .build()
         )
         addFragment(
             Step.Builder().setTitle("See results")
                 .setBackgroundColor(Color.parseColor("#26c6da"))
-                .setDrawable(R.drawable.tutorial_8_characters)
+                .setDrawable(R.drawable.tutorial_8_add_skill)
+                .build()
+        )
+        addFragment(
+            Step.Builder().setTitle("9")
+                .setBackgroundColor(Color.parseColor("#26c6da"))
+                .setDrawable(R.drawable.tutorial_9_create_thing)
+                .build()
+        )
+        addFragment(
+            Step.Builder().setTitle("10")
+                .setBackgroundColor(Color.parseColor("#26c6da"))
+                .setDrawable(R.drawable.tutorial_10_create_comment)
                 .build()
         )
     }
