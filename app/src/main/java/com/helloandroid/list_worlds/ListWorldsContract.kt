@@ -17,5 +17,6 @@ interface ListWorldsContract {
         fun showCreateWorldDialog()
         fun addedAt(i: Int, world: World)
         fun archivedAt(pos: Int)
+        fun showAboutDialog()
     }
 }

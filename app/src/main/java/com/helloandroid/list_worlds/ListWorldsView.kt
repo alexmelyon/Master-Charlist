@@ -3,14 +3,20 @@ package com.helloandroid.list_worlds
 import android.content.DialogInterface
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.RecyclerView
+import android.text.SpannableString
+import android.text.method.LinkMovementMethod
+import android.text.util.Linkify
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.TextView
+import com.helloandroid.App
 import com.helloandroid.MainActivity
 import com.helloandroid.R
 import com.helloandroid.room.World
 import com.helloandroid.ui.RecyclerStringAdapter
 import org.jetbrains.anko._FrameLayout
 import org.jetbrains.anko.matchParent
+import org.jetbrains.anko.padding
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.verticalLayout
 import javax.inject.Inject
@@ -69,5 +75,23 @@ class ListWorldsView @Inject constructor(val activity: MainActivity) : _FrameLay
                 dialog.dismiss()
             })
             .show()
+    }
+
+    override fun showAboutDialog() {
+        val dialog = AlertDialog.Builder(activity)
+            .setTitle("Master Charlist")
+            .setMessage("""
+            |Sketchpad for game masters
+            |Version ${activity.packageManager.getPackageInfo(activity.packageName, 0).versionName}
+            |github.com/alexmelyon/Master-Charlist""".trimMargin())
+            .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
+                dialog.dismiss()
+            })
+            .create()
+
+        dialog.show()
+        val message = dialog.findViewById<TextView>(android.R.id.message)
+        Linkify.addLinks(message, Linkify.WEB_URLS)
+        message?.movementMethod = LinkMovementMethod.getInstance()
     }
 }

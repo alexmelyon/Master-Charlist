@@ -1,5 +1,6 @@
 package com.helloandroid.list_worlds
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.view.*
@@ -62,6 +63,10 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
                     flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                     putExtra(TutorialActivity.FORCED_TUTORIAL, true)
                 })
+                return true
+            }
+            R.id.menu_about -> {
+                view.showAboutDialog()
                 return true
             }
         }
