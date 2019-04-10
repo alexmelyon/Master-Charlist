@@ -25,14 +25,16 @@ class DbModule {
                     "`worldGroup` INTEGER NOT NULL," +
                     "`lastUsed` INTEGER NOT NULL," +
                     "`archived` INTEGER NOT NULL)")
-            database.execSQL("CREATE TABLE `effectdiff` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+            database.execSQL("CREATE TABLE `effectdiff` (" +
+                    "`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                     "`value` INTEGER NOT NULL," +
                     "`time` INTEGER NOT NULL," +
                     "`characterGroup` INTEGER NOT NULL," +
                     "`effectGroup` INTEGER NOT NULL," +
                     "`sessionGroup` INTEGER NOT NULL," +
                     "`gameGroup` INTEGER NOT NULL," +
-                    "`worldGroup` INTEGER NOT NULL)")
+                    "`worldGroup` INTEGER NOT NULL," +
+                    "`archived` INTEGER NOT NULL)")
         }
     }
 }

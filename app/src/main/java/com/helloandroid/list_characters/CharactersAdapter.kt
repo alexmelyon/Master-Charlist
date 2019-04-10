@@ -42,6 +42,14 @@ class CharactersAdapter(val context: Context, val onLongTapListener: (Int, Chara
                 id = R.id.character_hp
                 textColor = Color.BLACK
             }
+            textView("Effects:") {
+                typeface = Typeface.DEFAULT_BOLD
+                textColor = Color.BLACK
+            }
+            textView {
+                id = R.id.character_effects
+                textColor = Color.BLACK
+            }
             textView("Skills:") {
                 typeface = Typeface.DEFAULT_BOLD
                 textColor = Color.BLACK
@@ -69,6 +77,7 @@ class CharactersAdapter(val context: Context, val onLongTapListener: (Int, Chara
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.name.text = items[position].name
         holder.hp.text = "HP " + items[position].hp
+        holder.effects.text = items[position].effects.joinToString(", ")
         holder.skills.text = items[position].skills.map { "${it.first}: ${it.second}" }.joinToString("\n")
         holder.things.text = items[position].things.map { "${it.first}: ${it.second}" }.joinToString("\n")
         holder.itemView.setOnLongClickListener {
@@ -91,6 +100,7 @@ class CharactersAdapter(val context: Context, val onLongTapListener: (Int, Chara
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val name = view.findViewById<TextView>(R.id.character_name)
         val hp = view.findViewById<TextView>(R.id.character_hp)
+        val effects = view.findViewById<TextView>(R.id.character_effects)
         val skills = view.findViewById<TextView>(R.id.character_skills)
         val things = view.findViewById<TextView>(R.id.character_things)
     }

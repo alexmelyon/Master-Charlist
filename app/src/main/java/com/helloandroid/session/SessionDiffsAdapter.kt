@@ -1,6 +1,7 @@
 package com.helloandroid.session
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Paint
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -16,6 +17,7 @@ import kotlinx.android.synthetic.main.session_item_int.view.*
 import kotlinx.android.synthetic.main.simple_list_item_2_with_header.view.*
 import org.jetbrains.anko.layoutInflater
 import org.jetbrains.anko.sdk15.listeners.onClick
+import org.jetbrains.anko.textColor
 
 class SessionDiffsAdapter(val context: Context, val editable: Boolean) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -89,10 +91,12 @@ class SessionDiffsAdapter(val context: Context, val editable: Boolean) : Recycle
             SessionItemType.ITEM_EFFECT -> {
                 holder as ItemEffectViewHolder
                 holder.title.text = items[position].title
+                holder.title.textColor = Color.BLACK
                 if(items[position].value < 0) {
                     holder.title.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
                 }
                 holder.desc.text = items[position].desc
+                holder.desc.textColor = Color.GRAY
             }
             SessionItemType.ITEM_COMMENT -> {
                 holder as ItemCommentViewHolder
@@ -136,8 +140,8 @@ class SessionDiffsAdapter(val context: Context, val editable: Boolean) : Recycle
     }
 
     class ItemEffectViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val title = view.text1
-        val desc = view.text2
+        val title = view.findViewById<TextView>(android.R.id.text1)
+        val desc = view.findViewById<TextView>(android.R.id.text2)
     }
 
     class ItemCommentViewHolder(view: View) : RecyclerView.ViewHolder(view) {

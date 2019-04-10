@@ -18,7 +18,8 @@ import android.arch.persistence.room.TypeConverters
         SkillDiff::class,
         ThingDiff::class,
         CommentDiff::class,
-        EffectDiff::class]
+        EffectDiff::class
+    ]
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {

@@ -151,10 +151,11 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
             }
             SESSION_ADD_EFFECT -> {
                 val effectNames = getEffects().map { it.name }
-                view.showAddEffectDialog(characterNames, effectNames)
+                view.showAttachEffectDialog(characterNames, effectNames)
             }
             SESSION_REMOVE_EFFECT -> {
-                // TODO
+                val characterToEffects = getUsedEffects()
+                view.showRemoveEffectDialog(characterNames, characterToEffects)
             }
             SESSION_ADD_COMMENT -> view.showAddComment()
         }
@@ -243,7 +244,7 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
         view.itemAddedAt(item.index, item)
     }
 
-    override fun addCharacterEffectDiff(character: Int, effect: Int) {
+    override fun addCharacterAttachEffectDiff(character: Int, effect: Int) {
         val selectedCharacter = getCharacters()[character]
         val selectedEffect = getEffects()[effect]
         selectedEffect.lastUsed = Calendar.getInstance().time
@@ -253,6 +254,20 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
         effectDiff.id = id
 
         val item = SessionItem(effectDiff.id, effectDiff.time, SessionItemType.ITEM_EFFECT, selectedEffect.name, selectedCharacter.name, 1, selectedCharacter.id)
+        itemsWrapper.add(item)
+        view.itemAddedAt(item.index, item)
+    }
+
+    override fun addCharacterDetachEffectDiff(character: Int, effect: Int) {
+        val selectedCharacter = getCharacters()[character]
+        val selectedEffect = getUsedEffects()[selectedCharacter.name]!![effect]
+        selectedEffect.lastUsed = Calendar.getInstance().time
+        db.effectDao().update(selectedEffect)
+        val effectDiff = EffectDiff(false, Calendar.getInstance().time, selectedCharacter.id, selectedEffect.id, session.id, game.id, world.id)
+        val id = db.effectDiffDao().insert(effectDiff)
+        effectDiff.id = id
+
+        val item = SessionItem(effectDiff.id, effectDiff.time, SessionItemType.ITEM_EFFECT, selectedEffect.name, selectedCharacter.name, -1, selectedCharacter.id)
         itemsWrapper.add(item)
         view.itemAddedAt(item.index, item)
     }
@@ -310,6 +325,20 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
     private fun getEffects(): List<Effect> {
         return db.effectDao().getAll(world.id, archived = false)
             .sortedBy { it.name }
+    }
+
+    private fun getUsedEffects(): Map<String, List<Effect>> {
+        val closedSessions = db.gameSessionDao().getClosed(world.id, game.id)
+        val effects = db.effectDao().getAll(world.id, archived = false)
+        val res = db.characterDao().getAll(world.id, game.id, archived = false).map { character ->
+            val closed = db.effectDiffDao().getAllByCharacter(world.id, game.id, character.id, archived = false)
+                .filter { it.sessionGroup in closedSessions }
+            val open = db.effectDiffDao().getAllBySession(world.id, game.id, session.id, archived = false)
+            character.name to closed + open
+        }.filter { it.second.map { if(it.value) 1 else 0 }.sum() > 0 }
+            .map { it.first to it.second.map { diff -> effects.single { it.id == diff.effectGroup } }.sortedBy { it.name } }
+            .toMap()
+        return res
     }
 
     class SessionItemsWrapper {

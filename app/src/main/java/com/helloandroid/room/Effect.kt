@@ -5,7 +5,7 @@ import java.util.*
 
 @Entity
 class Effect(var name: String, val worldGroup: Long, var lastUsed: Date, var archived: Boolean) {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     var id: Long = 0
 }
 

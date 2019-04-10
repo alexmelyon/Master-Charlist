@@ -1,6 +1,9 @@
 package com.helloandroid.session
 
 import android.view.ViewGroup
+import com.helloandroid.room.Effect
+import com.helloandroid.room.EffectDiff
+import com.helloandroid.room.GameCharacter
 import java.util.*
 
 interface SessionContract {
@@ -15,7 +18,8 @@ interface SessionContract {
         fun showAddHpDialog(characterNames: List<String>)
         fun showAddSkillDialog(characterNames: List<String>, skillNames: List<String>)
         fun showAddThingDialog(characterNames: List<String>, thingNames: List<String>)
-        fun showAddEffectDialog(characterNames: List<String>, effectNames: List<String>)
+        fun showAttachEffectDialog(characterNames: List<String>, effectNames: List<String>)
+        fun showRemoveEffectDialog(characterNames: List<String>, characterToEffectNames: Map<String, List<Effect>>)
         fun showAddComment()
         fun showCloseSessionDialog(name: String)
         fun showCreateCharacterDialog()
@@ -31,6 +35,8 @@ interface SessionContract {
         fun onCommentChanged(pos: Int, comment: String)
         fun addHpDiff(character: Int)
         fun addCharacterSkillDiff(character: Int, skill: Int)
+        fun addCharacterAttachEffectDiff(character: Int, effect: Int)
+        fun addCharacterDetachEffectDiff(character: Int, effect: Int)
         fun addCharacterThingDiff(character: Int, thing: Int)
         fun addCommentDiff()
         fun onAddItemClicked(which: Int)
@@ -40,7 +46,6 @@ interface SessionContract {
         fun createSkill(name: String)
         fun createThing(name: String)
         fun createEffect(name: String)
-        fun addCharacterEffectDiff(character: Int, effect: Int)
     }
 }
 

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "ac955685216cb532610c4b86a01d4cb5",
+    "identityHash": "393d812112a8aad869390491e7e79b6a",
     "entities": [
       {
         "tableName": "World",
@@ -132,7 +132,7 @@
       },
       {
         "tableName": "Effect",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `worldGroup` INTEGER NOT NULL, `lastUsed` INTEGER NOT NULL, `archived` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `worldGroup` INTEGER NOT NULL, `lastUsed` INTEGER NOT NULL, `archived` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -169,7 +169,7 @@
           "columnNames": [
             "id"
           ],
-          "autoGenerate": false
+          "autoGenerate": true
         },
         "indices": [],
         "foreignKeys": []
@@ -580,7 +580,7 @@
       },
       {
         "tableName": "EffectDiff",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `value` INTEGER NOT NULL, `time` INTEGER NOT NULL, `characterGroup` INTEGER NOT NULL, `effectGroup` INTEGER NOT NULL, `sessionGroup` INTEGER NOT NULL, `gameGroup` INTEGER NOT NULL, `worldGroup` INTEGER NOT NULL, `archived` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `value` INTEGER NOT NULL, `time` INTEGER NOT NULL, `characterGroup` INTEGER NOT NULL, `effectGroup` INTEGER NOT NULL, `sessionGroup` INTEGER NOT NULL, `gameGroup` INTEGER NOT NULL, `worldGroup` INTEGER NOT NULL, `archived` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -641,7 +641,7 @@
           "columnNames": [
             "id"
           ],
-          "autoGenerate": false
+          "autoGenerate": true
         },
         "indices": [],
         "foreignKeys": []
@@ -649,7 +649,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"ac955685216cb532610c4b86a01d4cb5\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"393d812112a8aad869390491e7e79b6a\")"
     ]
   }
 }

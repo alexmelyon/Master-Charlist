@@ -110,4 +110,4 @@ class App : Application(), HasActivityInjector {
 }
 // TODO Комментарий по персонажу, Состояния, особенности (плюсы минусы), дополнительные скиллы, заклинания, баффы, дебаффы, ачивки
 // TODO Пресеты по DND, Fallout, SW:KotOR
-// TODO Room
+// TODO Кубик

@@ -8,7 +8,7 @@ import android.widget.EditText
 fun Context.showAlertEditDialog(title: String, action: (String) -> Unit) {
     val editText = EditText(this)
     AlertDialog.Builder(this)
-        .setTitle("Thing name:")
+        .setTitle(title)
         .setView(editText)
         .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
             action.invoke(editText.text.toString())
