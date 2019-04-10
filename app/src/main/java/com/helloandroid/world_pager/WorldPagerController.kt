@@ -14,6 +14,7 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.helloandroid.MainActivity
 import com.helloandroid.R
+import com.helloandroid.list_effects.ListEffectsController
 import com.helloandroid.list_games.ListGamesController
 import com.helloandroid.list_games.WORLD_KEY
 import com.helloandroid.list_skills.ListSkillsController
@@ -56,7 +57,7 @@ class WorldPagerController(args: Bundle) : Controller(args) {
             }
 
             override fun getCount(): Int {
-                return 3
+                return screenToController.size
             }
 
             override fun getPageTitle(position: Int): CharSequence? {
@@ -72,7 +73,8 @@ class WorldPagerController(args: Bundle) : Controller(args) {
         screenToController = listOf(
             "Games" to ListGamesController(world.id),
             "Skills" to ListSkillsController(world.id),
-            "Things" to ListThingsController(world.id))
+            "Things" to ListThingsController(world.id),
+            "Effects" to ListEffectsController(world.id))
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {

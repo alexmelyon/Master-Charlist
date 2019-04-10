@@ -6,6 +6,7 @@ import com.helloandroid.App
 import com.helloandroid.MainActivity
 import com.helloandroid.game_pager.GamePagerControllerModule
 import com.helloandroid.list_characters.ListCharactersControllerModule
+import com.helloandroid.list_effects.ListEffectsControllerModule
 import com.helloandroid.list_games.ListGamesControllerModule
 import com.helloandroid.list_sessions.ListSessionsControllerModule
 import com.helloandroid.list_skills.ListSkillsControllerModule
@@ -27,6 +28,7 @@ import javax.inject.Singleton
     ListGamesControllerModule::class,
     ListSkillsControllerModule::class,
     ListThingsControllerModule::class,
+    ListEffectsControllerModule::class,
     ListCharactersControllerModule::class,
     ListSessionsControllerModule::class,
     SessionControllerModule::class,

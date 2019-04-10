@@ -4,9 +4,11 @@ import android.arch.persistence.room.*
 import java.util.*
 
 @Entity
-class Effect(var name: String, val worldGroup: Long, var lastUsed: Date, var archived: Boolean) {
+class Effect(var name: String, val worldGroup: Long, var lastUsed: Date, var archived: Boolean = false) {
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
+
+    override fun toString() = name
 }
 
 @Dao
