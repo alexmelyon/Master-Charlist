@@ -1,6 +1,7 @@
 package com.helloandroid.room
 
 import android.arch.persistence.room.*
+import com.helloandroid.App
 import java.util.*
 
 @Entity
@@ -25,4 +26,12 @@ interface CharacterDao {
 
     @Update
     fun update(character: GameCharacter)
+}
+
+fun getUsedEffectsFor(character: GameCharacter, diffs: List<EffectDiff>, effects: List<Effect>): List<Effect> {
+    return diffs.groupBy { it.effectGroup }
+        .map { it.key to it.value.map { if(it.value) 1 else -1 }.sum() }
+        .filter { it.second > 0 }
+        .map { e -> effects.single { it.id == e.first } }
+        .sortedBy { it.name }
 }

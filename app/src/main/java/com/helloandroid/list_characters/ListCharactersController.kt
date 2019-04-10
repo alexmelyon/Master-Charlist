@@ -7,10 +7,7 @@ import com.bluelinelabs.conductor.Controller
 import com.helloandroid.R
 import com.helloandroid.list_games.WORLD_KEY
 import com.helloandroid.list_sessions.GAME_KEY
-import com.helloandroid.room.AppDatabase
-import com.helloandroid.room.Game
-import com.helloandroid.room.GameCharacter
-import com.helloandroid.room.World
+import com.helloandroid.room.*
 import ru.napoleonit.talan.di.ControllerInjector
 import java.util.*
 import javax.inject.Inject
@@ -83,14 +80,10 @@ class ListCharactersController(args: Bundle) : Controller(args), ListCharactersC
                 .sumBy { it.value }
 
             val effects = db.effectDao().getAll(world.id, archived = false)
-            val effectDiffs = db.effectDiffDao().getAllByCharacter(world.id, game.id, character.id, archived = false)
-                .asSequence()
+            val closedEffectDiffs = db.effectDiffDao().getAllByCharacter(world.id, game.id, character.id, archived = false)
                 .filter { it.sessionGroup in closedSessions }
-                .groupBy { it.effectGroup }
-                .map { it.key to it.value.map { if(it.value) 1 else 0 }.sum() }
-                .map { effectToValue -> effects.single { it.id == effectToValue.first }.name to effectToValue.second }
-                .filter { it.second > 0 }
-            val effectDiffNames = effectDiffs.map { it.first }
+            val effectDiffs = getUsedEffectsFor(character, closedEffectDiffs, effects)
+            val effectDiffNames = effectDiffs.map { it.name }
 
             val skills = db.skillDao().getAll(world.id, archived = false)
             val skillDiffs = db.skillDiffDao().getAllByCharacter(world.id, game.id, character.id, archived = false)

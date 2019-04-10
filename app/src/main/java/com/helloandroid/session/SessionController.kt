@@ -260,7 +260,8 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
 
     override fun addCharacterDetachEffectDiff(character: Int, effect: Int) {
         val selectedCharacter = getCharacters()[character]
-        val selectedEffect = getUsedEffects()[selectedCharacter.name]!![effect]
+        val usedEffects = getUsedEffects().getValue(selectedCharacter.name)
+        val selectedEffect = usedEffects[effect]
         selectedEffect.lastUsed = Calendar.getInstance().time
         db.effectDao().update(selectedEffect)
         val effectDiff = EffectDiff(false, Calendar.getInstance().time, selectedCharacter.id, selectedEffect.id, session.id, game.id, world.id)
@@ -333,11 +334,10 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
         val res = db.characterDao().getAll(world.id, game.id, archived = false).map { character ->
             val closed = db.effectDiffDao().getAllByCharacter(world.id, game.id, character.id, archived = false)
                 .filter { it.sessionGroup in closedSessions }
-            val open = db.effectDiffDao().getAllBySession(world.id, game.id, session.id, archived = false)
-            character.name to closed + open
-        }.filter { it.second.map { if(it.value) 1 else 0 }.sum() > 0 }
-            .map { it.first to it.second.map { diff -> effects.single { it.id == diff.effectGroup } }.sortedBy { it.name } }
-            .toMap()
+            val current = db.effectDiffDao().getAllBySession(world.id, game.id, session.id, archived = false)
+            val usedEffects = getUsedEffectsFor(character, closed + current, effects)
+            character.name to usedEffects
+        }.toMap()
         return res
     }
 
