@@ -8,7 +8,9 @@ import android.widget.EditText
 import com.helloandroid.MainActivity
 import com.helloandroid.room.Skill
 import com.helloandroid.ui.RecyclerStringAdapter
+import com.helloandroid.utils.showAlertEditDialog
 import org.jetbrains.anko._FrameLayout
+import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import javax.inject.Inject
 
@@ -48,17 +50,9 @@ class ListSkillsView @Inject constructor(val activity: MainActivity) : _FrameLay
     }
 
     override fun showAddSkillDialog() {
-        val editText = EditText(activity)
-        AlertDialog.Builder(activity)
-            .setTitle("Skill name:")
-            .setView(editText)
-            .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
-                controller.createSkill(editText.text.toString())
-            })
-            .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
-                dialog.dismiss()
-            })
-            .show()
+        activity.showAlertEditDialog("Skill name:") { name ->
+            controller.createSkill(name)
+        }
     }
 
     override fun addedAt(pos: Int, skill: Skill) {

@@ -24,8 +24,8 @@ interface CommentDiffDao {
     @Query("SELECT * FROM commentdiff WHERE worldGroup = :worldId AND gameGroup = :gameId AND sessionGroup = :sessionId AND archived = :archived")
     fun getAll(worldId: Long, gameId: Long, sessionId: Long, archived: Boolean): List<CommentDiff>
 
-    @Query("SELECT * FROM commentdiff WHERE worldGroup = :worldId AND gameGroup = :gameId AND sessionGroup = :sessionId AND id = :id LIMIT 1")
-    fun get(worldId: Long, gameId: Long, sessionId: Long, id: Long): CommentDiff
+    @Query("SELECT * FROM commentdiff WHERE id = :id LIMIT 1")
+    fun get(id: Long): CommentDiff
 
     @Insert
     fun insert(commentDiff: CommentDiff): Long

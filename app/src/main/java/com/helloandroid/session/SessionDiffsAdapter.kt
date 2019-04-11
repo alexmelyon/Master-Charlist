@@ -12,9 +12,9 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import com.helloandroid.R
+import com.helloandroid.room.Effect
 import kotlinx.android.synthetic.main.session_item_comment.view.*
 import kotlinx.android.synthetic.main.session_item_int.view.*
-import kotlinx.android.synthetic.main.simple_list_item_2_with_header.view.*
 import org.jetbrains.anko.layoutInflater
 import org.jetbrains.anko.sdk15.listeners.onClick
 import org.jetbrains.anko.textColor
@@ -29,8 +29,12 @@ class SessionDiffsAdapter(val context: Context, val editable: Boolean) : Recycle
     var onItemPlus: (Int, SessionItemType) -> Unit = { pos, type -> }
     var onItemMinus: (Int, SessionItemType) -> Unit = { pos, type -> }
     var onCommentChanged: (Int, String) -> Unit = { pos, comment -> }
+    var onItemClickListener = { pos: Int -> }
+    var onItemLongClickListener = { pos: Int -> }
+    var onSubitemPlus = { item: Int, subitem: Int -> }
+    var onSubitemMinus = { item: Int, subitem: Int -> }
 
-    private val textWatchers = mutableMapOf<EditText, IdTextWatcher>()
+    private val textWatchers = mutableMapOf<EditText, IndexTextWatcher>()
     private var layoutManager: RecyclerView.LayoutManager? = null
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
@@ -52,7 +56,8 @@ class SessionDiffsAdapter(val context: Context, val editable: Boolean) : Recycle
                 return ItemIntViewHolder(view)
             }
             SessionItemType.ITEM_EFFECT -> {
-                val view = parent.context.layoutInflater.inflate(android.R.layout.simple_list_item_2, parent, false)
+//                val view = parent.context.layoutInflater.inflate(android.R.layout.simple_list_item_2, parent, false)
+                val view = parent.context.layoutInflater.inflate(R.layout.session_item_effect, parent, false)
                 return ItemEffectViewHolder(view)
             }
             SessionItemType.ITEM_COMMENT -> {
@@ -60,7 +65,6 @@ class SessionDiffsAdapter(val context: Context, val editable: Boolean) : Recycle
                 return ItemCommentViewHolder(view)
             }
         }
-        throw NotImplementedError("Wrong viewType")
     }
 
     override fun getItemCount(): Int {
@@ -89,21 +93,27 @@ class SessionDiffsAdapter(val context: Context, val editable: Boolean) : Recycle
                 }
             }
             SessionItemType.ITEM_EFFECT -> {
+                val correctPosition = holder.adapterPosition
                 holder as ItemEffectViewHolder
-                holder.title.text = items[position].title
+                holder.title.text = items[correctPosition].title
                 holder.title.textColor = Color.BLACK
-                if(items[position].value < 0) {
+                if(items[correctPosition].value < 0) {
                     holder.title.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
                 }
-                holder.desc.text = items[position].desc
+                holder.desc.text = items[correctPosition].desc
                 holder.desc.textColor = Color.GRAY
+                holder.attachedSkills.visibility = if(items[correctPosition].effectSkills.isEmpty()) View.GONE else View.VISIBLE
+                holder.attachedSkills.text = items[correctPosition].effectSkills.joinToString("\n")
+                holder.itemView.setOnClickListener({ view ->
+                    onItemClickListener(correctPosition)
+                })
             }
             SessionItemType.ITEM_COMMENT -> {
                 holder as ItemCommentViewHolder
                 holder.editText.isEnabled = editable
                 holder.editText.setText(items[position].comment, TextView.BufferType.EDITABLE)
                 if (textWatchers[holder.editText] == null) {
-                    val watcher = IdTextWatcher() { index, comment ->
+                    val watcher = IndexTextWatcher() { index, comment ->
                         val correctPosition = holder.adapterPosition
                         onCommentChanged(correctPosition, comment)
                     }
@@ -121,7 +131,7 @@ class SessionDiffsAdapter(val context: Context, val editable: Boolean) : Recycle
         layoutManager?.scrollToPosition(0)
     }
 
-    class IdTextWatcher(val textChanged: (Int, String) -> Unit) : TextWatcher {
+    class IndexTextWatcher(val textChanged: (Int, String) -> Unit) : TextWatcher {
         var index: Int = 0
 
         override fun afterTextChanged(s: Editable?) {}
@@ -140,8 +150,9 @@ class SessionDiffsAdapter(val context: Context, val editable: Boolean) : Recycle
     }
 
     class ItemEffectViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val title = view.findViewById<TextView>(android.R.id.text1)
-        val desc = view.findViewById<TextView>(android.R.id.text2)
+        val title = view.findViewById<TextView>(R.id.effect_title)
+        val desc = view.findViewById<TextView>(R.id.effect_desc)
+        val attachedSkills = view.findViewById<TextView>(R.id.attached_skills)
     }
 
     class ItemCommentViewHolder(view: View) : RecyclerView.ViewHolder(view) {

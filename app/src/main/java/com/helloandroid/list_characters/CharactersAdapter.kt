@@ -10,9 +10,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.helloandroid.R
-import org.jetbrains.anko.linearLayout
-import org.jetbrains.anko.textColor
-import org.jetbrains.anko.textView
+import org.jetbrains.anko.*
 
 class CharactersAdapter(val context: Context, val onLongTapListener: (Int, CharacterItem) -> Unit) : RecyclerView.Adapter<CharactersAdapter.ViewHolder>() {
 
@@ -37,7 +35,7 @@ class CharactersAdapter(val context: Context, val onLongTapListener: (Int, Chara
                 textSize = 20F
                 textColor = Color.BLACK
                 typeface = Typeface.DEFAULT_BOLD
-            }
+            }.lparams(matchParent, wrapContent)
             textView {
                 id = R.id.character_hp
                 textColor = Color.BLACK

@@ -20,6 +20,9 @@ interface EffectDiffDao {
     @Query("SELECT * FROM effectdiff WHERE worldGroup = :worldId AND gameGroup = :gameId AND characterGroup = :characterId AND archived = :archived")
     fun getAllByCharacter(worldId: Long, gameId: Long, characterId: Long, archived: Boolean): List<EffectDiff>
 
+    @Query("SELECT * FROM effectdiff WHERE id = :id LIMIT 1")
+    fun get(id: Long): EffectDiff
+
     @Insert
     fun insert(effectDiff: EffectDiff): Long
 }

@@ -58,10 +58,14 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
             .map { SessionItem(it.id, it.time, SessionItemType.ITEM_SKILL, getSkill(it.skillGroup).name, getCharacter(it.characterGroup).name, it.value, it.characterGroup) })
         itemsWrapper.addAll(db.thingDiffDao().getAllBySession(world.id, game.id, session.id, archived = false)
             .map { SessionItem(it.id, it.time, SessionItemType.ITEM_THING, getThing(it.thingGroup).name, getCharacter(it.characterGroup).name, it.value, it.characterGroup) })
+        val effects = db.effectDao().getAll(world.id, archived = false)
         itemsWrapper.addAll(db.effectDiffDao().getAllBySession(world.id, game.id, session.id, archived = false)
             .map {
                 val intValue = if(it.value) 1 else -1
-                SessionItem(it.id, it.time, SessionItemType.ITEM_EFFECT, getEffect(it.effectGroup).name, getCharacter(it.characterGroup).name, intValue, it.characterGroup)
+                val effectSkills = db.effectSkillDao().getAll(world.id, it.effectGroup)
+                    .map { e -> effects.single { it.id == e.effectGroup } to e.value }
+                    .map { "%s %+d".format(it.first, it.second - 10) }
+                SessionItem(it.id, it.time, SessionItemType.ITEM_EFFECT, getEffect(it.effectGroup).name, getCharacter(it.characterGroup).name, intValue, it.characterGroup, effectSkills = effectSkills)
             })
         itemsWrapper.addAll(db.commentDiffDao().getAll(world.id, game.id, session.id, archived = false)
             .map { SessionItem(it.id, it.time, SessionItemType.ITEM_COMMENT, "", "", 0, -1, it.comment) })
@@ -142,14 +146,17 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
         when(which) {
             SESSION_ADD_HP -> view.showAddHpDialog(characterNames)
             SESSION_ADD_SKILL -> {
+                // TODO Create new
                 val skillNames = getSkills().map { it.name }
                 view.showAddSkillDialog(characterNames, skillNames)
             }
             SESSION_ADD_THING -> {
+                // TODO Create new
                 val thingNames = getThings().map { it.name }
                 view.showAddThingDialog(characterNames, thingNames)
             }
             SESSION_ADD_EFFECT -> {
+                // TODO Create new
                 val effectNames = getEffects().map { it.name }
                 view.showAttachEffectDialog(characterNames, effectNames)
             }
@@ -198,7 +205,7 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
         val item = itemsWrapper.toList()[pos]
         val commentId = item.id
         item.comment = comment
-        val commentDiff = db.commentDiffDao().get(world.id, game.id, session.id, commentId)
+        val commentDiff = db.commentDiffDao().get(commentId)
         commentDiff.comment = comment
         db.commentDiffDao().update(commentDiff)
         // Do not itemChangedAt
@@ -271,6 +278,24 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
         val item = SessionItem(effectDiff.id, effectDiff.time, SessionItemType.ITEM_EFFECT, selectedEffect.name, selectedCharacter.name, -1, selectedCharacter.id)
         itemsWrapper.add(item)
         view.itemAddedAt(item.index, item)
+    }
+
+    override fun getSkillsForEffect(pos: Int): List<Skill> {
+        val allSkills = db.skillDao().getAll(world.id, archived = false)
+        // TODO allSkills - usedSkills
+        val possible = allSkills
+        return possible
+    }
+
+    override fun addSkillForEffect(pos: Int, skill: Skill) {
+        val effectDiffId = itemsWrapper.toList()[pos].id
+        val effectDiff = db.effectDiffDao().get(effectDiffId)
+        val effect = db.effectDao().get(effectDiff.effectGroup)
+        val effectSkill = EffectSkill(0, effect.id, skill.id, world.id)
+        val id = db.effectSkillDao().insert(effectSkill)
+        effectSkill.id = id
+
+        view.itemChangedAt(pos)
     }
 
     override fun addCommentDiff() {

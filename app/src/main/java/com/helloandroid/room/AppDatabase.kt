@@ -5,7 +5,7 @@ import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
 
 @Database(
-    version = 2,
+    version = 3,
     entities = [
         World::class,
         Game::class,
@@ -18,7 +18,8 @@ import android.arch.persistence.room.TypeConverters
         SkillDiff::class,
         ThingDiff::class,
         CommentDiff::class,
-        EffectDiff::class
+        EffectDiff::class,
+        EffectSkill::class
     ]
 )
 @TypeConverters(Converters::class)
@@ -35,4 +36,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun thingDiffDao(): ThingDiffDao
     abstract fun commentDiffDao(): CommentDiffDao
     abstract fun effectDiffDao(): EffectDiffDao
+    abstract fun effectSkillDao(): EffectSkillDao
 }

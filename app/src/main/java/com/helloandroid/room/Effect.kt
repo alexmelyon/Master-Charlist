@@ -19,6 +19,9 @@ interface EffectDao {
     @Query("SELECT * FROM effect WHERE worldGroup = :worldId AND archived = :archived")
     fun getAll(worldId: Long, archived: Boolean): List<Effect>
 
+    @Query("SELECT * FROM effect WHERE id = :id LIMIT 1")
+    fun get(id: Long): Effect
+
     @Insert
     fun insert(effect: Effect): Long
 

@@ -12,7 +12,7 @@ import com.helloandroid.list_sessions.ListSessionsControllerModule
 import com.helloandroid.list_skills.ListSkillsControllerModule
 import com.helloandroid.list_things.ListThingsControllerModule
 import com.helloandroid.list_worlds.ListWorldsControllerModule
-import com.helloandroid.room.DbModule
+import com.helloandroid.room.AppDatabaseModule
 import com.helloandroid.session.SessionControllerModule
 import com.helloandroid.world_pager.WorldPagerControllerModule
 import dagger.*
@@ -58,7 +58,7 @@ class ContextModule(val context: Context) {
     MainActivityModule::class,
     AndroidInjectionModule::class,
     ContextModule::class,
-    DbModule::class])
+    AppDatabaseModule::class])
 interface AppComponent {
     fun inject(app: App)
 }

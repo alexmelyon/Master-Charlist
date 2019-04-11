@@ -4,7 +4,6 @@ import android.content.DialogInterface
 import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import com.helloandroid.MainActivity
 import com.helloandroid.room.Effect
 import com.helloandroid.utils.showAlertEditDialog
@@ -38,6 +37,16 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
             }
             onCommentChanged = { id, comment ->
                 controller.onCommentChanged(id, comment)
+            }
+            onItemClickListener = { pos ->
+                val skillForEffects = controller.getSkillsForEffect(pos)
+                val skillNames = skillForEffects.map { it.name }.toTypedArray()
+                AlertDialog.Builder(activity)
+                    .setItems(skillNames, DialogInterface.OnClickListener { dialog, which ->
+                        val skill = skillForEffects[which]
+                        controller.addSkillForEffect(pos, skill)
+                    })
+                    .show()
             }
         }
         return container.context.recyclerView {
@@ -138,46 +147,21 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
     }
 
     override fun showCreateCharacterDialog() {
-        val editText = EditText(activity)
-        AlertDialog.Builder(activity)
-            .setTitle("Character name:")
-            .setView(editText)
-            .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
-                controller.createCharacter(editText.text.toString())
-            })
-            .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
-                dialog.dismiss()
-            })
-            .show()
+        activity.showAlertEditDialog("Character name:") { name ->
+            controller.createCharacter(name)
+        }
     }
 
     override fun showCreateSkillDialog() {
-        val editText = EditText(activity)
-        AlertDialog.Builder(activity)
-            .setTitle("Skill name:")
-            .setView(editText)
-            .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
-                controller.createSkill(editText.text.toString())
-            })
-            .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
-                dialog.dismiss()
-            })
-            .show()
+        activity.showAlertEditDialog("Skill name:") { name ->
+            controller.createSkill(name)
+        }
     }
 
     override fun showCreateThingDialog() {
-        val editText = EditText(activity)
-        AlertDialog.Builder(activity)
-            .setTitle("Thing name:")
-            .setView(editText)
-            .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
-                controller.createThing(editText.text.toString())
-            })
-            .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
-                dialog.dismiss()
-            })
-            .show()
-        editText.requestFocus()
+        activity.showAlertEditDialog("Thing name:") { name ->
+            controller.createThing(name)
+        }
     }
 
     override fun showCreateEffectDialog() {

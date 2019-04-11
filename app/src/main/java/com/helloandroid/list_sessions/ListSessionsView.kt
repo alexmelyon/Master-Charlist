@@ -9,6 +9,7 @@ import com.helloandroid.MainActivity
 import com.helloandroid.R
 import com.helloandroid.room.GameSession
 import com.helloandroid.ui.RecyclerStringAdapter
+import com.helloandroid.utils.showAlertEditDialog
 import org.jetbrains.anko._FrameLayout
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import javax.inject.Inject
@@ -53,17 +54,9 @@ class ListSessionsView @Inject constructor(val activity: MainActivity) : _FrameL
     }
 
     override fun showCreateSessionDialog() {
-        val editText = EditText(activity)
-        AlertDialog.Builder(activity)
-            .setTitle("Session name:")
-            .setView(editText)
-            .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
-                controller.createSession(editText.text.toString())
-            })
-            .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
-                dialog.dismiss()
-            })
-            .show()
+        activity.showAlertEditDialog("Session name:") { name ->
+            controller.createSession(name)
+        }
     }
 
     override fun addedAt(pos: Int, session: GameSession) {

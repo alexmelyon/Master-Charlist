@@ -8,8 +8,10 @@ import android.widget.EditText
 import com.helloandroid.MainActivity
 import com.helloandroid.room.Game
 import com.helloandroid.ui.RecyclerStringAdapter
+import com.helloandroid.utils.showAlertEditDialog
 import org.jetbrains.anko._FrameLayout
 import org.jetbrains.anko.linearLayout
+import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import javax.inject.Inject
 
@@ -32,11 +34,14 @@ class ListGamesView @Inject constructor(val activity: MainActivity) : _FrameLayo
                 .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
                     controller.archiveGameAt(pos)
                 })
+                .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
+                    dialog.dismiss()
+                })
                 .show()
         }
         gamesView = recyclerView {
             adapter = gamesAdapter
-        }
+        }.lparams(matchParent, matchParent)
     }
 
     override fun setData(items: MutableList<Game>) {
@@ -44,17 +49,9 @@ class ListGamesView @Inject constructor(val activity: MainActivity) : _FrameLayo
     }
 
     override fun showAddGameDialog() {
-        val editText = EditText(activity)
-        AlertDialog.Builder(activity)
-            .setTitle("Game name:")
-            .setView(editText)
-            .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
-                controller.createGame(editText.text.toString())
-            })
-            .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
-                dialog.dismiss()
-            })
-            .show()
+        activity.showAlertEditDialog("Game name:") { name ->
+            controller.createGame(name)
+        }
     }
 
     override fun addedAt(pos: Int, game: Game) {

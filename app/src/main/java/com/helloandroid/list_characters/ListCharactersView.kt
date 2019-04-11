@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import com.helloandroid.MainActivity
+import com.helloandroid.utils.showAlertEditDialog
 import org.jetbrains.anko._FrameLayout
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import javax.inject.Inject
@@ -40,17 +41,9 @@ class ListCharactersView @Inject constructor(val activity: MainActivity) : _Fram
     }
 
     override fun showAddCharacterDialog() {
-        val editText = EditText(activity)
-        AlertDialog.Builder(activity)
-            .setTitle("Character name:")
-            .setView(editText)
-            .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
-                controller.createCharacter(editText.text.toString())
-            })
-            .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
-                dialog.dismiss()
-            })
-            .show()
+        activity.showAlertEditDialog("Character name:") { name ->
+            controller.createCharacter(name)
+        }
     }
 
     override fun addedAt(index: Int, item: CharacterItem) {

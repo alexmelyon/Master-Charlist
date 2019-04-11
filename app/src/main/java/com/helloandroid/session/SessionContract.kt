@@ -1,9 +1,7 @@
 package com.helloandroid.session
 
 import android.view.ViewGroup
-import com.helloandroid.room.Effect
-import com.helloandroid.room.EffectDiff
-import com.helloandroid.room.GameCharacter
+import com.helloandroid.room.*
 import java.util.*
 
 interface SessionContract {
@@ -13,7 +11,7 @@ interface SessionContract {
         fun itemChangedAt(pos: Int)
         fun itemAddedAt(pos: Int, sessionItem: SessionItem)
         fun itemRemovedAt(pos: Int)
-        /** Chooose Hp or Skill or Thing or Comment */
+        /** Chooose Hp, Effect, Skill, Thing or Comment */
         fun showAddSomethingDialog()
         fun showAddHpDialog(characterNames: List<String>)
         fun showAddSkillDialog(characterNames: List<String>, skillNames: List<String>)
@@ -37,6 +35,8 @@ interface SessionContract {
         fun addCharacterSkillDiff(character: Int, skill: Int)
         fun addCharacterAttachEffectDiff(character: Int, effect: Int)
         fun addCharacterDetachEffectDiff(character: Int, effect: Int)
+        fun getSkillsForEffect(pos: Int): List<Skill>
+        fun addSkillForEffect(pos: Int, skill: Skill)
         fun addCharacterThingDiff(character: Int, thing: Int)
         fun addCommentDiff()
         fun onAddItemClicked(which: Int)
@@ -57,4 +57,4 @@ enum class SessionItemType {
     ITEM_COMMENT
 }
 
-class SessionItem(val id: Long, val time: Date, val type: SessionItemType, val title: String, val desc: String, var value: Int, val characterId: Long, var comment: String = "", var index: Int = -1)
+class SessionItem(val id: Long, val time: Date, val type: SessionItemType, val title: String, val desc: String, var value: Int, val characterId: Long, var comment: String = "", var effectSkills: List<String> = listOf(), var index: Int = -1)

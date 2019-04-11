@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.helloandroid.R
+import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.textColor
 
 class RecyclerStringAdapter<T>(val context: Context, @LayoutRes val layoutRes: Int = android.R.layout.simple_list_item_1, val onItemClickListener: (Int, T) -> Unit = { pos, item -> }) : RecyclerView.Adapter<RecyclerStringAdapter.ViewHolder>() {
@@ -35,6 +36,7 @@ class RecyclerStringAdapter<T>(val context: Context, @LayoutRes val layoutRes: I
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context)
             .inflate(layoutRes, parent, false)
+        v.layoutParams.width = matchParent
         val vh = ViewHolder(v)
         vh.text1.textColor = Color.BLACK
         vh.text2?.textColor = Color.GRAY

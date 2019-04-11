@@ -89,9 +89,7 @@ class ListCharactersController(args: Bundle) : Controller(args), ListCharactersC
             val skillDiffs = db.skillDiffDao().getAllByCharacter(world.id, game.id, character.id, archived = false)
                 .asSequence()
                 .filter { closedSessions.contains(it.sessionGroup) }
-                .fold(listOf<Pair<Long, Int>>()) { total, next ->
-                    total + listOf(Pair(next.skillGroup, next.value))
-                }.map { skillToValue -> skills.single { it.id == skillToValue.first } to skillToValue.second }
+                .map { skill -> skills.single { it.id == skill.skillGroup } to skill.value }
                 .groupBy { it.first }
                 .map { it.key to it.value.sumBy { it.second } }
                 .filter { it.second != 0 }
@@ -103,9 +101,7 @@ class ListCharactersController(args: Bundle) : Controller(args), ListCharactersC
             val thingDiffs = db.thingDiffDao().getAllByCharacter(world.id, game.id, character.id, archived = false)
                 .asSequence()
                 .filter { closedSessions.contains(it.sessionGroup) }
-                .fold(listOf<Pair<Long, Int>>()) { total, next ->
-                    total + listOf(Pair(next.thingGroup, next.value))
-                }.map { thingToValue -> things.single { it.id == thingToValue.first } to thingToValue.second }
+                .map { thing -> things.single { it.id == thing.thingGroup } to thing.value }
                 .groupBy { it.first }
                 .map { it.key to it.value.sumBy { it.second } }
                 .filter { it.second != 0 }

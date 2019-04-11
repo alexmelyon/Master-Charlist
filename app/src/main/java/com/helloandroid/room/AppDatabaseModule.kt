@@ -8,12 +8,13 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class DbModule {
+class AppDatabaseModule {
     @Provides
     fun provideDb(context: Context): AppDatabase {
         return Room.databaseBuilder(context, AppDatabase::class.java, "MasterCharlistDB")
             .allowMainThreadQueries()
             .addMigrations(MIGRATION_1_2)
+            .addMigrations(MIGRATION_2_3)
             .build()
     }
 
@@ -36,5 +37,17 @@ class DbModule {
                     "`worldGroup` INTEGER NOT NULL," +
                     "`archived` INTEGER NOT NULL)")
         }
+    }
+
+    val MIGRATION_2_3 = object : Migration(2, 3) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("CREATE TABLE `effectskill` (" +
+                    "`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                    "`value` INTEGER NOT NULL," +
+                    "`effectGroup` INTEGER NOT NULL," +
+                    "`skillGroup` INTEGER NOT NULL," +
+                    "`worldGroup` INTEGER NOT NULL)")
+        }
+
     }
 }

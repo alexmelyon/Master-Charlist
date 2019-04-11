@@ -8,6 +8,7 @@ import android.widget.EditText
 import com.helloandroid.MainActivity
 import com.helloandroid.room.Thing
 import com.helloandroid.ui.RecyclerStringAdapter
+import com.helloandroid.utils.showAlertEditDialog
 import org.jetbrains.anko._FrameLayout
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import javax.inject.Inject
@@ -48,17 +49,9 @@ class ListThingsView @Inject constructor(val activity: MainActivity) : _FrameLay
     }
 
     override fun showAddThingDialog() {
-        val editText = EditText(activity)
-        AlertDialog.Builder(activity)
-            .setTitle("Thing name:")
-            .setView(editText)
-            .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
-                controller.createThing(editText.text.toString())
-            })
-            .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
-                dialog.dismiss()
-            })
-            .show()
+        activity.showAlertEditDialog("Thing name:") { name ->
+            controller.createThing(name)
+        }
     }
 
     override fun addedAt(pos: Int, thing: Thing) {

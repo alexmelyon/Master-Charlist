@@ -14,6 +14,7 @@ import com.helloandroid.MainActivity
 import com.helloandroid.R
 import com.helloandroid.room.World
 import com.helloandroid.ui.RecyclerStringAdapter
+import com.helloandroid.utils.showAlertEditDialog
 import org.jetbrains.anko._FrameLayout
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.padding
@@ -64,17 +65,9 @@ class ListWorldsView @Inject constructor(val activity: MainActivity) : _FrameLay
     }
 
     override fun showCreateWorldDialog() {
-        val editText = EditText(activity)
-        AlertDialog.Builder(activity)
-            .setTitle("World name:")
-            .setView(editText)
-            .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
-                controller.createWorld(editText.text.toString())
-            })
-            .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
-                dialog.dismiss()
-            })
-            .show()
+        activity.showAlertEditDialog("World name:") { name ->
+            controller.createWorld(name)
+        }
     }
 
     override fun showAboutDialog() {
