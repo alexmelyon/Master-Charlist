@@ -20,6 +20,9 @@ interface EffectSkillDao {
     @Query("SELECT * FROM effectskill WHERE worldGroup = :worldId AND effectGroup = :effectId")
     fun getAll(worldId: Long, effectId: Long): List<EffectSkill>
 
+    @Query("SELECT * FROM effectskill WHERE worldGroup = :worldId AND effectGroup = :effectId AND skillGroup = :skillId LIMIT 1")
+    fun get(worldId: Long, effectId: Long, skillId: Long): EffectSkill
+
     @Query("SELECT * FROM effectskill WHERE id = :id LIMIT 1")
     fun get(id: Long): EffectSkill
 
@@ -28,4 +31,7 @@ interface EffectSkillDao {
 
     @Delete
     fun delete(effectSkill: EffectSkill)
+
+    @Update
+    fun update(effectSkill: EffectSkill)
 }

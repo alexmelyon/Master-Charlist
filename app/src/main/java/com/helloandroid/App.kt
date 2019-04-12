@@ -3,13 +3,11 @@ package com.helloandroid
 import android.app.Activity
 import android.app.Application
 import com.helloandroid.dagger.AppComponent
-import com.helloandroid.dagger.ContextModule
 import com.helloandroid.dagger.DaggerAppComponent
 import com.helloandroid.room.*
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
-import java.util.*
 import javax.inject.Inject
 
 
@@ -34,7 +32,7 @@ class App : Application(), HasActivityInjector {
         instance = this
 
         appComponent = DaggerAppComponent.builder()
-            .contextModule(ContextModule(this))
+            .appDatabaseModule(AppDatabaseModule(this))
             .build()
         appComponent.inject(this)
     }

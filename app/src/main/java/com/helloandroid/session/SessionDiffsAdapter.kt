@@ -7,9 +7,12 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.helloandroid.R
 import com.helloandroid.room.Effect
@@ -96,14 +99,26 @@ class SessionDiffsAdapter(val context: Context, val editable: Boolean) : Recycle
                 val correctPosition = holder.adapterPosition
                 holder as ItemEffectViewHolder
                 holder.title.text = items[correctPosition].title
-                holder.title.textColor = Color.BLACK
                 if(items[correctPosition].value < 0) {
                     holder.title.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
                 }
                 holder.desc.text = items[correctPosition].desc
-                holder.desc.textColor = Color.GRAY
-                holder.attachedSkills.visibility = if(items[correctPosition].effectSkills.isEmpty()) View.GONE else View.VISIBLE
-                holder.attachedSkills.text = items[correctPosition].effectSkills.joinToString("\n")
+
+                val inflater = LayoutInflater.from(holder.itemView.context)
+                holder.attachedSkills.removeAllViews()
+                items[correctPosition].effectSkills.forEachIndexed { index, skillToValue ->
+                    val view = inflater.inflate(R.layout.session_effect_skill, holder.attachedSkills)
+                    val title = view.findViewById<TextView>(R.id.title)
+                    title.text = skillToValue.first
+                    val value = view.findViewById<TextView>(R.id.value)
+                    value.text = "%+d".format(skillToValue.second)
+
+                    val plus = view.findViewById<Button>(R.id.plusButton)
+                    plus.setOnClickListener { v -> onSubitemPlus(correctPosition, index) }
+                    val minus = view.findViewById<Button>(R.id.minusButton)
+                    minus.setOnClickListener { v -> onSubitemMinus(correctPosition, index) }
+                }
+
                 holder.itemView.setOnClickListener{ view ->
                     onItemClickListener(correctPosition)
                 }
@@ -156,7 +171,8 @@ class SessionDiffsAdapter(val context: Context, val editable: Boolean) : Recycle
     class ItemEffectViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val title = view.findViewById<TextView>(R.id.effect_title)
         val desc = view.findViewById<TextView>(R.id.effect_desc)
-        val attachedSkills = view.findViewById<TextView>(R.id.attached_skills)
+//        val attachedSkills = view.findViewById<TextView>(R.id.attached_skills)
+        val attachedSkills = view.findViewById<LinearLayout>(R.id.attached_skills)
     }
 
     class ItemCommentViewHolder(view: View) : RecyclerView.ViewHolder(view) {

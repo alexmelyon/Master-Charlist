@@ -60,6 +60,12 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
                     })
                     .show()
             }
+            onSubitemPlus = { pos, subPos ->
+                controller.onEffectSkillChanged(pos, subPos, +1)
+            }
+            onSubitemMinus = { pos, subPos ->
+                controller.onEffectSkillChanged(pos, subPos, -1)
+            }
         }
         return container.context.recyclerView {
             adapter = listAdapter

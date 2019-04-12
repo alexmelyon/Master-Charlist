@@ -38,6 +38,7 @@ interface SessionContract {
         fun getAvailableSkillsForEffect(pos: Int): List<Skill>
         fun attachSkillForEffect(pos: Int, skill: Skill)
         fun detachSkillForEffect(pos: Int, effectSkill: EffectSkill)
+        fun onEffectSkillChanged(pos: Int, subPos: Int, value: Int)
         fun addCharacterThingDiff(character: Int, thing: Int)
         fun addCommentDiff()
         fun onAddItemClicked(which: Int)
@@ -59,4 +60,4 @@ enum class SessionItemType {
     ITEM_COMMENT
 }
 
-class SessionItem(val id: Long, val time: Date, val type: SessionItemType, val title: String, val desc: String, var value: Int, val characterId: Long, var comment: String = "", var effectSkills: List<String> = listOf(), var index: Int = -1)
+class SessionItem(val id: Long, val time: Date, val type: SessionItemType, val title: String, val desc: String, var value: Int, val characterId: Long, var comment: String = "", var effectSkills: List<Pair<String, Int>> = listOf(), var index: Int = -1)

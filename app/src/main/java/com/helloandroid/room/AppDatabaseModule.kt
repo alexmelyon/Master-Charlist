@@ -8,9 +8,9 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class AppDatabaseModule {
+class AppDatabaseModule(val context: Context) {
     @Provides
-    fun provideDb(context: Context): AppDatabase {
+    fun provideDb(): AppDatabase {
         return Room.databaseBuilder(context, AppDatabase::class.java, "MasterCharlistDB")
             .allowMainThreadQueries()
             .addMigrations(MIGRATION_1_2)

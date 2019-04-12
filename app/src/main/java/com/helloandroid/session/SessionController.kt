@@ -61,17 +61,22 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
         itemsWrapper.addAll(db.effectDiffDao().getAllBySession(world.id, game.id, session.id, archived = false)
             .map {
                 val intValue = if(it.value) 1 else -1
-                val skillToValue = skillToValue(it.effectGroup)
+                val skillToValue = skillNamesToValue(it)
                 SessionItem(it.id, it.time, SessionItemType.ITEM_EFFECT, getEffect(it.effectGroup).name, getCharacter(it.characterGroup).name, intValue, it.characterGroup, effectSkills = skillToValue)
             })
         itemsWrapper.addAll(db.commentDiffDao().getAll(world.id, game.id, session.id, archived = false)
             .map { SessionItem(it.id, it.time, SessionItemType.ITEM_COMMENT, "", "", 0, -1, it.comment) })
     }
 
-    private fun skillToValue(effectGroup: Long): List<String> {
-        return db.effectSkillDao().getAll(world.id, effectGroup)
-            .map { db.skillDao().get(it.skillGroup) to it.value }
-            .map { "%s %+d".format(it.first, it.second) }
+    private fun skillToValue(effectDiff: EffectDiff): List<Pair<Skill, Int>> {
+        val sign = if(effectDiff.value) 1 else -1
+        return db.effectSkillDao().getAll(world.id, effectDiff.effectGroup)
+            .map { db.skillDao().get(it.skillGroup) to sign * it.value }
+            .sortedBy { it.first.name }
+    }
+
+    private fun skillNamesToValue(effectDiff: EffectDiff): List<Pair<String, Int>> {
+        return skillToValue(effectDiff).map { it.first.name to it.second }
     }
 
     fun getCharacter(characterId: Long): GameCharacter {
@@ -285,8 +290,8 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
 
     override fun getAvailableSkillsForEffect(pos: Int): List<Skill> {
         val allSkills = db.skillDao().getAll(world.id, archived = false)
-        val effect = getEffectAt(pos)
-        val usedSkills = db.effectSkillDao().getAll(world.id, effect.id)
+        val effectDiff = getEffectDiffAt(pos)
+        val usedSkills = db.effectSkillDao().getAll(world.id, effectDiff.effectGroup)
             .map { db.skillDao().get(it.skillGroup) }
             .map { it.id }
         val possible = allSkills.filterNot { it.id in usedSkills }
@@ -294,36 +299,48 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
     }
 
     override fun attachSkillForEffect(pos: Int, skill: Skill) {
-        val effect = getEffectAt(pos)
-        val effectSkill = EffectSkill(0, effect.id, skill.id, world.id)
+        val effectDiffId = itemsWrapper.toList()[pos].id
+        val effectSkill = EffectSkill(0, effectDiffId, skill.id, world.id)
         val id = db.effectSkillDao().insert(effectSkill)
         effectSkill.id = id
-        itemsWrapper.toList()[pos].effectSkills = skillToValue(effect.id)
+        val effectDiff = db.effectDiffDao().get(effectDiffId)
+        itemsWrapper.toList()[pos].effectSkills = skillNamesToValue(effectDiff)
 
         view.itemChangedAt(pos)
     }
 
     override fun getUsedSkillEffects(pos: Int): Map<String, EffectSkill> {
 
-        val effect = getEffectAt(pos)
-        val used = db.effectSkillDao().getAll(world.id, effect.id)
+        val effectDiff = getEffectDiffAt(pos)
+        val used = db.effectSkillDao().getAll(world.id, effectDiff.effectGroup)
             .map { db.skillDao().get(it.skillGroup).name to it }
             .toMap()
 
         return used
     }
 
-    private fun getEffectAt(pos: Int): Effect {
+    private fun getEffectDiffAt(pos: Int): EffectDiff {
         val effectDiffId = itemsWrapper.toList()[pos].id
         val effectDiff = db.effectDiffDao().get(effectDiffId)
-        val effect = db.effectDao().get(effectDiff.effectGroup)
-        return effect
+        return effectDiff
     }
 
     override fun detachSkillForEffect(pos: Int, effectSkill: EffectSkill) {
         db.effectSkillDao().delete(effectSkill)
-        itemsWrapper.toList()[pos].effectSkills = skillToValue(effectSkill.effectGroup)
+        val effectDiff = getEffectDiffAt(pos)
+        itemsWrapper.toList()[pos].effectSkills = skillNamesToValue(effectDiff)
 
+        view.itemChangedAt(pos)
+    }
+
+    override fun onEffectSkillChanged(pos: Int, subPos: Int, value: Int) {
+        val effectDiff = getEffectDiffAt(pos)
+        val skillToValue = skillToValue(effectDiff)[subPos].first
+        val effectSkill = db.effectSkillDao().get(world.id, effectDiff.effectGroup, skillToValue.id)
+        effectSkill.value += value
+        db.effectSkillDao().update(effectSkill)
+
+        itemsWrapper.toList()[pos].effectSkills = skillNamesToValue(effectDiff)
         view.itemChangedAt(pos)
     }
 

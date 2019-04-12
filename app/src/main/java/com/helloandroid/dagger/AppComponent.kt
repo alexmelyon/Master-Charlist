@@ -48,16 +48,9 @@ abstract class MainActivityModule(val context: Context) {
     abstract fun bindMainActivityInjectorFactory(builder: MainActivitySubcomponent.Builder): AndroidInjector.Factory<out Activity>
 }
 
-@Module
-class ContextModule(val context: Context) {
-    @Provides
-    fun provideContext() = context
-}
-
 @Component(modules = [
     MainActivityModule::class,
     AndroidInjectionModule::class,
-    ContextModule::class,
     AppDatabaseModule::class])
 interface AppComponent {
     fun inject(app: App)
