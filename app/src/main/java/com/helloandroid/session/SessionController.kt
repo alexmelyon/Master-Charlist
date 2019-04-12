@@ -58,17 +58,20 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
             .map { SessionItem(it.id, it.time, SessionItemType.ITEM_SKILL, getSkill(it.skillGroup).name, getCharacter(it.characterGroup).name, it.value, it.characterGroup) })
         itemsWrapper.addAll(db.thingDiffDao().getAllBySession(world.id, game.id, session.id, archived = false)
             .map { SessionItem(it.id, it.time, SessionItemType.ITEM_THING, getThing(it.thingGroup).name, getCharacter(it.characterGroup).name, it.value, it.characterGroup) })
-        val effects = db.effectDao().getAll(world.id, archived = false)
         itemsWrapper.addAll(db.effectDiffDao().getAllBySession(world.id, game.id, session.id, archived = false)
             .map {
                 val intValue = if(it.value) 1 else -1
-                val effectSkills = db.effectSkillDao().getAll(world.id, it.effectGroup)
-                    .map { e -> effects.single { it.id == e.effectGroup } to e.value }
-                    .map { "%s %+d".format(it.first, it.second - 10) }
-                SessionItem(it.id, it.time, SessionItemType.ITEM_EFFECT, getEffect(it.effectGroup).name, getCharacter(it.characterGroup).name, intValue, it.characterGroup, effectSkills = effectSkills)
+                val skillToValue = skillToValue(it.effectGroup)
+                SessionItem(it.id, it.time, SessionItemType.ITEM_EFFECT, getEffect(it.effectGroup).name, getCharacter(it.characterGroup).name, intValue, it.characterGroup, effectSkills = skillToValue)
             })
         itemsWrapper.addAll(db.commentDiffDao().getAll(world.id, game.id, session.id, archived = false)
             .map { SessionItem(it.id, it.time, SessionItemType.ITEM_COMMENT, "", "", 0, -1, it.comment) })
+    }
+
+    private fun skillToValue(effectGroup: Long): List<String> {
+        return db.effectSkillDao().getAll(world.id, effectGroup)
+            .map { db.skillDao().get(it.skillGroup) to it.value }
+            .map { "%s %+d".format(it.first, it.second) }
     }
 
     fun getCharacter(characterId: Long): GameCharacter {
@@ -280,20 +283,46 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
         view.itemAddedAt(item.index, item)
     }
 
-    override fun getSkillsForEffect(pos: Int): List<Skill> {
+    override fun getAvailableSkillsForEffect(pos: Int): List<Skill> {
         val allSkills = db.skillDao().getAll(world.id, archived = false)
-        // TODO allSkills - usedSkills
-        val possible = allSkills
+        val effect = getEffectAt(pos)
+        val usedSkills = db.effectSkillDao().getAll(world.id, effect.id)
+            .map { db.skillDao().get(it.skillGroup) }
+            .map { it.id }
+        val possible = allSkills.filterNot { it.id in usedSkills }
         return possible
     }
 
-    override fun addSkillForEffect(pos: Int, skill: Skill) {
-        val effectDiffId = itemsWrapper.toList()[pos].id
-        val effectDiff = db.effectDiffDao().get(effectDiffId)
-        val effect = db.effectDao().get(effectDiff.effectGroup)
+    override fun attachSkillForEffect(pos: Int, skill: Skill) {
+        val effect = getEffectAt(pos)
         val effectSkill = EffectSkill(0, effect.id, skill.id, world.id)
         val id = db.effectSkillDao().insert(effectSkill)
         effectSkill.id = id
+        itemsWrapper.toList()[pos].effectSkills = skillToValue(effect.id)
+
+        view.itemChangedAt(pos)
+    }
+
+    override fun getUsedSkillEffects(pos: Int): Map<String, EffectSkill> {
+
+        val effect = getEffectAt(pos)
+        val used = db.effectSkillDao().getAll(world.id, effect.id)
+            .map { db.skillDao().get(it.skillGroup).name to it }
+            .toMap()
+
+        return used
+    }
+
+    private fun getEffectAt(pos: Int): Effect {
+        val effectDiffId = itemsWrapper.toList()[pos].id
+        val effectDiff = db.effectDiffDao().get(effectDiffId)
+        val effect = db.effectDao().get(effectDiff.effectGroup)
+        return effect
+    }
+
+    override fun detachSkillForEffect(pos: Int, effectSkill: EffectSkill) {
+        db.effectSkillDao().delete(effectSkill)
+        itemsWrapper.toList()[pos].effectSkills = skillToValue(effectSkill.effectGroup)
 
         view.itemChangedAt(pos)
     }

@@ -39,12 +39,24 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
                 controller.onCommentChanged(id, comment)
             }
             onItemClickListener = { pos ->
-                val skillForEffects = controller.getSkillsForEffect(pos)
+                val skillForEffects = controller.getAvailableSkillsForEffect(pos)
                 val skillNames = skillForEffects.map { it.name }.toTypedArray()
                 AlertDialog.Builder(activity)
                     .setItems(skillNames, DialogInterface.OnClickListener { dialog, which ->
                         val skill = skillForEffects[which]
-                        controller.addSkillForEffect(pos, skill)
+                        controller.attachSkillForEffect(pos, skill)
+                    })
+                    .show()
+            }
+            onItemLongClickListener = { pos ->
+                val usedSkills = controller.getUsedSkillEffects(pos)
+                val skillNames = usedSkills.map { it.key }.sorted().toTypedArray()
+                val skillArr = skillNames.map { "Detach $it" }.toTypedArray()
+                AlertDialog.Builder(activity)
+                    .setItems(skillArr, DialogInterface.OnClickListener { dialog, which ->
+                        val name = skillNames[which]
+                        val effectSkill = usedSkills.getValue(name)
+                        controller.detachSkillForEffect(pos, effectSkill)
                     })
                     .show()
             }

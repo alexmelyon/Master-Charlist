@@ -104,9 +104,13 @@ class SessionDiffsAdapter(val context: Context, val editable: Boolean) : Recycle
                 holder.desc.textColor = Color.GRAY
                 holder.attachedSkills.visibility = if(items[correctPosition].effectSkills.isEmpty()) View.GONE else View.VISIBLE
                 holder.attachedSkills.text = items[correctPosition].effectSkills.joinToString("\n")
-                holder.itemView.setOnClickListener({ view ->
+                holder.itemView.setOnClickListener{ view ->
                     onItemClickListener(correctPosition)
-                })
+                }
+                holder.itemView.setOnLongClickListener { view ->
+                    onItemLongClickListener(correctPosition)
+                    return@setOnLongClickListener true
+                }
             }
             SessionItemType.ITEM_COMMENT -> {
                 holder as ItemCommentViewHolder

@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity(), HasControllerInjector {
         val content = find<ViewGroup>(android.R.id.content)
         router = Conductor.attachRouter(this, content, savedInstanceState)
         if (!router.hasRootController()) {
+            // TODO Save backstack
             router.setRoot(RouterTransaction.with(ListWorldsController()))
         }
     }

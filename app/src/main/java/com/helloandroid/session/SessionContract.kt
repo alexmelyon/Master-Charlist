@@ -35,8 +35,9 @@ interface SessionContract {
         fun addCharacterSkillDiff(character: Int, skill: Int)
         fun addCharacterAttachEffectDiff(character: Int, effect: Int)
         fun addCharacterDetachEffectDiff(character: Int, effect: Int)
-        fun getSkillsForEffect(pos: Int): List<Skill>
-        fun addSkillForEffect(pos: Int, skill: Skill)
+        fun getAvailableSkillsForEffect(pos: Int): List<Skill>
+        fun attachSkillForEffect(pos: Int, skill: Skill)
+        fun detachSkillForEffect(pos: Int, effectSkill: EffectSkill)
         fun addCharacterThingDiff(character: Int, thing: Int)
         fun addCommentDiff()
         fun onAddItemClicked(which: Int)
@@ -46,6 +47,7 @@ interface SessionContract {
         fun createSkill(name: String)
         fun createThing(name: String)
         fun createEffect(name: String)
+        fun getUsedSkillEffects(pos: Int): Map<String, EffectSkill>
     }
 }
 
