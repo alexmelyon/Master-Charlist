@@ -27,7 +27,7 @@
 
     </LinearLayout>
 
-    <TextView android:text="Attach skill..."
+    <TextView android:text="Add modifiers..."
               android:textColor="#555555"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"/>

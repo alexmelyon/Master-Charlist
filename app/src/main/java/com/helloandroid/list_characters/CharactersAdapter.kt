@@ -76,7 +76,7 @@ class CharactersAdapter(val context: Context, val onLongTapListener: (Int, Chara
         holder.name.text = items[position].name
         holder.hp.text = "HP " + items[position].hp
         holder.effects.text = items[position].effects.joinToString(", ")
-        holder.skills.text = items[position].skills.map { "${it.first}: ${it.second}" }.joinToString("\n")
+        holder.skills.text = items[position].skills.joinToString("\n")
         holder.things.text = items[position].things.map { "${it.first}: ${it.second}" }.joinToString("\n")
         holder.itemView.setOnLongClickListener {
             val correctPosition = holder.adapterPosition

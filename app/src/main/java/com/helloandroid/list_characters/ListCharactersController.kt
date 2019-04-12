@@ -18,6 +18,8 @@ interface ListCharactersDelegate {
 
 class ListCharactersController(args: Bundle) : Controller(args), ListCharactersContract.Controller, ListCharactersDelegate {
 
+    data class SkillValueModifier(val skill: Skill, val value: Int, val modifier: Int)
+
     @Inject
     lateinit var view: ListCharactersContract.View
     @Inject
@@ -82,8 +84,21 @@ class ListCharactersController(args: Bundle) : Controller(args), ListCharactersC
             val effects = db.effectDao().getAll(world.id, archived = false)
             val closedEffectDiffs = db.effectDiffDao().getAllByCharacter(world.id, game.id, character.id, archived = false)
                 .filter { it.sessionGroup in closedSessions }
-            val effectDiffs = getUsedEffectsFor(character, closedEffectDiffs, effects)
+            val effectDiffs = getUsedEffectsFor(closedEffectDiffs, effects)
             val effectDiffNames = effectDiffs.map { it.name }
+
+            val skillIdToModifier = db.effectDiffDao().getAllByCharacter(world.id, game.id, character.id, archived = false)
+                .filter { it.sessionGroup in closedSessions }
+                .map { it.effectGroup to if(it.value) +1 else -1 }
+                .groupBy { it.first }
+                .map { it.key to it.value.sumBy { it.second } }
+                .flatMap { (effectId, amount) ->
+                    val effectSkills = db.effectSkillDao().getAllByEffect(world.id, effectId)
+                        .map { db.skillDao().get(it.skillGroup) to it.value }
+                    effectSkills.map { it.first to it.second * amount }
+                }.groupBy { it.first }
+                .map { it.key.id to it.value.sumBy { it.second } }
+                .toMap()
 
             val skills = db.skillDao().getAll(world.id, archived = false)
             val skillDiffs = db.skillDiffDao().getAllByCharacter(world.id, game.id, character.id, archived = false)
@@ -92,9 +107,10 @@ class ListCharactersController(args: Bundle) : Controller(args), ListCharactersC
                 .map { skill -> skills.single { it.id == skill.skillGroup } to skill.value }
                 .groupBy { it.first }
                 .map { it.key to it.value.sumBy { it.second } }
-                .filter { it.second != 0 }
+                .map { SkillValueModifier(it.first, it.second, skillIdToModifier.getValue(it.first.id)) }
+                .filter { it.value != 0 || it.modifier != 0 }
                 .toList()
-            val skillDiffNames = skillDiffs.map { it.first.name to it.second }
+            val skillDiffNames = skillDiffs.map { "${it.skill.name}: ${it.value} (${it.modifier}) ${it.value + it.modifier}" }
 
             val things = db.thingDao().getAll(world.id, archived = false)
             // TODO Refactor this boilerplate
@@ -108,7 +124,7 @@ class ListCharactersController(args: Bundle) : Controller(args), ListCharactersC
                 .toList()
             val thingDiffNames = thingDiffs.map { it.first.name to it.second }
 
-            val lastUsed = (skillDiffs.map { it.first.lastUsed } + thingDiffs.map { it.first.lastUsed })
+            val lastUsed = (skillDiffs.map { it.skill.lastUsed } + thingDiffs.map { it.first.lastUsed })
                 .min() ?: Calendar.getInstance().time
             characterItems.add(CharacterItem(character.id, character.name, hp, lastUsed, effectDiffNames, skillDiffNames, thingDiffNames))
             characterItems.forEachIndexed { index, item ->

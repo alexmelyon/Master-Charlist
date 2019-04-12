@@ -59,7 +59,6 @@ class SessionDiffsAdapter(val context: Context, val editable: Boolean) : Recycle
                 return ItemIntViewHolder(view)
             }
             SessionItemType.ITEM_EFFECT -> {
-//                val view = parent.context.layoutInflater.inflate(android.R.layout.simple_list_item_2, parent, false)
                 val view = parent.context.layoutInflater.inflate(R.layout.session_item_effect, parent, false)
                 return ItemEffectViewHolder(view)
             }
@@ -114,17 +113,21 @@ class SessionDiffsAdapter(val context: Context, val editable: Boolean) : Recycle
                     value.text = "%+d".format(skillToValue.second)
 
                     val plus = view.findViewById<Button>(R.id.plusButton)
+                    plus.visibility = if(editable) View.VISIBLE else View.INVISIBLE
                     plus.setOnClickListener { v -> onSubitemPlus(correctPosition, index) }
                     val minus = view.findViewById<Button>(R.id.minusButton)
+                    minus.visibility = if(editable) View.VISIBLE else View.INVISIBLE
                     minus.setOnClickListener { v -> onSubitemMinus(correctPosition, index) }
                 }
 
-                holder.itemView.setOnClickListener{ view ->
-                    onItemClickListener(correctPosition)
-                }
-                holder.itemView.setOnLongClickListener { view ->
-                    onItemLongClickListener(correctPosition)
-                    return@setOnLongClickListener true
+                if(editable) {
+                    holder.itemView.setOnClickListener { view ->
+                        onItemClickListener(correctPosition)
+                    }
+                    holder.itemView.setOnLongClickListener { view ->
+                        onItemLongClickListener(correctPosition)
+                        return@setOnLongClickListener true
+                    }
                 }
             }
             SessionItemType.ITEM_COMMENT -> {

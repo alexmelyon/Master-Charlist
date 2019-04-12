@@ -19,4 +19,4 @@ interface ListCharactersContract {
     }
 }
 
-class CharacterItem(val id: Long, val name: String, val hp: Int, val lastUsed: Date, val effects: List<String>, val skills: List<Pair<String, Int>>, val things: List<Pair<String, Int>>, var index: Int = -1)
+class CharacterItem(val id: Long, val name: String, val hp: Int, val lastUsed: Date, val effects: List<String>, val skills: List<String>, val things: List<Pair<String, Int>>, var index: Int = -1)

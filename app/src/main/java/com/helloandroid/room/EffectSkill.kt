@@ -18,7 +18,7 @@ interface EffectSkillDao {
     fun getAll(worldId: Long): List<EffectSkill>
 
     @Query("SELECT * FROM effectskill WHERE worldGroup = :worldId AND effectGroup = :effectId")
-    fun getAll(worldId: Long, effectId: Long): List<EffectSkill>
+    fun getAllByEffect(worldId: Long, effectId: Long): List<EffectSkill>
 
     @Query("SELECT * FROM effectskill WHERE worldGroup = :worldId AND effectGroup = :effectId AND skillGroup = :skillId LIMIT 1")
     fun get(worldId: Long, effectId: Long, skillId: Long): EffectSkill

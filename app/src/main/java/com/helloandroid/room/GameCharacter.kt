@@ -28,7 +28,7 @@ interface CharacterDao {
     fun update(character: GameCharacter)
 }
 
-fun getUsedEffectsFor(character: GameCharacter, diffs: List<EffectDiff>, effects: List<Effect>): List<Effect> {
+fun getUsedEffectsFor(diffs: List<EffectDiff>, effects: List<Effect>): List<Effect> {
     return diffs.groupBy { it.effectGroup }
         .map { it.key to it.value.map { if(it.value) 1 else -1 }.sum() }
         .filter { it.second > 0 }
