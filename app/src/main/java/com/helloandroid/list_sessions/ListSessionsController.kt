@@ -66,7 +66,7 @@ class ListSessionsController(args: Bundle) : Controller(args), ListSessionsContr
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_add_session -> {
-                view.showCreateSessionDialog()
+                createSession()
                 return true
             }
         }
@@ -106,7 +106,7 @@ class ListSessionsController(args: Bundle) : Controller(args), ListSessionsContr
 
     override fun getDescription(pos: Int): String {
         val session = sessionsList[pos]
-        return session.startTime.let { SimpleDateFormat("d MMMM HH:mm", Locale.getDefault()).format(it) }
+        return session.startTime.let { SimpleDateFormat("d MMMM HH:mm yyyy", Locale.getDefault()).format(it) }
     }
 
     override fun getHeader(pos: Int): String {
@@ -130,13 +130,13 @@ class ListSessionsController(args: Bundle) : Controller(args), ListSessionsContr
         return game.name
     }
 
-    override fun createSession(sessionName: String) {
+    override fun createSession() {
         val now = Calendar.getInstance().time
-        val session = GameSession(sessionName, game.id, world.id, now, open = true, endTime = now)
+        val name = now.let { SimpleDateFormat("d MMMM HH:mm yyyy", Locale.getDefault()).format(it) }
+        val session = GameSession(name, game.id, world.id, now, open = true, endTime = now)
         val id = db.gameSessionDao().insert(session)
         session.id = id
 
-//        view.addedAt(0, session)
         updateScreen()
         view.setData(sessionsList)
     }

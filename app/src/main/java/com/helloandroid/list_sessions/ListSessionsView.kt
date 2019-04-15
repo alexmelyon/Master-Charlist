@@ -53,12 +53,6 @@ class ListSessionsView @Inject constructor(val activity: MainActivity) : _FrameL
         sessionsAdapter.items = items
     }
 
-    override fun showCreateSessionDialog() {
-        activity.showAlertEditDialog("Session name:") { name ->
-            controller.createSession(name)
-        }
-    }
-
     override fun addedAt(pos: Int, session: GameSession) {
         sessionsAdapter.itemAddedAt(pos, session)
     }
