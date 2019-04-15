@@ -19,3 +19,13 @@ fun Context.showAlertEditDialog(title: String, action: (String) -> Unit) {
         .show()
     editText.requestFocus()
 }
+
+fun Context.alertNoAvailableSkills() {
+    AlertDialog.Builder(this)
+        .setTitle("Master Charlist")
+        .setMessage("No available skills")
+        .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
+            dialog.dismiss()
+        })
+        .show()
+}

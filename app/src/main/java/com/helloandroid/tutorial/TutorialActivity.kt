@@ -26,9 +26,7 @@ class TutorialActivity : TutorialActivity() {
         val forcedTutorial = intent.extras?.getBoolean(FORCED_TUTORIAL) ?: false
 
         if (!forcedTutorial && getSharedPreferences(SHARED, Context.MODE_PRIVATE).getBoolean(TUTORIAL, false)) {
-            startActivity(Intent(this, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-            })
+            startMainActivity()
         }
 
         addFragment(
@@ -91,8 +89,12 @@ class TutorialActivity : TutorialActivity() {
             putBoolean(TUTORIAL, true)
             apply()
         }
+        startMainActivity()
+    }
+
+    private fun startMainActivity() {
         startActivity(Intent(this, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         })
     }
 }

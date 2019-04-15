@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.helloandroid.MainActivity
 import com.helloandroid.room.Effect
+import com.helloandroid.utils.alertNoAvailableSkills
 import com.helloandroid.utils.showAlertEditDialog
 import org.jetbrains.anko._FrameLayout
 import org.jetbrains.anko.recyclerview.v7.recyclerView
@@ -41,12 +42,16 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
             onItemClickListener = { pos ->
                 val skillsForEffect = controller.getAvailableSkillsForEffect(pos)
                 val skillNames = skillsForEffect.map { "Attach ${it.name}" }
-                AlertDialog.Builder(activity)
-                    .setItems(skillNames.toTypedArray(), DialogInterface.OnClickListener { dialog, which ->
-                        val skill = skillsForEffect[which]
-                        controller.attachSkillForEffect(pos, skill)
-                    })
-                    .show()
+                if(skillNames.isEmpty()) {
+                    activity.alertNoAvailableSkills()
+                } else {
+                    AlertDialog.Builder(activity)
+                        .setItems(skillNames.toTypedArray(), DialogInterface.OnClickListener { dialog, which ->
+                            val skill = skillsForEffect[which]
+                            controller.attachSkillForEffect(pos, skill)
+                        })
+                        .show()
+                }
             }
             onItemLongClickListener = { pos ->
                 val usedSkills = controller.getUsedEffectSkills(pos)

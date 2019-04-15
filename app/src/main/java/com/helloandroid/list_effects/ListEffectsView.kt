@@ -5,6 +5,7 @@ import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
 import com.helloandroid.MainActivity
+import com.helloandroid.utils.alertNoAvailableSkills
 import com.helloandroid.utils.showAlertEditDialog
 import org.jetbrains.anko._FrameLayout
 import org.jetbrains.anko.recyclerview.v7.recyclerView
@@ -22,12 +23,16 @@ class ListEffectsView @Inject constructor(val activity: MainActivity) : _FrameLa
         effectsAdapter.onItemClickListener = { pos, row ->
             val skillsForEffect = controller.getAvailableSkillsForEffect(row.effect)
             val skillNames = skillsForEffect.map { "Attach ${it.name}" }.toTypedArray()
-            AlertDialog.Builder(activity)
-                .setItems(skillNames, DialogInterface.OnClickListener { dialog, which ->
-                    val skill = skillsForEffect[which]
-                    controller.attachSkillForEffect(pos, row.effect, skill)
-                })
-                .show()
+            if(skillNames.isEmpty()) {
+                activity.alertNoAvailableSkills()
+            } else {
+                AlertDialog.Builder(activity)
+                    .setItems(skillNames, DialogInterface.OnClickListener { dialog, which ->
+                        val skill = skillsForEffect[which]
+                        controller.attachSkillForEffect(pos, row.effect, skill)
+                    })
+                    .show()
+            }
         }
         effectsAdapter.onItemLongclickListener = { pos, row ->
             val usedSkills = controller.getUsedEffectSkills(row.effect)
