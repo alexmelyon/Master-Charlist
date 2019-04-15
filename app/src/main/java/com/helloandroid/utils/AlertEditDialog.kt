@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.DialogInterface
 import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AlertDialog
+import org.jetbrains.anko.singleLine
 
 fun Context.showAlertEditDialog(title: String, action: (String) -> Unit) {
     val edit = TextInputEditText(this)
+    edit.singleLine = true
 
     val dialog = AlertDialog.Builder(this)
         .setTitle(title)

@@ -138,8 +138,8 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
             SESSION_ADD_HP -> view.showAddHpDialog(characterNames)
             SESSION_ADD_SKILL -> {
                 // TODO Create new
-                val skillNames = getSkills().map { it.name }
-                view.showAddSkillDialog(characterNames, skillNames)
+//                val skillNames = getSkills().map { it.name }
+                view.showAddSkillDialog(getCharacters(), getSkills())
             }
             SESSION_ADD_THING -> {
                 // TODO Create new
@@ -214,16 +214,16 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
         this.view.itemAddedAt(item.index, item)
     }
 
-    override fun addCharacterSkillDiff(character: Int, skill: Int) {
-        val selectedCharacter = getCharacters()[character]
-        val selectedSkill = getSkills()[skill]
-        selectedSkill.lastUsed = Calendar.getInstance().time
-        db.skillDao().update(selectedSkill)
-        val skillDiff = SkillDiff(0, Calendar.getInstance().time, selectedCharacter.id, selectedSkill.id, session.id, game.id, world.id)
+    override fun addCharacterSkillDiff(character: GameCharacter, skill: Skill) {
+//        val character = getCharacters()[character]
+//        val skill = getSkills()[skill]
+        skill.lastUsed = Calendar.getInstance().time
+        db.skillDao().update(skill)
+        val skillDiff = SkillDiff(0, Calendar.getInstance().time, character.id, skill.id, session.id, game.id, world.id)
         val id = db.skillDiffDao().insert(skillDiff)
         skillDiff.id = id
 
-        val item = SessionItem(skillDiff.id, skillDiff.time, SessionItemType.ITEM_SKILL, selectedSkill.name, selectedCharacter.name, skillDiff.value, selectedCharacter.id)
+        val item = SessionItem(skillDiff.id, skillDiff.time, SessionItemType.ITEM_SKILL, skill.name, character.name, skillDiff.value, character.id)
         itemsWrapper.add(item)
         view.itemAddedAt(item.index, item)
     }
@@ -336,11 +336,11 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
         character.id = id
     }
 
-    override fun createSkill(name: String) {
+    override fun createSkill(name: String): Skill {
         val skill = Skill(name, world.id, Calendar.getInstance().time, archived = false)
         val id = db.skillDao().insert(skill)
         skill.id = id
-        // TODO Сразу добавлять?
+        return skill
     }
 
     override fun createThing(name: String) {

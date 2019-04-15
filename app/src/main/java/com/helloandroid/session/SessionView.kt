@@ -116,11 +116,11 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
         AlertDialog.Builder(activity)
             .setTitle("Select character")
             .setItems(characterNames.toTypedArray(), DialogInterface.OnClickListener { dialog, whichCharacter ->
-                val skillNames = skills.map { it.name }
+                val character = characters[whichCharacter]
+                val skillNames = listOf("Create new...") + skills.map { it.name }
                 AlertDialog.Builder(activity)
                     .setTitle("Select skill")
                     .setItems(skillNames.toTypedArray(), DialogInterface.OnClickListener { dialog, whichSkill ->
-                        val character = characters[whichCharacter]
                         if(whichSkill == 0) {
                             showCreateSkillDialog { skill ->
                                 controller.addCharacterSkillDiff(character, skill)
@@ -129,7 +129,8 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
                             val skill = skills[whichSkill]
                             controller.addCharacterSkillDiff(character, skill)
                         }
-                    }).show()
+                    })
+                    .show()
             }).show()
     }
 

@@ -14,7 +14,7 @@ interface SessionContract {
         /** Chooose Hp, Effect, Skill, Thing or Comment */
         fun showAddSomethingDialog()
         fun showAddHpDialog(characterNames: List<String>)
-        fun showAddSkillDialog(characterNames: List<GameCharacter>, skillNames: List<Skill>)
+        fun showAddSkillDialog(characters: List<GameCharacter>, skills: List<Skill>)
         fun showAddThingDialog(characterNames: List<String>, thingNames: List<String>)
         fun showAttachEffectDialog(characterNames: List<String>, effectNames: List<String>)
         fun showRemoveEffectDialog(characterNames: List<String>, characterToEffectNames: Map<String, List<Effect>>)
