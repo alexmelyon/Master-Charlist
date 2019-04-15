@@ -97,8 +97,8 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
 
     override fun showAddSomethingDialog() {
         AlertDialog.Builder(activity)
-            .setItems(arrayOf(/* TODO Add Character */ "Add Healthpoints", "Add Skill", "Add Thing", "Attach Effect", "Detach effect", "Add Comment"), DialogInterface.OnClickListener { dialog, which ->
-                controller.onAddItemClicked(which)
+            .setItems(arrayOf("Add Character", "Add Healthpoints", "Add Skill", "Add Thing", "Attach Effect", "Detach effect", "Add Comment"), DialogInterface.OnClickListener { dialog, which ->
+                controller.onAddSomethingClicked(which)
             })
             .show()
     }
@@ -201,9 +201,14 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
         controller.addCommentDiff()
     }
 
-    fun showCreateCharacterDialog() {
+    override fun showCreateCharacterDialog() {
         activity.showAlertEditDialog("Character name:") { name ->
             controller.createCharacter(name)
+            AlertDialog.Builder(activity)
+                .setTitle("Character created")
+                .setMessage("Name: $name")
+                .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->  })
+                .show()
         }
     }
 

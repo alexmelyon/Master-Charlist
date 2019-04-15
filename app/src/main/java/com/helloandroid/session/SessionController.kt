@@ -19,12 +19,13 @@ val SESSION_KEY = "SESSION_KEY"
 
 class SessionController(args: Bundle) : Controller(args), SessionContract.Controller {
 
-    val SESSION_ADD_HP = 0
-    val SESSION_ADD_SKILL = 1
-    val SESSION_ADD_THING = 2
-    val SESSION_ADD_EFFECT = 3
-    val SESSION_REMOVE_EFFECT = 4
-    val SESSION_ADD_COMMENT = 5
+    val SESSION_ADD_CHARACTER = 0
+    val SESSION_ADD_HP = 1
+    val SESSION_ADD_SKILL = 2
+    val SESSION_ADD_THING = 3
+    val SESSION_ADD_EFFECT = 4
+    val SESSION_REMOVE_EFFECT = 5
+    val SESSION_ADD_COMMENT = 6
 
     @Inject
     lateinit var view: SessionContract.View
@@ -132,9 +133,10 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
         return session.open
     }
 
-    override fun onAddItemClicked(which: Int) {
+    override fun onAddSomethingClicked(which: Int) {
         val characterNames = getCharacters().map { it.name }
         when(which) {
+            SESSION_ADD_CHARACTER -> view.showCreateCharacterDialog()
             SESSION_ADD_HP -> view.showAddHpDialog(characterNames)
             SESSION_ADD_SKILL -> {
                 view.showAddSkillDialog(getCharacters(), getSkills())

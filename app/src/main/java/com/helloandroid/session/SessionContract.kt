@@ -13,6 +13,7 @@ interface SessionContract {
         fun itemRemovedAt(pos: Int)
         /** Chooose Hp, Effect, Skill, Thing or Comment */
         fun showAddSomethingDialog()
+        fun showCreateCharacterDialog()
         fun showAddHpDialog(characterNames: List<String>)
         fun showAddSkillDialog(characters: List<GameCharacter>, skills: List<Skill>)
         fun showAddThingDialog(characters: List<GameCharacter>, things: List<Thing>)
@@ -37,7 +38,7 @@ interface SessionContract {
         fun onEffectSkillChanged(pos: Int, subPos: Int, value: Int)
         fun addCharacterThingDiff(character: GameCharacter, thing: Thing)
         fun addCommentDiff()
-        fun onAddItemClicked(which: Int)
+        fun onAddSomethingClicked(which: Int)
         fun closeSession()
         fun isSessionOpen(): Boolean
         fun createCharacter(name: String)
