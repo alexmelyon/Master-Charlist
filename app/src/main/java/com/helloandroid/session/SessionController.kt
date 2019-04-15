@@ -137,14 +137,10 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
         when(which) {
             SESSION_ADD_HP -> view.showAddHpDialog(characterNames)
             SESSION_ADD_SKILL -> {
-                // TODO Create new
-//                val skillNames = getSkills().map { it.name }
                 view.showAddSkillDialog(getCharacters(), getSkills())
             }
             SESSION_ADD_THING -> {
-                // TODO Create new
-                val thingNames = getThings().map { it.name }
-                view.showAddThingDialog(characterNames, thingNames)
+                view.showAddThingDialog(getCharacters(), getThings())
             }
             SESSION_ADD_EFFECT -> {
                 // TODO Create new
@@ -228,16 +224,14 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
         view.itemAddedAt(item.index, item)
     }
 
-    override fun addCharacterThingDiff(character: Int, thing: Int) {
-        val selectedCharacter = getCharacters()[character]
-        val selectedThing = getThings()[thing]
-        selectedThing.lastUsed = Calendar.getInstance().time
-        db.thingDao().update(selectedThing)
-        val thingDiff = ThingDiff(0, Calendar.getInstance().time, selectedCharacter.id, selectedThing.id, session.id, game.id, world.id)
+    override fun addCharacterThingDiff(character: GameCharacter, thing: Thing) {
+        thing.lastUsed = Calendar.getInstance().time
+        db.thingDao().update(thing)
+        val thingDiff = ThingDiff(0, Calendar.getInstance().time, character.id, thing.id, session.id, game.id, world.id)
         val id = db.thingDiffDao().insert(thingDiff)
         thingDiff.id = id
 
-        val item = SessionItem(thingDiff.id, thingDiff.time, SessionItemType.ITEM_THING, selectedThing.name, selectedCharacter.name, thingDiff.value, selectedCharacter.id)
+        val item = SessionItem(thingDiff.id, thingDiff.time, SessionItemType.ITEM_THING, thing.name, character.name, thingDiff.value, character.id)
         itemsWrapper.add(item)
         view.itemAddedAt(item.index, item)
     }
@@ -343,16 +337,18 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
         return skill
     }
 
-    override fun createThing(name: String) {
+    override fun createThing(name: String): Thing {
         val thing = Thing(name, world.id, Calendar.getInstance().time, archived = false)
         val id = db.thingDao().insert(thing)
         thing.id = id
+        return thing
     }
 
-    override fun createEffect(name: String) {
+    override fun createEffect(name: String): Effect {
         val effect = Effect(name, world.id, Calendar.getInstance().time, archived = false)
         val id = db.effectDao().insert(effect)
         effect.id = id
+        return effect
     }
 
     private fun getCharacters(): List<GameCharacter> {

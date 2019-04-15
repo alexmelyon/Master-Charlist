@@ -8,6 +8,7 @@ import com.helloandroid.MainActivity
 import com.helloandroid.room.Effect
 import com.helloandroid.room.GameCharacter
 import com.helloandroid.room.Skill
+import com.helloandroid.room.Thing
 import com.helloandroid.utils.alertNoAvailableSkills
 import com.helloandroid.utils.showAlertEditDialog
 import org.jetbrains.anko._FrameLayout
@@ -96,7 +97,7 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
 
     override fun showAddSomethingDialog() {
         AlertDialog.Builder(activity)
-            .setItems(arrayOf("Add Healthpoints", "Add Skill", "Add Thing", "Attach Effect", "Detach effect", "Add Comment"), DialogInterface.OnClickListener { dialog, which ->
+            .setItems(arrayOf(/* TODO Add Character */ "Add Healthpoints", "Add Skill", "Add Thing", "Attach Effect", "Detach effect", "Add Comment"), DialogInterface.OnClickListener { dialog, which ->
                 controller.onAddItemClicked(which)
             })
             .show()
@@ -126,7 +127,7 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
                                 controller.addCharacterSkillDiff(character, skill)
                             }
                         } else {
-                            val skill = skills[whichSkill]
+                            val skill = skills[whichSkill - 1]
                             controller.addCharacterSkillDiff(character, skill)
                         }
                     })
@@ -134,14 +135,24 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
             }).show()
     }
 
-    override fun showAddThingDialog(characterNames: List<String>, thingNames: List<String>) {
+    override fun showAddThingDialog(characters: List<GameCharacter>, things: List<Thing>) {
+        val characterNames = characters.map { it.name }
         AlertDialog.Builder(activity)
             .setTitle("Select character")
-            .setItems(characterNames.toTypedArray(), DialogInterface.OnClickListener { dialog, character ->
+            .setItems(characterNames.toTypedArray(), DialogInterface.OnClickListener { dialog, whichCharacter ->
+                val character = characters[whichCharacter]
+                val thingNames = listOf("Create new...") + things.map { it.name }
                 AlertDialog.Builder(activity)
                     .setTitle("Select thing")
-                    .setItems(thingNames.toTypedArray(), DialogInterface.OnClickListener { dialog, thing ->
-                        controller.addCharacterThingDiff(character, thing)
+                    .setItems(thingNames.toTypedArray(), DialogInterface.OnClickListener { dialog, whichThing ->
+                        if(whichThing == 0) {
+                            showCreateThingDialog { thing ->
+                                controller.addCharacterThingDiff(character, thing)
+                            }
+                        } else {
+                            val thing = things[whichThing - 1]
+                            controller.addCharacterThingDiff(character, thing)
+                        }
                     }).show()
             }).show()
     }
@@ -193,9 +204,10 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
         }
     }
 
-    fun showCreateThingDialog() {
+    fun showCreateThingDialog(action: (Thing) -> Unit) {
         activity.showAlertEditDialog("Thing name:") { name ->
-            controller.createThing(name)
+            val thing = controller.createThing(name)
+            action(thing)
         }
     }
 

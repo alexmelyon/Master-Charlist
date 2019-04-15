@@ -15,15 +15,11 @@ interface SessionContract {
         fun showAddSomethingDialog()
         fun showAddHpDialog(characterNames: List<String>)
         fun showAddSkillDialog(characters: List<GameCharacter>, skills: List<Skill>)
-        fun showAddThingDialog(characterNames: List<String>, thingNames: List<String>)
+        fun showAddThingDialog(characters: List<GameCharacter>, things: List<Thing>)
         fun showAttachEffectDialog(characterNames: List<String>, effectNames: List<String>)
         fun showRemoveEffectDialog(characterNames: List<String>, characterToEffectNames: Map<String, List<Effect>>)
         fun showAddComment()
         fun showCloseSessionDialog(name: String)
-//        fun showCreateCharacterDialog()
-//        fun showCreateSkillDialog()
-//        fun showCreateThingDialog()
-//        fun showCreateEffectDialog()
     }
     interface Controller {
         fun getTitle(): String
@@ -39,15 +35,15 @@ interface SessionContract {
         fun attachSkillForEffect(pos: Int, skill: Skill)
         fun detachSkillForEffect(pos: Int, effectSkill: EffectSkill)
         fun onEffectSkillChanged(pos: Int, subPos: Int, value: Int)
-        fun addCharacterThingDiff(character: Int, thing: Int)
+        fun addCharacterThingDiff(character: GameCharacter, thing: Thing)
         fun addCommentDiff()
         fun onAddItemClicked(which: Int)
         fun closeSession()
         fun isSessionOpen(): Boolean
         fun createCharacter(name: String)
         fun createSkill(name: String): Skill
-        fun createThing(name: String)
-        fun createEffect(name: String)
+        fun createThing(name: String): Thing
+        fun createEffect(name: String): Effect
         fun getUsedEffectSkills(pos: Int): List<Pair<String, EffectSkill>>
     }
 }
