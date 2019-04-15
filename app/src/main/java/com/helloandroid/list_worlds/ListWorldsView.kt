@@ -36,6 +36,7 @@ class ListWorldsView @Inject constructor(val activity: MainActivity) : _FrameLay
             controller.onItemClick(world)
         }
         worldsAdapter.onItemLongclickListener = { pos, world ->
+            // TODO Rename
             AlertDialog.Builder(activity)
                 .setTitle("Archive world?")
                 .setMessage(world.name)
