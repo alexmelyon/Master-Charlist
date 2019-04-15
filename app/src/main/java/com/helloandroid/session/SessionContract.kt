@@ -48,7 +48,7 @@ interface SessionContract {
         fun createSkill(name: String)
         fun createThing(name: String)
         fun createEffect(name: String)
-        fun getUsedSkillEffects(pos: Int): Map<String, EffectSkill>
+        fun getUsedEffectSkills(pos: Int): List<Pair<String, EffectSkill>>
     }
 }
 

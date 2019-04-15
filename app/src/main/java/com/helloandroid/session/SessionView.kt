@@ -39,23 +39,21 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
                 controller.onCommentChanged(id, comment)
             }
             onItemClickListener = { pos ->
-                val skillForEffects = controller.getAvailableSkillsForEffect(pos)
-                val skillNames = skillForEffects.map { it.name }.toTypedArray()
+                val skillsForEffect = controller.getAvailableSkillsForEffect(pos)
+                val skillNames = skillsForEffect.map { "Attach ${it.name}" }
                 AlertDialog.Builder(activity)
-                    .setItems(skillNames, DialogInterface.OnClickListener { dialog, which ->
-                        val skill = skillForEffects[which]
+                    .setItems(skillNames.toTypedArray(), DialogInterface.OnClickListener { dialog, which ->
+                        val skill = skillsForEffect[which]
                         controller.attachSkillForEffect(pos, skill)
                     })
                     .show()
             }
             onItemLongClickListener = { pos ->
-                val usedSkills = controller.getUsedSkillEffects(pos)
-                val skillNames = usedSkills.map { it.key }.sorted().toTypedArray()
-                val skillArr = skillNames.map { "Detach $it" }.toTypedArray()
+                val usedSkills = controller.getUsedEffectSkills(pos)
+                val skillNames = usedSkills.map { it.first }
                 AlertDialog.Builder(activity)
-                    .setItems(skillArr, DialogInterface.OnClickListener { dialog, which ->
-                        val name = skillNames[which]
-                        val effectSkill = usedSkills.getValue(name)
+                    .setItems(skillNames.toTypedArray(), DialogInterface.OnClickListener { dialog, which ->
+                        val effectSkill = usedSkills[which].second
                         controller.detachSkillForEffect(pos, effectSkill)
                     })
                     .show()

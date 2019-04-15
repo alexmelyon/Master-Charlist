@@ -1,7 +1,6 @@
 package com.helloandroid.session
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.Paint
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -15,12 +14,10 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.helloandroid.R
-import com.helloandroid.room.Effect
 import kotlinx.android.synthetic.main.session_item_comment.view.*
 import kotlinx.android.synthetic.main.session_item_int.view.*
 import org.jetbrains.anko.layoutInflater
 import org.jetbrains.anko.sdk15.listeners.onClick
-import org.jetbrains.anko.textColor
 
 class SessionDiffsAdapter(val context: Context, val editable: Boolean) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -34,8 +31,8 @@ class SessionDiffsAdapter(val context: Context, val editable: Boolean) : Recycle
     var onCommentChanged: (Int, String) -> Unit = { pos, comment -> }
     var onItemClickListener = { pos: Int -> }
     var onItemLongClickListener = { pos: Int -> }
-    var onSubitemPlus = { item: Int, subitem: Int -> }
-    var onSubitemMinus = { item: Int, subitem: Int -> }
+    var onSubitemPlus = { pos: Int, subPos: Int -> }
+    var onSubitemMinus = { pos: Int, subPos: Int -> }
 
     private val textWatchers = mutableMapOf<EditText, IndexTextWatcher>()
     private var layoutManager: RecyclerView.LayoutManager? = null
@@ -106,18 +103,20 @@ class SessionDiffsAdapter(val context: Context, val editable: Boolean) : Recycle
                 val inflater = LayoutInflater.from(holder.itemView.context)
                 holder.attachedSkills.removeAllViews()
                 items[correctPosition].effectSkills.forEachIndexed { index, skillToValue ->
-                    val view = inflater.inflate(R.layout.session_effect_skill, holder.attachedSkills)
-                    val title = view.findViewById<TextView>(R.id.title)
+                    val row = inflater.inflate(R.layout.session_effect_skill, null)
+                    val title = row.findViewById<TextView>(R.id.title)
                     title.text = skillToValue.first
-                    val value = view.findViewById<TextView>(R.id.value)
+                    val value = row.findViewById<TextView>(R.id.value)
                     value.text = "%+d".format(skillToValue.second)
 
-                    val plus = view.findViewById<Button>(R.id.plusButton)
+                    val plus = row.findViewById<Button>(R.id.plusButton)
                     plus.visibility = if(editable) View.VISIBLE else View.INVISIBLE
                     plus.setOnClickListener { v -> onSubitemPlus(correctPosition, index) }
-                    val minus = view.findViewById<Button>(R.id.minusButton)
+                    val minus = row.findViewById<Button>(R.id.minusButton)
                     minus.visibility = if(editable) View.VISIBLE else View.INVISIBLE
                     minus.setOnClickListener { v -> onSubitemMinus(correctPosition, index) }
+
+                    holder.attachedSkills.addView(row)
                 }
 
                 if(editable) {
