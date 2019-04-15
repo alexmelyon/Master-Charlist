@@ -23,11 +23,8 @@ class ListSessionsView @Inject constructor(val activity: MainActivity) : _FrameL
 
     override fun createView(container: ViewGroup): View {
         activity.supportActionBar!!.title = controller.getGameName()
-        sessionsAdapter = RecyclerStringAdapter(container.context, R.layout.simple_list_item_2_with_header) { pos, session ->
+        sessionsAdapter = RecyclerStringAdapter(container.context) { pos, session ->
             controller.onItemClick(session)
-        }
-        sessionsAdapter.onGetDescriptionValue = { pos ->
-            controller.getDescription(pos)
         }
         sessionsAdapter.onGetHeaderValue = { pos ->
             controller.getHeader(pos)
