@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.helloandroid.MainActivity
 import com.helloandroid.room.Effect
+import com.helloandroid.room.GameCharacter
+import com.helloandroid.room.Skill
 import com.helloandroid.utils.alertNoAvailableSkills
 import com.helloandroid.utils.showAlertEditDialog
 import org.jetbrains.anko._FrameLayout
@@ -109,14 +111,24 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
             .show()
     }
 
-    override fun showAddSkillDialog(characterNames: List<String>, skillNames: List<String>) {
+    override fun showAddSkillDialog(characters: List<GameCharacter>, skills: List<Skill>) {
+        val characterNames = characters.map { it.name }
         AlertDialog.Builder(activity)
             .setTitle("Select character")
-            .setItems(characterNames.toTypedArray(), DialogInterface.OnClickListener { dialog, character ->
+            .setItems(characterNames.toTypedArray(), DialogInterface.OnClickListener { dialog, whichCharacter ->
+                val skillNames = skills.map { it.name }
                 AlertDialog.Builder(activity)
                     .setTitle("Select skill")
-                    .setItems(skillNames.toTypedArray(), DialogInterface.OnClickListener { dialog, skill ->
-                        controller.addCharacterSkillDiff(character, skill)
+                    .setItems(skillNames.toTypedArray(), DialogInterface.OnClickListener { dialog, whichSkill ->
+                        val character = characters[whichCharacter]
+                        if(whichSkill == 0) {
+                            showCreateSkillDialog { skill ->
+                                controller.addCharacterSkillDiff(character, skill)
+                            }
+                        } else {
+                            val skill = skills[whichSkill]
+                            controller.addCharacterSkillDiff(character, skill)
+                        }
                     }).show()
             }).show()
     }
@@ -167,25 +179,26 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
         controller.addCommentDiff()
     }
 
-    override fun showCreateCharacterDialog() {
+    fun showCreateCharacterDialog() {
         activity.showAlertEditDialog("Character name:") { name ->
             controller.createCharacter(name)
         }
     }
 
-    override fun showCreateSkillDialog() {
+    fun showCreateSkillDialog(action: (Skill) -> Unit) {
         activity.showAlertEditDialog("Skill name:") { name ->
-            controller.createSkill(name)
+            val skill = controller.createSkill(name)
+            action(skill)
         }
     }
 
-    override fun showCreateThingDialog() {
+    fun showCreateThingDialog() {
         activity.showAlertEditDialog("Thing name:") { name ->
             controller.createThing(name)
         }
     }
 
-    override fun showCreateEffectDialog() {
+    fun showCreateEffectDialog() {
         activity.showAlertEditDialog("Effect name:") { name ->
             controller.createEffect(name)
         }

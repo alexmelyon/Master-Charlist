@@ -14,16 +14,16 @@ interface SessionContract {
         /** Chooose Hp, Effect, Skill, Thing or Comment */
         fun showAddSomethingDialog()
         fun showAddHpDialog(characterNames: List<String>)
-        fun showAddSkillDialog(characterNames: List<String>, skillNames: List<String>)
+        fun showAddSkillDialog(characterNames: List<GameCharacter>, skillNames: List<Skill>)
         fun showAddThingDialog(characterNames: List<String>, thingNames: List<String>)
         fun showAttachEffectDialog(characterNames: List<String>, effectNames: List<String>)
         fun showRemoveEffectDialog(characterNames: List<String>, characterToEffectNames: Map<String, List<Effect>>)
         fun showAddComment()
         fun showCloseSessionDialog(name: String)
-        fun showCreateCharacterDialog()
-        fun showCreateSkillDialog()
-        fun showCreateThingDialog()
-        fun showCreateEffectDialog()
+//        fun showCreateCharacterDialog()
+//        fun showCreateSkillDialog()
+//        fun showCreateThingDialog()
+//        fun showCreateEffectDialog()
     }
     interface Controller {
         fun getTitle(): String
@@ -32,7 +32,7 @@ interface SessionContract {
         fun onThingChanged(pos: Int, value: Int)
         fun onCommentChanged(pos: Int, comment: String)
         fun addHpDiff(character: Int)
-        fun addCharacterSkillDiff(character: Int, skill: Int)
+        fun addCharacterSkillDiff(character: GameCharacter, skill: Skill)
         fun addCharacterAttachEffectDiff(character: Int, effect: Int)
         fun addCharacterDetachEffectDiff(character: Int, effect: Int)
         fun getAvailableSkillsForEffect(pos: Int): List<Skill>
@@ -45,7 +45,7 @@ interface SessionContract {
         fun closeSession()
         fun isSessionOpen(): Boolean
         fun createCharacter(name: String)
-        fun createSkill(name: String)
+        fun createSkill(name: String): Skill
         fun createThing(name: String)
         fun createEffect(name: String)
         fun getUsedEffectSkills(pos: Int): List<Pair<String, EffectSkill>>

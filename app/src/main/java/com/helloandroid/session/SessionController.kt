@@ -120,21 +120,6 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
                 view.showCloseSessionDialog(session.name)
                 return true
             }
-            R.id.session_create_character -> {
-                view.showCreateCharacterDialog()
-                return true
-            }
-            R.id.session_create_skill -> {
-                view.showCreateSkillDialog()
-                return true
-            }
-            R.id.session_create_thing -> {
-                view.showCreateThingDialog()
-                return true
-            }
-            R.id.session_create_effect -> {
-                view.showCreateEffectDialog()
-            }
         }
         return super.onOptionsItemSelected(item)
     }
