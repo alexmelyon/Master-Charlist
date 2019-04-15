@@ -27,7 +27,7 @@ class ListEffectsAdapter : RecyclerView.Adapter<ListEffectsAdapter.ViewHolder>()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.session_item_effect, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.list_effects_item, parent, false)
         val holder = ViewHolder(view)
         return holder
     }
@@ -39,8 +39,6 @@ class ListEffectsAdapter : RecyclerView.Adapter<ListEffectsAdapter.ViewHolder>()
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder as ViewHolder
         holder.effectName.text = items[position].name
-
-        holder.charactername.visibility = View.GONE
 
         val effectSkills = items[position].effectSkills
         holder.attachedSkils.removeAllViews()
@@ -84,8 +82,7 @@ class ListEffectsAdapter : RecyclerView.Adapter<ListEffectsAdapter.ViewHolder>()
     }
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        val effectName = view.findViewById<TextView>(R.id.effect_title)
-        val charactername = view.findViewById<TextView>(R.id.effect_desc)
+        val effectName = view.findViewById<TextView>(R.id.effect_name)
         val attachedSkils = view.findViewById<LinearLayout>(R.id.attached_skills)
     }
 }
