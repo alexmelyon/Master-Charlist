@@ -157,14 +157,24 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
             }).show()
     }
 
-    override fun showAttachEffectDialog(characterNames: List<String>, effectNames: List<String>) {
+    override fun showAttachEffectDialog(characters: List<GameCharacter>, effects: List<Effect>) {
+        val characterNames = characters.map { it.name }
         AlertDialog.Builder(activity)
             .setTitle("Select character")
-            .setItems(characterNames.toTypedArray(), DialogInterface.OnClickListener { dialog, character ->
+            .setItems(characterNames.toTypedArray(), DialogInterface.OnClickListener { dialog, whichCharacter ->
+                val character = characters[whichCharacter]
+                val effectNames = listOf("Create new...") + effects.map { it.name }
                 AlertDialog.Builder(activity)
                     .setTitle("Select effect")
-                    .setItems(effectNames.toTypedArray(), DialogInterface.OnClickListener { dialog, effect ->
-                        controller.addCharacterAttachEffectDiff(character, effect)
+                    .setItems(effectNames.toTypedArray(), DialogInterface.OnClickListener { dialog, whichEffect ->
+                        if(whichEffect == 0) {
+                            showCreateEffectDialog { effect ->
+                                controller.addCharacterAttachEffectDiff(character, effect)
+                            }
+                        } else {
+                            val effect = effects[whichEffect - 1]
+                            controller.addCharacterAttachEffectDiff(character, effect)
+                        }
                     })
                     .show()
             })
@@ -211,9 +221,10 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
         }
     }
 
-    fun showCreateEffectDialog() {
+    fun showCreateEffectDialog(action: (Effect) -> Unit) {
         activity.showAlertEditDialog("Effect name:") { name ->
-            controller.createEffect(name)
+            val effect = controller.createEffect(name)
+            action(effect)
         }
     }
 

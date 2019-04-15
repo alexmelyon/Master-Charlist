@@ -16,7 +16,7 @@ interface SessionContract {
         fun showAddHpDialog(characterNames: List<String>)
         fun showAddSkillDialog(characters: List<GameCharacter>, skills: List<Skill>)
         fun showAddThingDialog(characters: List<GameCharacter>, things: List<Thing>)
-        fun showAttachEffectDialog(characterNames: List<String>, effectNames: List<String>)
+        fun showAttachEffectDialog(characters: List<GameCharacter>, effects: List<Effect>)
         fun showRemoveEffectDialog(characterNames: List<String>, characterToEffectNames: Map<String, List<Effect>>)
         fun showAddComment()
         fun showCloseSessionDialog(name: String)
@@ -29,7 +29,7 @@ interface SessionContract {
         fun onCommentChanged(pos: Int, comment: String)
         fun addHpDiff(character: Int)
         fun addCharacterSkillDiff(character: GameCharacter, skill: Skill)
-        fun addCharacterAttachEffectDiff(character: Int, effect: Int)
+        fun addCharacterAttachEffectDiff(character: GameCharacter, effect: Effect)
         fun addCharacterDetachEffectDiff(character: Int, effect: Int)
         fun getAvailableSkillsForEffect(pos: Int): List<Skill>
         fun attachSkillForEffect(pos: Int, skill: Skill)

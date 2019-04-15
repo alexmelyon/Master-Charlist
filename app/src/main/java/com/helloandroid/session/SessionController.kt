@@ -143,9 +143,7 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
                 view.showAddThingDialog(getCharacters(), getThings())
             }
             SESSION_ADD_EFFECT -> {
-                // TODO Create new
-                val effectNames = getEffects().map { it.name }
-                view.showAttachEffectDialog(characterNames, effectNames)
+                view.showAttachEffectDialog(getCharacters(), getEffects())
             }
             SESSION_REMOVE_EFFECT -> {
                 val characterToEffects = getUsedEffects()
@@ -236,17 +234,15 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
         view.itemAddedAt(item.index, item)
     }
 
-    override fun addCharacterAttachEffectDiff(character: Int, effect: Int) {
-        val selectedCharacter = getCharacters()[character]
-        val selectedEffect = getEffects()[effect]
-        selectedEffect.lastUsed = Calendar.getInstance().time
-        db.effectDao().update(selectedEffect)
-        val effectDiff = EffectDiff(true, Calendar.getInstance().time, selectedCharacter.id, selectedEffect.id, session.id, game.id, world.id)
+    override fun addCharacterAttachEffectDiff(character: GameCharacter, effect: Effect) {
+        effect.lastUsed = Calendar.getInstance().time
+        db.effectDao().update(effect)
+        val effectDiff = EffectDiff(true, Calendar.getInstance().time, character.id, effect.id, session.id, game.id, world.id)
         val id = db.effectDiffDao().insert(effectDiff)
         effectDiff.id = id
 
         val skillToValue = skillNamesToValue(effectDiff)
-        val item = SessionItem(effectDiff.id, effectDiff.time, SessionItemType.ITEM_EFFECT, selectedEffect.name, selectedCharacter.name, 1, selectedCharacter.id, effectSkills = skillToValue)
+        val item = SessionItem(effectDiff.id, effectDiff.time, SessionItemType.ITEM_EFFECT, effect.name, character.name, 1, character.id, effectSkills = skillToValue)
         itemsWrapper.add(item)
         view.itemAddedAt(item.index, item)
     }
