@@ -4,32 +4,45 @@ import android.content.Context
 import android.content.DialogInterface
 import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AlertDialog
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import com.helloandroid.MainActivity
 import org.jetbrains.anko.singleLine
+import android.app.Activity
+import android.view.WindowManager
+import android.widget.EditText
 
-fun Context.showAlertEditDialog(title: String, message: String = "", action: (String) -> Unit) {
+
+
+
+
+fun MainActivity.showAlertEditDialog(title: String, message: String = "", action: (String) -> Unit) {
     val edit = TextInputEditText(this)
     edit.singleLine = true
+    edit.inputType = EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES
     edit.setText(message, TextView.BufferType.EDITABLE)
 
     val dialog = AlertDialog.Builder(this)
         .setTitle(title)
         .setView(edit)
         .setPositiveButton("OK", null)
-        .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
-            dialog.dismiss()
-        })
+        .setNegativeButton("Cancel", null)
         .create()
     dialog.show()
+
+    edit.requestFocus()
+    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
+    window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
     dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener { v ->
-        if (edit.text.isEmpty()) {
-            edit.setError("Please enter name")
+        if (edit.text.isBlank()) {
+            edit.error = "Please enter name"
         } else {
             dialog.dismiss()
             action(edit.text.toString())
         }
     }
-    edit.requestFocus()
 }
 
 fun Context.showAlertDialog(title: String, message: String, action: () -> Unit) {
