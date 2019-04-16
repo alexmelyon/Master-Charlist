@@ -9,6 +9,7 @@ interface ListSessionsContract {
         fun setData(items: MutableList<GameSession>)
         fun addedAt(pos: Int, session: GameSession)
         fun archivedAt(pos: Int)
+        fun itemChangedAt(pos: Int)
     }
 
     interface Controller {
@@ -18,5 +19,6 @@ interface ListSessionsContract {
         fun archiveSession(pos: Int, session: GameSession)
         fun getDescription(pos: Int): String
         fun getHeader(pos: Int): String
+        fun renameSession(pos: Int, session: GameSession, name: String)
     }
 }

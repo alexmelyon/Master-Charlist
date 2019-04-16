@@ -148,4 +148,10 @@ class ListSessionsController(args: Bundle) : Controller(args), ListSessionsContr
         view.archivedAt(pos)
         delegate?.get()?.updateCharactersScreen()
     }
+
+    override fun renameSession(pos: Int, session: GameSession, name: String) {
+        session.name = name
+        db.gameSessionDao().update(session)
+        view.itemChangedAt(pos)
+    }
 }

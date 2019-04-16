@@ -4,19 +4,21 @@
               android:layout_height="wrap_content"
               android:orientation="vertical">
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/effect_name"
-              android:textColor="#555555"
-              android:textSize="20sp"
-              android:textStyle="bold"
-              android:background="#EEEEEE"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:textAppearance="?android:attr/textAppearanceListItemSmall"
-              android:gravity="center_vertical"
-              android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-              android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-              android:minHeight="?android:attr/listPreferredItemHeightSmall"/>
+    <FrameLayout android:id="@+id/header_view"
+                 android:layout_width="match_parent"
+                 android:layout_height="50dp"
+                 android:background="#EEEEEE">
+        <TextView android:id="@+id/effect_name"
+                  android:layout_gravity="bottom"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:paddingBottom="8dp"
+                  android:textSize="20sp"
+                  android:textColor="#555555"
+                  android:textStyle="bold"
+                  android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+                  android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"/>
+    </FrameLayout>
 
     <LinearLayout android:id="@+id/attached_skills"
                   android:orientation="vertical"

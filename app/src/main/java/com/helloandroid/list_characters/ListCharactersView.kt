@@ -4,7 +4,6 @@ import android.content.DialogInterface
 import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import com.helloandroid.MainActivity
 import com.helloandroid.utils.showAlertDialog
 import com.helloandroid.utils.showAlertEditDialog
@@ -17,10 +16,10 @@ class ListCharactersView @Inject constructor(val activity: MainActivity) : _Fram
     @Inject
     lateinit var controller: ListCharactersContract.Controller
 
-    lateinit var charactersAdapter: CharactersAdapter
+    lateinit var charactersAdapter: ListCharactersAdapter
 
     override fun createView(container: ViewGroup): View {
-        charactersAdapter = CharactersAdapter(activity) { pos, item ->
+        charactersAdapter = ListCharactersAdapter(activity) { pos, item ->
             AlertDialog.Builder(activity)
                 .setItems(arrayOf("Rename", "Archive"), DialogInterface.OnClickListener { dialog, which ->
                     when(which) {

@@ -9,6 +9,7 @@ import com.helloandroid.MainActivity
 import com.helloandroid.R
 import com.helloandroid.room.GameSession
 import com.helloandroid.ui.RecyclerStringAdapter
+import com.helloandroid.utils.showAlertDialog
 import com.helloandroid.utils.showAlertEditDialog
 import org.jetbrains.anko._FrameLayout
 import org.jetbrains.anko.recyclerview.v7.recyclerView
@@ -23,7 +24,7 @@ class ListSessionsView @Inject constructor(val activity: MainActivity) : _FrameL
 
     override fun createView(container: ViewGroup): View {
         activity.supportActionBar!!.title = controller.getGameName()
-        sessionsAdapter = RecyclerStringAdapter(container.context) { pos, session ->
+        sessionsAdapter = RecyclerStringAdapter(container.context, R.layout.list_sessions_item_with_header) { pos, session ->
             controller.onItemClick(session)
         }
         sessionsAdapter.onGetHeaderValue = { pos ->
@@ -31,15 +32,16 @@ class ListSessionsView @Inject constructor(val activity: MainActivity) : _FrameL
         }
         sessionsAdapter.onItemLongclickListener = { pos, session ->
             AlertDialog.Builder(activity)
-                .setTitle("Archive session?")
-                .setMessage(session.name)
-                .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
-                    controller.archiveSession(pos, session)
-                })
-                .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
-                    dialog.dismiss()
-                })
-                .show()
+                .setItems(arrayOf("Rename", "Archive"), DialogInterface.OnClickListener { dialog, which ->
+                    when(which) {
+                        0 -> activity.showAlertEditDialog("Rename session:", session.name) { name ->
+                            controller.renameSession(pos, session, name)
+                        }
+                        1 -> activity.showAlertDialog("Archive session?", session.name) {
+                            controller.archiveSession(pos, session)
+                        }
+                    }
+                }).show()
         }
         return container.context.recyclerView {
             adapter = sessionsAdapter
@@ -56,5 +58,9 @@ class ListSessionsView @Inject constructor(val activity: MainActivity) : _FrameL
 
     override fun archivedAt(pos: Int) {
         sessionsAdapter.itemRemovedAt(pos)
+    }
+
+    override fun itemChangedAt(pos: Int) {
+        sessionsAdapter.notifyItemChanged(pos)
     }
 }

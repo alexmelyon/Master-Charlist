@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content"
+              android:layout_height="wrap_content" xmlns:tools="http://schemas.android.com/tools"
               android:orientation="vertical">
 
     <FrameLayout android:id="@+id/header_view"
@@ -12,21 +12,23 @@
                   android:layout_gravity="bottom"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:layout_margin="8dp"
+                  android:paddingBottom="8dp"
                   android:textSize="20sp"
                   android:textColor="#555555"
-                  android:text="Header"
-                  android:textStyle="bold"/>
+                  tools:text="Header"
+                  android:textStyle="bold"
+                  android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+                  android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"/>
     </FrameLayout>
 
-    <TextView android:id="@android:id/text1"
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@android:id/text1"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_marginTop="8dp"
-              android:textAppearance="?attr/textAppearanceListItem"
-              android:paddingStart="?attr/listPreferredItemPaddingLeft"
-              android:paddingEnd="?attr/listPreferredItemPaddingRight"/>
-
-    <!--TODO-->
+              android:textAppearance="?android:attr/textAppearanceListItemSmall"
+              android:gravity="center_vertical"
+              android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+              android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+              android:minHeight="?android:attr/listPreferredItemHeightSmall" />
 
 </LinearLayout>

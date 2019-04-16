@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -12,7 +13,7 @@ import android.widget.TextView
 import com.helloandroid.R
 import org.jetbrains.anko.*
 
-class CharactersAdapter(val context: Context, val onLongclickListener: (Int, CharacterItem) -> Unit) : RecyclerView.Adapter<CharactersAdapter.ViewHolder>() {
+class ListCharactersAdapter(val context: Context, val onLongclickListener: (Int, CharacterItem) -> Unit) : RecyclerView.Adapter<ListCharactersAdapter.ViewHolder>() {
 
     var items = mutableListOf<CharacterItem>()
         set(value) {
@@ -30,14 +31,18 @@ class CharactersAdapter(val context: Context, val onLongclickListener: (Int, Cha
             orientation = LinearLayout.VERTICAL
             layoutParams = ViewGroup.LayoutParams(matchParent, wrapContent)
 
-            textView("Character name") {
-                id = R.id.character_name
-                textSize = 20F
-                textColor = Color.parseColor("#555555")
-                typeface = Typeface.DEFAULT_BOLD
+            frameLayout {
+                layoutParams = ViewGroup.LayoutParams(matchParent, dip(50))
                 backgroundColor = Color.parseColor("#EEEEEE")
-                setPadding(8, 8, 8, 8)
-            }.lparams(matchParent, wrapContent)
+                textView("Character name") {
+                    id = R.id.character_name
+                    textSize = 20F
+                    textColor = Color.parseColor("#555555")
+                    typeface = Typeface.DEFAULT_BOLD
+                    gravity = Gravity.BOTTOM
+                    setPadding(dip(8), 0, 0, dip(8))
+                }
+            }
             linearLayout {
                 orientation = LinearLayout.VERTICAL
                 setPadding(8, 8, 8, 8)
