@@ -81,4 +81,10 @@ class ListThingsController(args: Bundle) : Controller(args), ListThingsContract.
 
         view.addedAt(0, thing)
     }
+
+    override fun renameThing(pos: Int, thing: Thing, name: String) {
+        thing.name = name
+        db.thingDao().update(thing)
+        view.itemChangedAt(pos)
+    }
 }

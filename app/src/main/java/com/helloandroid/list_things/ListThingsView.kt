@@ -8,6 +8,7 @@ import android.widget.EditText
 import com.helloandroid.MainActivity
 import com.helloandroid.room.Thing
 import com.helloandroid.ui.RecyclerStringAdapter
+import com.helloandroid.utils.showAlertDialog
 import com.helloandroid.utils.showAlertEditDialog
 import org.jetbrains.anko._FrameLayout
 import org.jetbrains.anko.recyclerview.v7.recyclerView
@@ -24,15 +25,16 @@ class ListThingsView @Inject constructor(val activity: MainActivity) : _FrameLay
         thingsAdapter = RecyclerStringAdapter(container.context)
         thingsAdapter.onItemLongclickListener = { pos, thing ->
             AlertDialog.Builder(activity)
-                .setTitle("Archive thing?")
-                .setMessage(thing.name)
-                .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
-                    controller.archiveThing(pos, thing)
-                })
-                .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
-                    dialog.dismiss()
-                })
-                .show()
+                .setItems(arrayOf("Rename", "Archive"), DialogInterface.OnClickListener { dialog, which ->
+                    when(which) {
+                        0 -> activity.showAlertEditDialog("Rename thing:", thing.name) { name ->
+                            controller.renameThing(pos, thing, name)
+                        }
+                        1 -> activity.showAlertDialog("Archive thing?", thing.name) {
+                            controller.archiveThing(pos, thing)
+                        }
+                    }
+                }).show()
         }
 
         return container.context.recyclerView {
@@ -56,5 +58,9 @@ class ListThingsView @Inject constructor(val activity: MainActivity) : _FrameLay
 
     override fun addedAt(pos: Int, thing: Thing) {
         thingsAdapter.itemAddedAt(pos, thing)
+    }
+
+    override fun itemChangedAt(pos: Int) {
+        thingsAdapter.notifyItemChanged(pos)
     }
 }
