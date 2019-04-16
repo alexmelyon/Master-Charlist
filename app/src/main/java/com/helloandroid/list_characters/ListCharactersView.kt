@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import com.helloandroid.MainActivity
+import com.helloandroid.utils.showAlertDialog
 import com.helloandroid.utils.showAlertEditDialog
 import org.jetbrains.anko._FrameLayout
 import org.jetbrains.anko.recyclerview.v7.recyclerView
@@ -21,15 +22,16 @@ class ListCharactersView @Inject constructor(val activity: MainActivity) : _Fram
     override fun createView(container: ViewGroup): View {
         charactersAdapter = CharactersAdapter(activity) { pos, item ->
             AlertDialog.Builder(activity)
-                .setTitle("Archive character?")
-                .setMessage(item.name)
-                .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
-                    controller.archiveCharacter(pos, item)
-                })
-                .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
-                    dialog.dismiss()
-                })
-                .show()
+                .setItems(arrayOf("Rename", "Archive"), DialogInterface.OnClickListener { dialog, which ->
+                    when(which) {
+                        0 -> activity.showAlertEditDialog("Rename character:", item.character.name) { name ->
+                            controller.renameCharacter(pos, item.character, name)
+                        }
+                        1 -> activity.showAlertDialog("Archive character?", item.character.name) {
+                            controller.archiveCharacter(pos, item)
+                        }
+                    }
+                }).show()
         }
         return container.context.recyclerView {
             adapter = charactersAdapter
@@ -52,5 +54,9 @@ class ListCharactersView @Inject constructor(val activity: MainActivity) : _Fram
 
     override fun archiveddAt(pos: Int) {
         charactersAdapter.removedAt(pos)
+    }
+
+    override fun itemChangedAt(pos: Int) {
+        charactersAdapter.notifyItemChanged(pos)
     }
 }

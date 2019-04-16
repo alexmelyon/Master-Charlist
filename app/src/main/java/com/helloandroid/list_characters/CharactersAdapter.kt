@@ -12,7 +12,7 @@ import android.widget.TextView
 import com.helloandroid.R
 import org.jetbrains.anko.*
 
-class CharactersAdapter(val context: Context, val onLongTapListener: (Int, CharacterItem) -> Unit) : RecyclerView.Adapter<CharactersAdapter.ViewHolder>() {
+class CharactersAdapter(val context: Context, val onLongclickListener: (Int, CharacterItem) -> Unit) : RecyclerView.Adapter<CharactersAdapter.ViewHolder>() {
 
     var items = mutableListOf<CharacterItem>()
         set(value) {
@@ -28,41 +28,48 @@ class CharactersAdapter(val context: Context, val onLongTapListener: (Int, Chara
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = parent.context.linearLayout {
             orientation = LinearLayout.VERTICAL
-            setPadding(8, 8, 8, 0)
+            layoutParams = ViewGroup.LayoutParams(matchParent, wrapContent)
 
             textView("Character name") {
                 id = R.id.character_name
                 textSize = 20F
-                textColor = Color.BLACK
+                textColor = Color.parseColor("#555555")
                 typeface = Typeface.DEFAULT_BOLD
+                backgroundColor = Color.parseColor("#EEEEEE")
+                setPadding(8, 8, 8, 8)
             }.lparams(matchParent, wrapContent)
-            textView {
-                id = R.id.character_hp
-                textColor = Color.BLACK
-            }
-            textView("Effects:") {
-                typeface = Typeface.DEFAULT_BOLD
-                textColor = Color.BLACK
-            }
-            textView {
-                id = R.id.character_effects
-                textColor = Color.BLACK
-            }
-            textView("Skills:") {
-                typeface = Typeface.DEFAULT_BOLD
-                textColor = Color.BLACK
-            }
-            textView {
-                id = R.id.character_skills
-                textColor = Color.BLACK
-            }
-            textView("Items:") {
-                typeface = Typeface.DEFAULT_BOLD
-                textColor = Color.BLACK
-            }
-            textView {
-                id = R.id.character_things
-                textColor = Color.BLACK
+            linearLayout {
+                orientation = LinearLayout.VERTICAL
+                setPadding(8, 8, 8, 8)
+
+                textView {
+                    id = R.id.character_hp
+                    textColor = Color.BLACK
+                }
+                textView("Effects:") {
+                    typeface = Typeface.DEFAULT_BOLD
+                    textColor = Color.BLACK
+                }
+                textView {
+                    id = R.id.character_effects
+                    textColor = Color.BLACK
+                }
+                textView("Skills:") {
+                    typeface = Typeface.DEFAULT_BOLD
+                    textColor = Color.BLACK
+                }
+                textView {
+                    id = R.id.character_skills
+                    textColor = Color.BLACK
+                }
+                textView("Items:") {
+                    typeface = Typeface.DEFAULT_BOLD
+                    textColor = Color.BLACK
+                }
+                textView {
+                    id = R.id.character_things
+                    textColor = Color.BLACK
+                }
             }
         }
         return ViewHolder(v)
@@ -73,14 +80,14 @@ class CharactersAdapter(val context: Context, val onLongTapListener: (Int, Chara
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.name.text = items[position].name
+        holder.name.text = items[position].character.name
         holder.hp.text = "HP " + items[position].hp
         holder.effects.text = items[position].effects.joinToString(", ")
         holder.skills.text = items[position].skills.joinToString("\n")
         holder.things.text = items[position].things.map { "${it.first}: ${it.second}" }.joinToString("\n")
         holder.itemView.setOnLongClickListener {
             val correctPosition = holder.adapterPosition
-            onLongTapListener(correctPosition, items[position])
+            onLongclickListener(correctPosition, items[position])
             return@setOnLongClickListener true
         }
     }

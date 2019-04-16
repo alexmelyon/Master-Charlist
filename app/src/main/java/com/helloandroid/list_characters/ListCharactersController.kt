@@ -31,7 +31,7 @@ class ListCharactersController(args: Bundle) : Controller(args), ListCharactersC
         if (o1.lastUsed != o2.lastUsed) {
             return@Comparator o1.lastUsed.compareTo(o2.lastUsed)
         }
-        return@Comparator o1.name.compareTo(o2.name)
+        return@Comparator o1.character.name.compareTo(o2.character.name)
     })
 
     constructor(worldId: Long, gameId: Long) : this(Bundle().apply {
@@ -126,7 +126,7 @@ class ListCharactersController(args: Bundle) : Controller(args), ListCharactersC
 
             val lastUsed = (skillDiffs.map { it.skill.lastUsed } + thingDiffs.map { it.first.lastUsed })
                 .min() ?: Calendar.getInstance().time
-            characterItems.add(CharacterItem(character.id, character.name, hp, lastUsed, effectDiffNames, skillDiffNames, thingDiffNames))
+            characterItems.add(CharacterItem(character, hp, lastUsed, effectDiffNames, skillDiffNames, thingDiffNames))
             characterItems.forEachIndexed { index, item ->
                 item.index = index
             }
@@ -146,7 +146,7 @@ class ListCharactersController(args: Bundle) : Controller(args), ListCharactersC
         val id = db.characterDao().insert(character)
         character.id = id
 
-        val item = CharacterItem(character.id, characterName, 0, Calendar.getInstance().time, listOf(), listOf(), listOf())
+        val item = CharacterItem(character, 0, Calendar.getInstance().time, listOf(), listOf(), listOf())
         characterItems.add(item)
         characterItems.forEachIndexed { index, item ->
             item.index = index
@@ -155,7 +155,7 @@ class ListCharactersController(args: Bundle) : Controller(args), ListCharactersC
     }
 
     override fun archiveCharacter(pos: Int, item: CharacterItem) {
-        val character = db.characterDao().get(world.id, game.id, item.id)
+        val character = db.characterDao().get(world.id, game.id, item.character.id)
         character.archived = true
         db.characterDao().update(character)
 
@@ -164,5 +164,11 @@ class ListCharactersController(args: Bundle) : Controller(args), ListCharactersC
             item.index = index
         }
         view.archiveddAt(pos)
+    }
+
+    override fun renameCharacter(pos: Int, character: GameCharacter, name: String) {
+        character.name = name
+        db.characterDao().update(character)
+        view.itemChangedAt(pos)
     }
 }
