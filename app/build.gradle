@@ -67,6 +67,6 @@ dependencies {
     kapt "android.arch.persistence.room:compiler:$room_version"
 
     // Tutorial view
-    implementation 'com.github.msayan:tutorial-view:v1.0.10'
+    implementation 'com.github.msayan:tutorial-view:v1.0.11'
 
 }
