@@ -41,10 +41,6 @@ class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContrac
             .sortedWith(compareByDescending<Effect> { it.lastUsed }
                 .thenBy { it.name }
             ).map { effect ->
-//                val effectSkills = db.effectSkillDao().getAllByEffect(world.id, effect.id)
-//                    .map { EffectSkillRow(effect.name, it.value, it) }
-//                    .sortedBy { it.name }
-//                    .toMutableList()
                 val effectSkills = effect.getSkillToValue(db)
                     .map { EffectSkillRow(it.first.name, it.second, it.first) }
                 EffectRow(effect.name, effectSkills, effect)
@@ -81,6 +77,14 @@ class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContrac
         db.effectDao().update(effect)
 
         view.itemArchivedAt(pos)
+    }
+
+    override fun renameEffect(pos: Int, effect: Effect, name: String) {
+        effect.name = name
+        db.effectDao().update(effect)
+
+        effectItems[pos].name = name
+        view.itemChangedAt(pos)
     }
 
     override fun getAvailableSkillsForEffect(effect: Effect): List<Skill> {

@@ -23,9 +23,10 @@ interface ListEffectsContract {
         fun attachSkillForEffect(pos: Int, effect: Effect, skill: Skill)
         fun detachSkillForEffect(pos: Int, effect: Effect, effectSkill: EffectSkill)
         fun onEffectSkillChanged(pos: Int, effect: Effect, skill: Skill, delta: Int)
+        fun renameEffect(pos: Int, effect: Effect, name: String)
     }
 }
 
 class EffectSkillRow(val name: String, val value: Int, val skill: Skill)
 
-class EffectRow(val name: String, var effectSkills: List<EffectSkillRow>, val effect: Effect)
+class EffectRow(var name: String, var effectSkills: List<EffectSkillRow>, val effect: Effect)

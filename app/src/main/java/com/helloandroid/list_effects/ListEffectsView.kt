@@ -36,15 +36,20 @@ class ListEffectsView @Inject constructor(val activity: MainActivity) : _FrameLa
         }
         effectsAdapter.onItemLongclickListener = { pos, row ->
             val usedSkills = controller.getUsedEffectSkills(row.effect)
-            val variants = listOf("Archive effect") + usedSkills.map { "Detach ${it.first}" }
+            val usual = listOf("Rename", "Archive effect")
+            val variants = usual + usedSkills.map { "Detach ${it.first}" }
             AlertDialog.Builder(activity)
                 .setItems(variants.toTypedArray(), DialogInterface.OnClickListener { dialog, which ->
                     if(which == 0) {
+                        activity.showAlertEditDialog("Rename effect:", row.effect.name) { name ->
+                            controller.renameEffect(pos, row.effect, name)
+                        }
+                    } else if(which == 1) {
                         confirmArchiveEffect(row.effect.name) {
                             controller.archiveEffect(pos, row.effect)
                         }
                     } else {
-                        val effectSkill = usedSkills[which - 1]
+                        val effectSkill = usedSkills[which - usual.size]
                         controller.detachSkillForEffect(pos, row.effect, effectSkill.second)
                     }
                 })
@@ -85,6 +90,7 @@ class ListEffectsView @Inject constructor(val activity: MainActivity) : _FrameLa
     }
 
     override fun itemArchivedAt(pos: Int) {
+        effectsAdapter.items.removeAt(pos)
         effectsAdapter.notifyItemRemoved(pos)
     }
 

@@ -2,7 +2,6 @@ package com.helloandroid.room
 
 import android.arch.persistence.room.*
 import java.util.*
-import kotlin.math.sign
 
 @Entity
 class Effect(var name: String, val worldGroup: Long, var lastUsed: Date, var archived: Boolean = false) {

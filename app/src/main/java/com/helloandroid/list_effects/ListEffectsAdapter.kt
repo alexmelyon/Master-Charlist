@@ -37,11 +37,10 @@ class ListEffectsAdapter : RecyclerView.Adapter<ListEffectsAdapter.ViewHolder>()
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder as ViewHolder
         holder.effectName.text = items[position].name
 
         val effectSkills = items[position].effectSkills
-        holder.attachedSkils.removeAllViews()
+        holder.attachedSkills.removeAllViews()
         val inflater = LayoutInflater.from(holder.itemView.context)
         for ((subPos, es) in effectSkills.withIndex()) {
             val row = inflater.inflate(R.layout.session_effect_skill, null)
@@ -68,7 +67,7 @@ class ListEffectsAdapter : RecyclerView.Adapter<ListEffectsAdapter.ViewHolder>()
                 onSubitemPlus(correctPos, effect, skill)
             }
 
-            holder.attachedSkils.addView(row)
+            holder.attachedSkills.addView(row)
         }
         holder.itemView.setOnClickListener { v ->
             val correctPos = holder.adapterPosition
@@ -83,6 +82,6 @@ class ListEffectsAdapter : RecyclerView.Adapter<ListEffectsAdapter.ViewHolder>()
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val effectName = view.findViewById<TextView>(R.id.effect_name)
-        val attachedSkils = view.findViewById<LinearLayout>(R.id.attached_skills)
+        val attachedSkills = view.findViewById<LinearLayout>(R.id.attached_skills)
     }
 }
