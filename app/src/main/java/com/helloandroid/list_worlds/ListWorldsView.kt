@@ -14,6 +14,7 @@ import com.helloandroid.MainActivity
 import com.helloandroid.R
 import com.helloandroid.room.World
 import com.helloandroid.ui.RecyclerStringAdapter
+import com.helloandroid.utils.showAlertDialog
 import com.helloandroid.utils.showAlertEditDialog
 import org.jetbrains.anko._FrameLayout
 import org.jetbrains.anko.matchParent
@@ -43,7 +44,7 @@ class ListWorldsView @Inject constructor(val activity: MainActivity) : _FrameLay
                         0 -> activity.showAlertEditDialog("Rename world:", world.name) { name ->
                             controller.renameWorld(pos, world, name)
                         }
-                        1 -> activity.showAlertEditDialog("Archive world?", world.name) {
+                        1 -> activity.showAlertDialog("Archive world?", world.name) {
                             controller.archiveWorldAt(pos)
                         }
                     }
