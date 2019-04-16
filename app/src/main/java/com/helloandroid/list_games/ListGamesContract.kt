@@ -10,6 +10,7 @@ interface ListGamesContract {
         fun showAddGameDialog()
         fun addedAt(pos: Int, game: Game)
         fun archivedAt(pos: Int)
+        fun itemChangedAt(pos: Int)
     }
 
     interface Controller {
@@ -17,5 +18,6 @@ interface ListGamesContract {
         fun getWorldName(): String
         fun createGame(gameName: String)
         fun archiveGameAt(pos: Int)
+        fun renameGame(pos: Int, game: Game, name: String)
     }
 }

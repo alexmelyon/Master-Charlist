@@ -8,6 +8,7 @@ import android.widget.EditText
 import com.helloandroid.MainActivity
 import com.helloandroid.room.Game
 import com.helloandroid.ui.RecyclerStringAdapter
+import com.helloandroid.utils.showAlertDialog
 import com.helloandroid.utils.showAlertEditDialog
 import org.jetbrains.anko._FrameLayout
 import org.jetbrains.anko.linearLayout
@@ -29,15 +30,16 @@ class ListGamesView @Inject constructor(val activity: MainActivity) : _FrameLayo
         }
         gamesAdapter.onItemLongclickListener = { pos, game ->
             AlertDialog.Builder(activity)
-                .setTitle("Archive game?")
-                .setMessage(game.name)
-                .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
-                    controller.archiveGameAt(pos)
-                })
-                .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
-                    dialog.dismiss()
-                })
-                .show()
+                .setItems(arrayOf("Rename", "Archive"), DialogInterface.OnClickListener { dialog, which ->
+                    when(which) {
+                        0 -> activity.showAlertEditDialog("Rename game:", game.name) { name ->
+                            controller.renameGame(pos, game, name)
+                        }
+                        1 -> activity.showAlertDialog("Archive game?", game.name) {
+                            controller.archiveGameAt(pos)
+                        }
+                    }
+                }).show()
         }
         gamesView = recyclerView {
             adapter = gamesAdapter
@@ -60,5 +62,9 @@ class ListGamesView @Inject constructor(val activity: MainActivity) : _FrameLayo
 
     override fun archivedAt(pos: Int) {
         gamesAdapter.itemRemovedAt(pos)
+    }
+
+    override fun itemChangedAt(pos: Int) {
+        gamesAdapter.notifyItemChanged(pos)
     }
 }

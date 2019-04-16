@@ -48,17 +48,6 @@ class ListWorldsView @Inject constructor(val activity: MainActivity) : _FrameLay
                         }
                     }
                 }).show()
-
-//            AlertDialog.Builder(activity)
-//                .setTitle("Archive world?")
-//                .setMessage(world.name)
-//                .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
-//                    controller.archiveWorldAt(pos)
-//                })
-//                .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
-//                    dialog.dismiss()
-//                })
-//                .show()
         }
         worldsView = recyclerView {
             adapter = worldsAdapter

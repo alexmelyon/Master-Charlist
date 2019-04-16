@@ -100,4 +100,10 @@ class ListGamesController(args: Bundle) : Controller(args), ListGamesContract.Co
         gamesSet.remove(game)
         view.archivedAt(pos)
     }
+
+    override fun renameGame(pos: Int, game: Game, name: String) {
+        game.name = name
+        db.gameDao().update(game)
+        view.itemChangedAt(pos)
+    }
 }
