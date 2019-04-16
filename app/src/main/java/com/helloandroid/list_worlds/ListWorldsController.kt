@@ -94,4 +94,10 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
         setWorlds.remove(world)
         view.archivedAt(pos)
     }
+
+    override fun renameWorld(pos: Int, world: World, name: String) {
+        world.name = name
+        db.worldDao().update(world)
+        view.itemChangedAt(pos)
+    }
 }

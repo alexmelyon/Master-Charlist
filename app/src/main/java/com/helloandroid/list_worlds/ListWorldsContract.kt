@@ -9,6 +9,7 @@ interface ListWorldsContract {
         fun onItemClick(world: World)
         fun createWorld(worldName: String)
         fun archiveWorldAt(pos: Int)
+        fun renameWorld(pos: Int, world: World, name: String)
     }
 
     interface View {
@@ -18,5 +19,6 @@ interface ListWorldsContract {
         fun addedAt(i: Int, world: World)
         fun archivedAt(pos: Int)
         fun showAboutDialog()
+        fun itemChangedAt(pos: Int)
     }
 }

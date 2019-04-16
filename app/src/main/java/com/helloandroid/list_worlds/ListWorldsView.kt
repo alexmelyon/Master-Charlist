@@ -38,15 +38,27 @@ class ListWorldsView @Inject constructor(val activity: MainActivity) : _FrameLay
         worldsAdapter.onItemLongclickListener = { pos, world ->
             // TODO Rename
             AlertDialog.Builder(activity)
-                .setTitle("Archive world?")
-                .setMessage(world.name)
-                .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
-                    controller.archiveWorldAt(pos)
-                })
-                .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
-                    dialog.dismiss()
-                })
-                .show()
+                .setItems(arrayOf("Rename", "Archive"), DialogInterface.OnClickListener { dialog, which ->
+                    when(which) {
+                        0 -> activity.showAlertEditDialog("Rename world:", world.name) { name ->
+                            controller.renameWorld(pos, world, name)
+                        }
+                        1 -> activity.showAlertEditDialog("Archive world?", world.name) {
+                            controller.archiveWorldAt(pos)
+                        }
+                    }
+                }).show()
+
+//            AlertDialog.Builder(activity)
+//                .setTitle("Archive world?")
+//                .setMessage(world.name)
+//                .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
+//                    controller.archiveWorldAt(pos)
+//                })
+//                .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
+//                    dialog.dismiss()
+//                })
+//                .show()
         }
         worldsView = recyclerView {
             adapter = worldsAdapter
@@ -63,6 +75,10 @@ class ListWorldsView @Inject constructor(val activity: MainActivity) : _FrameLay
 
     override fun archivedAt(pos: Int) {
         worldsAdapter.itemRemovedAt(pos)
+    }
+
+    override fun itemChangedAt(pos: Int) {
+        worldsAdapter.notifyItemChanged(pos)
     }
 
     override fun showCreateWorldDialog() {

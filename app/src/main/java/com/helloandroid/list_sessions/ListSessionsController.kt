@@ -106,7 +106,7 @@ class ListSessionsController(args: Bundle) : Controller(args), ListSessionsContr
 
     override fun getDescription(pos: Int): String {
         val session = sessionsList[pos]
-        return session.startTime.let { SimpleDateFormat("d MMMM HH:mm yyyy", Locale.getDefault()).format(it) }
+        return session.startTime.let { SimpleDateFormat("EEEE d MMMM HH:mm yyyy", Locale.getDefault()).format(it) }
     }
 
     override fun getHeader(pos: Int): String {
@@ -132,7 +132,7 @@ class ListSessionsController(args: Bundle) : Controller(args), ListSessionsContr
 
     override fun createSession() {
         val now = Calendar.getInstance().time
-        val name = now.let { SimpleDateFormat("d MMMM HH:mm yyyy", Locale.getDefault()).format(it) }
+        val name = now.let { SimpleDateFormat("EEEE d MMMM HH:mm yyyy", Locale.getDefault()).format(it) }
         val session = GameSession(name, game.id, world.id, now, open = true, endTime = now)
         val id = db.gameSessionDao().insert(session)
         session.id = id
