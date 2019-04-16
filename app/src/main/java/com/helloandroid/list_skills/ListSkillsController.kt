@@ -79,4 +79,10 @@ class ListSkillsController(args: Bundle) : Controller(args), ListSkillsContract.
 
         view.addedAt(0, skill)
     }
+
+    override fun renameSkill(pos: Int, skill: Skill, name: String) {
+        skill.name = name
+        db.skillDao().update(skill)
+        view.itemChangedAt(pos)
+    }
 }

@@ -8,6 +8,7 @@ import android.widget.EditText
 import com.helloandroid.MainActivity
 import com.helloandroid.room.Skill
 import com.helloandroid.ui.RecyclerStringAdapter
+import com.helloandroid.utils.showAlertDialog
 import com.helloandroid.utils.showAlertEditDialog
 import org.jetbrains.anko._FrameLayout
 import org.jetbrains.anko.matchParent
@@ -25,15 +26,16 @@ class ListSkillsView @Inject constructor(val activity: MainActivity) : _FrameLay
         skillsAdapter = RecyclerStringAdapter(container.context)
         skillsAdapter.onItemLongclickListener = { pos, skill ->
             AlertDialog.Builder(activity)
-                .setTitle("Archive skill?")
-                .setMessage(skill.name)
-                .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
-                    controller.archiveSkill(pos, skill)
-                })
-                .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
-                    dialog.dismiss()
-                })
-                .show()
+                .setItems(arrayOf("Rename", "Archive"), DialogInterface.OnClickListener { dialog, which ->
+                    when(which) {
+                        0 -> activity.showAlertEditDialog("Rename skill:", skill.name) { name ->
+                            controller.renameSkill(pos, skill, name)
+                        }
+                        1 -> activity.showAlertDialog("Archive skill?", skill.name) {
+                            controller.archiveSkill(pos, skill)
+                        }
+                    }
+                }).show()
         }
 
         return container.context.recyclerView {
@@ -57,5 +59,9 @@ class ListSkillsView @Inject constructor(val activity: MainActivity) : _FrameLay
 
     override fun addedAt(pos: Int, skill: Skill) {
         skillsAdapter.itemAddedAt(pos, skill)
+    }
+
+    override fun itemChangedAt(pos: Int) {
+        skillsAdapter.notifyItemChanged(pos)
     }
 }

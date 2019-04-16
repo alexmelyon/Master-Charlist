@@ -11,10 +11,12 @@ interface ListSkillsContract {
         fun archivedAt(pos: Int)
         fun showAddSkillDialog()
         fun addedAt(pos: Int, skill: Skill)
+        fun itemChangedAt(pos: Int)
     }
 
     interface Controller {
         fun archiveSkill(pos: Int, skill: Skill)
         fun createSkill(skillName: String)
+        fun renameSkill(pos: Int, skill: Skill, name: String)
     }
 }
