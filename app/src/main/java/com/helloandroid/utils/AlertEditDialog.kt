@@ -12,13 +12,12 @@ import org.jetbrains.anko.singleLine
 import android.app.Activity
 import android.view.WindowManager
 import android.widget.EditText
-
-
-
+import com.helloandroid.R
 
 
 fun MainActivity.showAlertEditDialog(title: String, message: String = "", action: (String) -> Unit) {
     val edit = TextInputEditText(this)
+    edit.id = R.id.alert_edit
     edit.singleLine = true
     edit.inputType = EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES
     edit.setText(message, TextView.BufferType.EDITABLE)

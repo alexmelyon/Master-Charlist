@@ -51,6 +51,7 @@ class ListWorldsView @Inject constructor(val activity: MainActivity) : _FrameLay
                 }).show()
         }
         worldsView = recyclerView {
+            id = R.id.list_worlds
             adapter = worldsAdapter
         }.lparams(matchParent, matchParent)
     }
