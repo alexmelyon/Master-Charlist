@@ -72,6 +72,8 @@ class SessionDiffsAdapter(val context: Context, val editable: Boolean) : Recycle
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val type = SessionItemType.values()[holder.itemViewType]
+        holder.itemView.setOnClickListener(null)
+        holder.itemView.setOnLongClickListener(null)
         when (type) {
             SessionItemType.ITEM_HP,
             SessionItemType.ITEM_SKILL,
@@ -92,17 +94,16 @@ class SessionDiffsAdapter(val context: Context, val editable: Boolean) : Recycle
                 }
             }
             SessionItemType.ITEM_EFFECT -> {
-                val correctPosition = holder.adapterPosition
                 holder as ItemEffectViewHolder
-                holder.title.text = items[correctPosition].title
-                if(items[correctPosition].value < 0) {
+                holder.title.text = items[position].title
+                if(items[position].value < 0) {
                     holder.title.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
                 }
-                holder.desc.text = items[correctPosition].desc
+                holder.desc.text = items[position].desc
 
                 val inflater = LayoutInflater.from(holder.itemView.context)
                 holder.attachedSkills.removeAllViews()
-                items[correctPosition].effectSkills.forEachIndexed { index, skillToValue ->
+                items[position].effectSkills.forEachIndexed { index, skillToValue ->
                     val row = inflater.inflate(R.layout.session_effect_skill, null)
                     val title = row.findViewById<TextView>(R.id.title)
                     title.text = skillToValue.first
@@ -111,19 +112,21 @@ class SessionDiffsAdapter(val context: Context, val editable: Boolean) : Recycle
 
                     val plus = row.findViewById<Button>(R.id.plusButton)
                     plus.visibility = if(editable) View.VISIBLE else View.INVISIBLE
-                    plus.setOnClickListener { v -> onSubitemPlus(correctPosition, index) }
+                    plus.setOnClickListener { v -> onSubitemPlus(position, index) }
                     val minus = row.findViewById<Button>(R.id.minusButton)
                     minus.visibility = if(editable) View.VISIBLE else View.INVISIBLE
-                    minus.setOnClickListener { v -> onSubitemMinus(correctPosition, index) }
+                    minus.setOnClickListener { v -> onSubitemMinus(position, index) }
 
                     holder.attachedSkills.addView(row)
                 }
 
                 if(editable) {
                     holder.itemView.setOnClickListener { view ->
+                        val correctPosition = holder.adapterPosition
                         onItemClickListener(correctPosition)
                     }
                     holder.itemView.setOnLongClickListener { view ->
+                        val correctPosition = holder.adapterPosition
                         onItemLongClickListener(correctPosition)
                         return@setOnLongClickListener true
                     }

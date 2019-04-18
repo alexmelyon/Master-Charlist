@@ -19,7 +19,7 @@ interface WorldDao {
     @Query("SELECT * FROM world WHERE archived = :archived")
     fun getAll(archived: Boolean): List<World>
 
-    @Query("SELECT * FROM world WHERE id = :worldId LIMIT 1")
+    @Query("SELECT * FROM world WHERE id = :worldId")
     fun getWorldById(worldId: Long): World
 
     @Insert

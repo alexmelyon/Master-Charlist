@@ -22,7 +22,7 @@ interface GameSessionDao {
     @Query("SELECT id FROM gamesession WHERE worldGroup = :worldId AND gameGroup = :gameId AND open = 0 AND archived = 0")
     fun getClosed(worldId: Long, gameId: Long): List<Long>
 
-    @Query("SELECT * FROM gamesession WHERE worldGroup = :worldId AND gameGroup = :gameId AND id = :id LIMIT 1")
+    @Query("SELECT * FROM gamesession WHERE worldGroup = :worldId AND gameGroup = :gameId AND id = :id")
     fun get(worldId: Long, gameId: Long, id: Long): GameSession
 
     @Insert

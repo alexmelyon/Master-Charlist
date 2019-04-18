@@ -110,7 +110,7 @@ class ListCharactersController(args: Bundle) : Controller(args), ListCharactersC
                 .map { SkillValueModifier(it.first, it.second, skillIdToModifier.getValue(it.first.id)) }
                 .filter { it.value != 0 || it.modifier != 0 }
                 .toList()
-            val skillDiffNames = skillDiffs.map { "${it.skill.name}: ${it.value} (${it.modifier}) ${it.value + it.modifier}" }
+            val skillDiffNames = skillDiffs.map { "%s: %d (%+d) %d".format(it.skill.name, it.value, it.modifier, it.value + it.modifier) }
 
             val things = db.thingDao().getAll(world.id, archived = false)
             // TODO Refactor this boilerplate

@@ -20,7 +20,7 @@ interface GameDao {
     @Query("SELECT * FROM game WHERE worldGroup = :worldId AND archived = :archived")
     fun getAll(worldId: Long, archived: Boolean): List<Game>
 
-    @Query("SELECT * FROM game WHERE id = :gameId AND worldGroup = :worldId LIMIT 1")
+    @Query("SELECT * FROM game WHERE id = :gameId AND worldGroup = :worldId")
     fun getAll(gameId: Long, worldId: Long): Game
 
     @Insert

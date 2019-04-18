@@ -18,7 +18,7 @@ interface SkillDao {
     @Query("SELECT * FROM skill WHERE worldGroup = :worldId AND archived = :archived")
     fun getAll(worldId: Long, archived: Boolean): List<Skill>
 
-    @Query("SELECT * FROM skill WHERE id = :skillId LIMIT 1")
+    @Query("SELECT * FROM skill WHERE id = :skillId")
     fun get(skillId: Long): Skill
 
     @Insert

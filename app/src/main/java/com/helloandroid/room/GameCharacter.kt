@@ -18,7 +18,7 @@ interface CharacterDao {
     @Query("SELECT * FROM gamecharacter WHERE worldGroup = :worldId AND gameGroup = :gameId AND archived = :archived")
     fun getAll(worldId: Long, gameId: Long, archived: Boolean): List<GameCharacter>
 
-    @Query("SELECT * FROM gamecharacter WHERE worldGroup = :worldId AND gameGroup = :gameId AND id = :characterId LIMIT 1")
+    @Query("SELECT * FROM gamecharacter WHERE worldGroup = :worldId AND gameGroup = :gameId AND id = :characterId")
     fun get(worldId: Long, gameId: Long, characterId: Long): GameCharacter
 
     @Insert

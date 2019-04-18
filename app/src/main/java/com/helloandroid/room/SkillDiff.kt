@@ -29,7 +29,7 @@ interface SkillDiffDao {
     @Query("SELECT * FROM skilldiff WHERE worldGroup = :worldId AND gameGroup = :gameId AND sessionGroup = :sessionId AND archived = :archived")
     fun getAllBySession(worldId: Long, gameId: Long, sessionId: Long, archived: Boolean): List<SkillDiff>
 
-    @Query("SELECT * FROM skilldiff WHERE worldGroup = :worldId AND gameGroup = :gameId AND sessionGroup = :sessionId AND characterGroup = :characterId AND id = :id LIMIT 1")
+    @Query("SELECT * FROM skilldiff WHERE worldGroup = :worldId AND gameGroup = :gameId AND sessionGroup = :sessionId AND characterGroup = :characterId AND id = :id")
     fun get(worldId: Long, gameId: Long, sessionId: Long, characterId: Long, id: Long): SkillDiff
 
     @Insert
