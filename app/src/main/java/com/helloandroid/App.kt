@@ -15,6 +15,7 @@ class App : Application(), HasActivityInjector {
 
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Activity>
+    lateinit var appComponent: AppComponent
 
     override fun activityInjector(): AndroidInjector<Activity> {
         return dispatchingAndroidInjector
@@ -22,8 +23,6 @@ class App : Application(), HasActivityInjector {
 
     companion object {
         lateinit var instance: App
-            private set
-        lateinit var appComponent: AppComponent
             private set
     }
 

@@ -4,6 +4,8 @@ import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.migration.Migration
 import android.content.Context
+import android.util.Log
+import com.helloandroid.BuildConfig
 import dagger.Module
 import dagger.Provides
 
@@ -11,7 +13,10 @@ import dagger.Provides
 class AppDatabaseModule(val context: Context) {
     @Provides
     fun provideDb(): AppDatabase {
-        return Room.databaseBuilder(context, AppDatabase::class.java, "MasterCharlistDB")
+        val dbName = BuildConfig.ROOM_DB_NAME
+//        val dbName = "MasterCharlistDB"
+        Log.i("ROOM", "Room using '$dbName'")
+        return Room.databaseBuilder(context, AppDatabase::class.java, dbName)
             .allowMainThreadQueries()
             .addMigrations(MIGRATION_1_2)
             .addMigrations(MIGRATION_2_3)

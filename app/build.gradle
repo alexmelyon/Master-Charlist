@@ -30,6 +30,19 @@ android {
     }
     sourceSets {
         androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
+//        androidTest {
+//            java.srcDirs += 'src/androidTestMyFlavor/java'
+//        }
+    }
+    productFlavors {
+        dev {
+            flavorDimensions "default"
+            buildConfigField("String", "ROOM_DB_NAME", "\"MasterCharlistDB\"")
+        }
+        myFlavor {
+            flavorDimensions "default"
+            buildConfigField("String", "ROOM_DB_NAME", "\"TestDB\"")
+        }
     }
 }
 

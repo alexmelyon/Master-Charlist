@@ -58,6 +58,7 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
                     .show()
             }
             onItemLongClickListener = { pos ->
+                // TODO Archive diff
                 val usedSkills = controller.getUsedEffectSkills(pos)
                 val skillNames = usedSkills.map { it.first }
                 AlertDialog.Builder(activity)
