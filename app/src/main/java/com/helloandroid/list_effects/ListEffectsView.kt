@@ -1,11 +1,12 @@
 package com.helloandroid.list_effects
 
+import android.app.ProgressDialog.show
 import android.content.DialogInterface
 import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
 import com.helloandroid.MainActivity
-import com.helloandroid.utils.alertNoAvailableSkills
+import com.helloandroid.room.Skill
 import com.helloandroid.utils.showAlertEditDialog
 import org.jetbrains.anko._FrameLayout
 import org.jetbrains.anko.recyclerview.v7.recyclerView
@@ -22,17 +23,19 @@ class ListEffectsView @Inject constructor(val activity: MainActivity) : _FrameLa
         effectsAdapter = ListEffectsAdapter()
         effectsAdapter.onItemClickListener = { pos, row ->
             val skillsForEffect = controller.getAvailableSkillsForEffect(row.effect)
-            val skillNames = skillsForEffect.map { "Attach ${it.name}" }.toTypedArray()
-            if(skillNames.isEmpty()) {
-                activity.alertNoAvailableSkills()
-            } else {
-                AlertDialog.Builder(activity)
-                    .setItems(skillNames, DialogInterface.OnClickListener { dialog, which ->
+            val skillNames = listOf("Create new...") + skillsForEffect.map { "Attach ${it.name}" }
+            AlertDialog.Builder(activity)
+                .setItems(skillNames.toTypedArray(), DialogInterface.OnClickListener { dialog, which ->
+                    if(which == 0) {
+                        showCreateSkillDialog { skill ->
+                            controller.attachSkillForEffect(pos, row.effect, skill)
+                        }
+                    } else {
                         val skill = skillsForEffect[which]
                         controller.attachSkillForEffect(pos, row.effect, skill)
-                    })
-                    .show()
-            }
+                    }
+                })
+                .show()
         }
         effectsAdapter.onItemLongclickListener = { pos, row ->
             val usedSkills = controller.getUsedEffectSkills(row.effect)
@@ -64,6 +67,13 @@ class ListEffectsView @Inject constructor(val activity: MainActivity) : _FrameLa
 
         return container.context.recyclerView {
             adapter = effectsAdapter
+        }
+    }
+
+    fun showCreateSkillDialog(action: (Skill) -> Unit) {
+        activity.showAlertEditDialog("Skill name:") { name ->
+            val skill = controller.createSkill(name)
+            action(skill)
         }
     }
 

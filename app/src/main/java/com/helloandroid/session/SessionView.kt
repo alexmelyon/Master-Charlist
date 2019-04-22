@@ -9,7 +9,6 @@ import com.helloandroid.room.Effect
 import com.helloandroid.room.GameCharacter
 import com.helloandroid.room.Skill
 import com.helloandroid.room.Thing
-import com.helloandroid.utils.alertNoAvailableSkills
 import com.helloandroid.utils.showAlertEditDialog
 import org.jetbrains.anko._FrameLayout
 import org.jetbrains.anko.recyclerview.v7.recyclerView
@@ -44,17 +43,19 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
             }
             onItemClickListener = { pos ->
                 val skillsForEffect = controller.getAvailableSkillsForEffect(pos)
-                val skillNames = skillsForEffect.map { "Attach ${it.name}" }
-                if(skillNames.isEmpty()) {
-                    activity.alertNoAvailableSkills()
-                } else {
-                    AlertDialog.Builder(activity)
-                        .setItems(skillNames.toTypedArray(), DialogInterface.OnClickListener { dialog, which ->
-                            val skill = skillsForEffect[which]
+                val skillNames = listOf("Create new...") + skillsForEffect.map { "Attach ${it.name}" }
+                AlertDialog.Builder(activity)
+                    .setItems(skillNames.toTypedArray(), DialogInterface.OnClickListener { dialog, which ->
+                        if(which == 0) {
+                            showCreateSkillDialog { skill ->
+                                controller.attachSkillForEffect(pos, skill)
+                            }
+                        } else {
+                            val skill = skillsForEffect[which - 1]
                             controller.attachSkillForEffect(pos, skill)
-                        })
-                        .show()
-                }
+                        }
+                    })
+                    .show()
             }
             onItemLongClickListener = { pos ->
                 val usedSkills = controller.getUsedEffectSkills(pos)
@@ -157,7 +158,7 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
             }).show()
     }
 
-    override fun showAttachEffectDialog(characters: List<GameCharacter>, effects: List<Effect>) {
+    override fun showAddEffectDialog(characters: List<GameCharacter>, effects: List<Effect>) {
         val characterNames = characters.map { it.name }
         AlertDialog.Builder(activity)
             .setTitle("Select character")

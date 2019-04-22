@@ -63,6 +63,13 @@ class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContrac
         return super.onOptionsItemSelected(item)
     }
 
+    override fun createSkill(name: String): Skill {
+        val skill = Skill(name, world.id, Calendar.getInstance().time)
+        val id = db.skillDao().insert(skill)
+        skill.id = id
+        return skill
+    }
+
     override fun createEffect(effectName: String) {
         val effect = Effect(effectName, world.id, Calendar.getInstance().time)
         val id = db.effectDao().insert(effect)

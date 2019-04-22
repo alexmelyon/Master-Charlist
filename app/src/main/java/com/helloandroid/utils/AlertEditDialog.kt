@@ -55,13 +55,3 @@ fun Context.showAlertDialog(title: String, message: String, action: () -> Unit) 
         .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->  })
         .show()
 }
-
-fun Context.alertNoAvailableSkills() {
-    AlertDialog.Builder(this)
-        .setTitle("Master Charlist")
-        .setMessage("No available skills")
-        .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
-            dialog.dismiss()
-        })
-        .show()
-}

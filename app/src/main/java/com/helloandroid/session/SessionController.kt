@@ -145,7 +145,7 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
                 view.showAddThingDialog(getCharacters(), getThings())
             }
             SESSION_ADD_EFFECT -> {
-                view.showAttachEffectDialog(getCharacters(), getEffects())
+                view.showAddEffectDialog(getCharacters(), getEffects())
             }
             SESSION_REMOVE_EFFECT -> {
                 val characterToEffects = getUsedEffects()
