@@ -31,7 +31,7 @@ class ListEffectsView @Inject constructor(val activity: MainActivity) : _FrameLa
                             controller.attachSkillForEffect(pos, row.effect, skill)
                         }
                     } else {
-                        val skill = skillsForEffect[which]
+                        val skill = skillsForEffect[which - 1]
                         controller.attachSkillForEffect(pos, row.effect, skill)
                     }
                 })
