@@ -9,9 +9,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import com.helloandroid.MainActivity
 import org.jetbrains.anko.singleLine
-import android.app.Activity
 import android.view.WindowManager
-import android.widget.EditText
 import com.helloandroid.R
 
 

@@ -10,11 +10,11 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class AppDatabaseModule(val context: Context) {
+open class AppDatabaseModule(val context: Context) {
+
     @Provides
     fun provideDb(): AppDatabase {
         val dbName = BuildConfig.ROOM_DB_NAME
-//        val dbName = "MasterCharlistDB"
         Log.i("ROOM", "Room using '$dbName'")
         return Room.databaseBuilder(context, AppDatabase::class.java, dbName)
             .allowMainThreadQueries()

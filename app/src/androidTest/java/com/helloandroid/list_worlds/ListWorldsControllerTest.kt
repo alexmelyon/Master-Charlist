@@ -10,9 +10,6 @@ import android.support.test.runner.AndroidJUnit4
 import com.helloandroid.App
 import com.helloandroid.MainActivity
 import com.helloandroid.R
-import com.helloandroid.TestAppComponent
-import com.helloandroid.dagger.DaggerAppComponent
-import com.helloandroid.room.AppDatabaseModule
 import com.helloandroid.utils.RecyclerViewItemCountAssertion
 import org.junit.BeforeClass
 import org.junit.Test
@@ -24,12 +21,12 @@ class ListWorldsControllerTest {
     companion object {
 
         lateinit var context: Context
-        lateinit var testAppComponent: TestAppComponent
 
         @BeforeClass
         @JvmStatic
         fun setUp() {
             context = InstrumentationRegistry.getTargetContext()
+            val app = context.applicationContext as App
             // TODO Clear Room storage
         }
     }
