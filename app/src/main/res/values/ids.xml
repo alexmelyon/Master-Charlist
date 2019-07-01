@@ -7,4 +7,5 @@
     <item name="character_things" type="id"/>
     <item name="alert_edit" type="id"/>
     <item name="list_worlds" type="id"/>
+    <item name="list_games" type="id"/>
 </resources>

@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import android.widget.EditText
 import com.helloandroid.MainActivity
+import com.helloandroid.R
 import com.helloandroid.room.Game
 import com.helloandroid.ui.RecyclerStringAdapter
 import com.helloandroid.utils.showAlertDialog
@@ -42,6 +43,7 @@ class ListGamesView @Inject constructor(val activity: MainActivity) : _FrameLayo
                 }).show()
         }
         gamesView = recyclerView {
+            id = R.id.list_games
             adapter = gamesAdapter
         }.lparams(matchParent, matchParent)
     }
