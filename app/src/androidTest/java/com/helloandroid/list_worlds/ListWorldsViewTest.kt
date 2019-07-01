@@ -20,44 +20,22 @@ import org.junit.runner.RunWith
 
 open class ParentTest {
 
-    lateinit var app: App
-    lateinit var testAppComponent: TestAppComponent
+    val app: App
+    val testAppComponent: TestAppComponent
 
     init {
-        val app = InstrumentationRegistry.getTargetContext().applicationContext as App
+        app = InstrumentationRegistry.getTargetContext().applicationContext as App
         val dbModule = InmemoryDatabaseModule(app)
         testAppComponent = DaggerTestAppComponent.builder()
             .inmemoryDatabaseModule(dbModule)
             .build()
         app.appComponent = testAppComponent
         testAppComponent.inject(app)
-//        testAppComponent.inject(this)
-    }
-
-    @Before
-    open fun setUp() {
     }
 }
 
 @RunWith(AndroidJUnit4::class)
 class ListWorldsViewTest : ParentTest() {
-
-//    companion object {
-//
-//        lateinit var context: Context
-//
-//        @BeforeClass
-//        @JvmStatic
-//        fun setUp() {
-//            context = InstrumentationRegistry.getTargetContext()
-//            val app = context.applicationContext as App
-//            val testAppComponent = DaggerTestAppComponent.builder()
-//                .inmemoryDatabaseModule(InmemoryDatabaseModule(app))
-//                .build()
-//            app.appComponent = testAppComponent
-//            testAppComponent.inject(app)
-//        }
-//    }
 
     @Test
     fun testCreateWorld() {

@@ -48,7 +48,6 @@ class GamePagerController(args: Bundle) : Controller(args) {
     val pagerAdapter: RouterPagerAdapter
     lateinit var listCharactersController: ListCharactersController
     lateinit var screenToController: List<Pair<String, Controller>>
-    var selectedTab = 0
     lateinit var menu: Menu
     lateinit var menuInflater: MenuInflater
 
@@ -114,12 +113,10 @@ class GamePagerController(args: Bundle) : Controller(args) {
 
     val tabselectedListener = object : TabLayout.OnTabSelectedListener {
         override fun onTabSelected(tab: TabLayout.Tab) {
-            selectedTab = tab.position
             screenToController[tab.position].second.onCreateOptionsMenu(menu, menuInflater)
         }
 
         override fun onTabReselected(tab: TabLayout.Tab) {
-            selectedTab = tab.position
             screenToController[tab.position].second.onCreateOptionsMenu(menu, menuInflater)
         }
 
@@ -131,7 +128,7 @@ class GamePagerController(args: Bundle) : Controller(args) {
         this.menuInflater = inflater
 
         tabLayout.addOnTabSelectedListener(tabselectedListener)
-        tabLayout.getTabAt(selectedTab)?.select()
+        tabLayout.getTabAt(tabLayout.selectedTabPosition)?.select()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
