@@ -87,6 +87,7 @@ class ListGamesController(args: Bundle) : Controller(args), ListGamesContract.Co
 
     override fun createGame(gameName: String) {
         val game = Game(gameName, world.id, Calendar.getInstance().time)
+        gamesSet.add(game)
         val id = db.gameDao().insert(game)
         game.id = id
         view.addedAt(0, game)

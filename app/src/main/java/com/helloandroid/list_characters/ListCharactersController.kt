@@ -107,6 +107,7 @@ class ListCharactersController(args: Bundle) : Controller(args), ListCharactersC
                 .map { skill -> skills.single { it.id == skill.skillGroup } to skill.value }
                 .groupBy { it.first }
                 .map { it.key to it.value.sumBy { it.second } }
+                    // FIXME     java.util.NoSuchElementException: Key 5 is missing in the map.
                 .map { SkillValueModifier(it.first, it.second, skillIdToModifier.getValue(it.first.id)) }
                 .filter { it.value != 0 || it.modifier != 0 }
                 .toList()
