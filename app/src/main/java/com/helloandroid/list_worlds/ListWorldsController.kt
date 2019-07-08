@@ -1,6 +1,5 @@
 package com.helloandroid.list_worlds
 
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.view.*

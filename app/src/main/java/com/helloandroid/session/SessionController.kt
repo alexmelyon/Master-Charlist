@@ -250,6 +250,7 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
     }
 
     override fun addCharacterDetachEffectDiff(character: Int, effect: Int) {
+        // TODO Update Attach/Detach while updating on Session screen
         val selectedCharacter = getCharacters()[character]
         val usedEffects = getUsedEffects().getValue(selectedCharacter.name)
         val selectedEffect = usedEffects[effect]
@@ -259,7 +260,8 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
         val id = db.effectDiffDao().insert(effectDiff)
         effectDiff.id = id
 
-        val item = SessionItem(effectDiff.id, effectDiff.time, SessionItemType.ITEM_EFFECT, selectedEffect.name, selectedCharacter.name, -1, selectedCharacter.id)
+        val skillToValue = skillNamesToValue(effectDiff)
+        val item = SessionItem(effectDiff.id, effectDiff.time, SessionItemType.ITEM_EFFECT, selectedEffect.name, selectedCharacter.name, -1, selectedCharacter.id, effectSkills = skillToValue)
         itemsWrapper.add(item)
         view.itemAddedAt(item.index, item)
     }
