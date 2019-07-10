@@ -5,15 +5,15 @@ import android.support.test.espresso.action.ViewActions
 import android.support.test.espresso.matcher.ViewMatchers
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
+import android.support.v7.view.menu.MenuBuilder
+import android.view.MenuInflater
 import com.bluelinelabs.conductor.RouterTransaction
 import com.helloandroid.MainActivity
+import com.helloandroid.ParentTest
 import com.helloandroid.R
-import com.helloandroid.game_pager.GamePagerController
-import com.helloandroid.list_worlds.ParentTest
 import com.helloandroid.room.AppDatabase
 import com.helloandroid.room.World
 import com.helloandroid.utils.RecyclerViewItemCountAssertion
-import com.helloandroid.world_pager.WorldPagerController
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -33,17 +33,17 @@ class ListGamesControllerTest : ParentTest() {
     @Before
     fun setUp() {
         testAppComponent.inject(this)
-
-        println("DB $db")
-        // TODO Create world 0L
         activityRule.launchActivity(null)
-        assert(activityRule.activity != null)
-        activityRule.activity?.runOnUiThread {
+        activityRule.activity.runOnUiThread {
             val router = activityRule.activity.router
             val worldId = db.worldDao().insert(World("World", Date()))
-//            val controller = ListGamesController(worldId)
-            val controller = WorldPagerController(worldId)
+//            val controller = WorldPagerController(worldId)
+            val controller = ListGamesController(worldId)
             router.setRoot(RouterTransaction.with(controller))
+            val context = controller.activity
+            val menu = MenuBuilder(context)
+            val inflater = MenuInflater(context)
+            controller.onCreateOptionsMenu(menu, inflater)
         }
     }
 

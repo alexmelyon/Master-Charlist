@@ -1,17 +1,17 @@
 package com.helloandroid.dagger
 
 import com.helloandroid.list_games.ListGamesControllerTest
-import com.helloandroid.list_worlds.ListWorldsViewTest
-import com.helloandroid.list_worlds.ParentTest
+import com.helloandroid.list_worlds.ListWorldsControllerTest
 import dagger.Component
 import dagger.android.AndroidInjectionModule
 
-@Component(modules = [
-    MainActivityModule::class,
-    AndroidInjectionModule::class,
-    InmemoryDatabaseModule::class])
+@Component(
+    modules = [
+        MainActivityModule::class,
+        AndroidInjectionModule::class,
+        InmemoryDatabaseModule::class]
+)
 interface TestAppComponent : AppComponent {
-    fun inject(activity: ListWorldsViewTest)
-    fun inject(activity: ParentTest)
+    fun inject(activity: ListWorldsControllerTest)
     fun inject(activity: ListGamesControllerTest)
 }
