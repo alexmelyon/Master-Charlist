@@ -47,7 +47,8 @@ class GamePagerController(args: Bundle) : Controller(args) {
     lateinit var viewPager: ViewPager
     val pagerAdapter: RouterPagerAdapter
     lateinit var listCharactersController: ListCharactersController
-    lateinit var screenToController: List<Pair<String, Controller>>
+    data class ScreenToController(val screenName: String, val controller: Controller)
+    lateinit var screenToController: List<ScreenToController>
     var selectedTab = 0
     lateinit var menu: Menu
     lateinit var menuInflater: MenuInflater
@@ -56,7 +57,7 @@ class GamePagerController(args: Bundle) : Controller(args) {
         pagerAdapter = object : RouterPagerAdapter(this) {
             override fun configureRouter(router: Router, position: Int) {
                 if (!router.hasRootController()) {
-                    val page = screenToController[position].second
+                    val page = screenToController[position].controller
                     router.setRoot(RouterTransaction.with(page))
                 }
             }
@@ -66,7 +67,7 @@ class GamePagerController(args: Bundle) : Controller(args) {
             }
 
             override fun getPageTitle(position: Int): CharSequence? {
-                return screenToController[position].first
+                return screenToController[position].screenName
             }
         }
     }
@@ -79,10 +80,10 @@ class GamePagerController(args: Bundle) : Controller(args) {
         game = db.gameDao().getAll(args.getLong(GAME_KEY), world.id)
         listCharactersController = ListCharactersController(world.id, game.id)
         screenToController = listOf(
-            "Characters" to listCharactersController,
-            "Sessions" to ListSessionsController(world.id, game.id).apply {
+            ScreenToController("Sessions", ListSessionsController(world.id, game.id).apply {
                 delegate = WeakReference(listCharactersController)
-            }
+            }),
+            ScreenToController("Characters", listCharactersController)
         )
     }
 
@@ -115,12 +116,12 @@ class GamePagerController(args: Bundle) : Controller(args) {
     val tabselectedListener = object : TabLayout.OnTabSelectedListener {
         override fun onTabSelected(tab: TabLayout.Tab) {
             selectedTab = tab.position
-            screenToController[tab.position].second.onCreateOptionsMenu(menu, menuInflater)
+            screenToController[tab.position].controller.onCreateOptionsMenu(menu, menuInflater)
         }
 
         override fun onTabReselected(tab: TabLayout.Tab) {
             selectedTab = tab.position
-            screenToController[tab.position].second.onCreateOptionsMenu(menu, menuInflater)
+            screenToController[tab.position].controller.onCreateOptionsMenu(menu, menuInflater)
         }
 
         override fun onTabUnselected(tab: TabLayout.Tab?) {}
@@ -135,6 +136,6 @@ class GamePagerController(args: Bundle) : Controller(args) {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return screenToController[tabLayout.selectedTabPosition].second.onOptionsItemSelected(item)
+        return screenToController[tabLayout.selectedTabPosition].controller.onOptionsItemSelected(item)
     }
 }
