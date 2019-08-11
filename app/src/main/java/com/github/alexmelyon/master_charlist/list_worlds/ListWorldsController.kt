@@ -1,20 +1,27 @@
 package com.github.alexmelyon.master_charlist.list_worlds
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.*
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.RouterTransaction
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.IdpResponse
 import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.room.AppDatabase
 import com.github.alexmelyon.master_charlist.room.World
 import com.github.alexmelyon.master_charlist.tutorial.TutorialActivity
 import com.github.alexmelyon.master_charlist.world_pager.WorldPagerController
+import com.google.firebase.auth.FirebaseAuth
 import ru.napoleonit.talan.di.ControllerInjector
 import java.util.*
 import javax.inject.Inject
 
 class ListWorldsController : Controller(), ListWorldsContract.Controller {
+
+    private val REQ_CODE_SIGN_IN = 100
 
     @Inject
     lateinit var view: ListWorldsContract.View
@@ -49,6 +56,14 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.list_worlds, menu)
+
+        val login = menu.findItem(R.id.menu_login)
+        val logout = menu.findItem(R.id.menu_logout)
+        if(FirebaseAuth.getInstance().currentUser != null) {
+            login.isVisible = false
+        } else {
+            logout.isVisible = false
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -64,12 +79,53 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
                 })
                 return true
             }
+            R.id.menu_login -> {
+                val providers = arrayListOf(
+                    AuthUI.IdpConfig.EmailBuilder().build(),
+                    AuthUI.IdpConfig.PhoneBuilder().build(),
+                    AuthUI.IdpConfig.GoogleBuilder().build(),
+                    AuthUI.IdpConfig.FacebookBuilder().build())
+                startActivityForResult(
+                    AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(providers)
+                        .build(),
+                    REQ_CODE_SIGN_IN)
+            }
+            R.id.menu_logout -> {
+                AuthUI.getInstance()
+                    .signOut(this.activity!!)
+                    .addOnCompleteListener {
+                        Log.i("JCD", "LOGOUT")
+                    }
+            }
             R.id.menu_about -> {
                 view.showAboutDialog()
                 return true
             }
+            // TODO Check new version
+            // TODO Check authorized
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQ_CODE_SIGN_IN) {
+            val response = IdpResponse.fromResultIntent(data)
+
+            if (resultCode == Activity.RESULT_OK) {
+                // Successfully signed in
+                val user = FirebaseAuth.getInstance().currentUser
+                Log.i("JCD", "LOGGED " + user?.uid)
+            } else {
+                // Sign in failed. If response is null the user canceled the
+                // sign-in flow using the back button. Otherwise check
+                // response.getError().getErrorCode() and handle the error.
+                // ...
+            }
+        }
     }
 
     override fun onItemClick(world: World) {

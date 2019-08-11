@@ -2,5 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:title="Add world" android:id="@+id/menu_add_world" app:showAsAction="ifRoom" android:icon="@drawable/baseline_add_white_24"/>
     <item android:title="Show tutorial" android:id="@+id/menu_show_tutorial"/>
+    <item android:title="Login &amp; Sync" android:id="@+id/menu_login"/>
+    <item android:title="Logout" android:id="@+id/menu_logout"/>
     <item android:title="About" android:id="@+id/menu_about"/>
 </menu>

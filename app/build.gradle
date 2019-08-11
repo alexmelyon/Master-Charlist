@@ -9,7 +9,7 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "com.helloandroid"
+        applicationId "com.github.alexmelyon.master_charlist"
         minSdkVersion 17
         targetSdkVersion 27
         versionCode 6
@@ -68,5 +68,9 @@ dependencies {
 
     // Tutorial view
     implementation 'com.github.msayan:tutorial-view:v1.0.8'
+
+    // Firebase
+    implementation 'com.firebaseui:firebase-ui-auth:4.3.1'
+    implementation 'com.facebook.android:facebook-android-sdk:4.41.0'
 
 }
