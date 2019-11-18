@@ -3,6 +3,8 @@ package com.github.alexmelyon.master_charlist.room
 import android.arch.persistence.room.*
 import java.util.*
 
+// TODO
+inline class WorldId(val id: Long);
 @Entity
 class World(var name: String, val createTime: Date, var archived: Boolean = false) {
     @PrimaryKey(autoGenerate = true)

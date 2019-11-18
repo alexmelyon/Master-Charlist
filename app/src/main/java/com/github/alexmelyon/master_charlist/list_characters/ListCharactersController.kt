@@ -2,6 +2,7 @@ package com.github.alexmelyon.master_charlist.list_characters
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import com.bluelinelabs.conductor.Controller
 import com.github.alexmelyon.master_charlist.R
@@ -11,6 +12,7 @@ import com.github.alexmelyon.master_charlist.room.*
 import ru.napoleonit.talan.di.ControllerInjector
 import java.util.*
 import javax.inject.Inject
+import kotlin.NoSuchElementException
 
 interface ListCharactersDelegate {
     fun updateCharactersScreen()
@@ -102,16 +104,20 @@ class ListCharactersController(args: Bundle) : Controller(args), ListCharactersC
 
             val skills = db.skillDao().getAll(world.id, archived = false)
             data class SkillToValue(val skill: Skill, val value: Int)
-            val skillDiffs = db.skillDiffDao().getAllByCharacter(world.id, game.id, character.id, archived = false)
-                .asSequence()
-                .filter { closedSessions.contains(it.sessionGroup) }
-                .map { skill -> SkillToValue(skills.single { it.id == skill.skillGroup },skill.value) }
-                .groupBy { it.skill }
-                .map { SkillToValue(it.key, it.value.sumBy { it.value }) }
-                    // FIXME     java.util.NoSuchElementException: Key 5 is missing in the map.
-                .map { SkillValueModifier(it.skill, it.value, skillIdToModifier.getValue(it.skill.id)) }
-                .filter { it.value != 0 || it.modifier != 0 }
-                .toList()
+            val skillDiffs = try {
+                db.skillDiffDao().getAllByCharacter(world.id, game.id, character.id, archived = false)
+                    .asSequence()
+                    .filter { closedSessions.contains(it.sessionGroup) }
+                    .map { skill -> SkillToValue(skills.single { it.id == skill.skillGroup },skill.value) }
+                    .groupBy { it.skill }
+                    .map { SkillToValue(it.key, it.value.sumBy { it.value }) }
+                    .map { SkillValueModifier(it.skill, it.value, skillIdToModifier.getValue(it.skill.id)) } // NoSuchElementException: Key 1 is missing in the map.
+                    .filter { it.value != 0 || it.modifier != 0 }
+                    .toList()
+            } catch (t: NoSuchElementException) {
+                Log.e("JCD", "", t)
+                emptyList<SkillValueModifier>()
+            }
             val skillDiffNames = skillDiffs.map { "%s: %d (%+d) %d".format(it.skill.name, it.value, it.modifier, it.value + it.modifier) }
 
             val things = db.thingDao().getAll(world.id, archived = false)
