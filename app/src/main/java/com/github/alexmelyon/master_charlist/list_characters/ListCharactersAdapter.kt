@@ -45,7 +45,7 @@ class ListCharactersAdapter(val context: Context, val onLongclickListener: (Int,
             }
             linearLayout {
                 orientation = LinearLayout.VERTICAL
-                setPadding(8, 8, 8, 8)
+                setPadding(20, 8, 20, 8)
 
                 textView {
                     id = R.id.character_hp
