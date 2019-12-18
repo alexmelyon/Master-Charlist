@@ -18,7 +18,7 @@ interface ListSessionsContract {
         fun createSession()
         fun archiveSession(pos: Int, session: GameSession)
         fun getDescription(pos: Int): String
-        fun getHeader(pos: Int): String
+        fun getHeaderStringRes(pos: Int): Int
         fun renameSession(pos: Int, session: GameSession, name: String)
     }
 }

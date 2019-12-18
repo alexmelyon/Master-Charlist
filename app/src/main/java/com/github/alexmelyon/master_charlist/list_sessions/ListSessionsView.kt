@@ -27,16 +27,16 @@ class ListSessionsView @Inject constructor(val activity: MainActivity) : _FrameL
             controller.onItemClick(session)
         }
         sessionsAdapter.onGetHeaderValue = { pos ->
-            controller.getHeader(pos)
+            controller.getHeaderStringRes(pos)
         }
         sessionsAdapter.onItemLongclickListener = { pos, session ->
             AlertDialog.Builder(activity)
-                .setItems(arrayOf("Rename", "Archive"), DialogInterface.OnClickListener { dialog, which ->
+                .setItems(arrayOf(context.getString(R.string.rename), context.getString(R.string.archive)), DialogInterface.OnClickListener { dialog, which ->
                     when(which) {
-                        0 -> activity.showAlertEditDialog("Rename session:", session.name) { name ->
+                        0 -> activity.showAlertEditDialog(context.getString(R.string.rename_session_colon), session.name) { name ->
                             controller.renameSession(pos, session, name)
                         }
-                        1 -> activity.showAlertDialog("Archive session?", session.name) {
+                        1 -> activity.showAlertDialog(context.getString(R.string.archive_session_question), session.name) {
                             controller.archiveSession(pos, session)
                         }
                     }

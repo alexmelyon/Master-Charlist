@@ -5,6 +5,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import com.github.alexmelyon.master_charlist.MainActivity
+import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.room.Game
 import com.github.alexmelyon.master_charlist.ui.RecyclerStringAdapter
 import com.github.alexmelyon.master_charlist.utils.showAlertDialog
@@ -29,12 +30,12 @@ class ListGamesView @Inject constructor(val activity: MainActivity) : _FrameLayo
         }
         gamesAdapter.onItemLongclickListener = { pos, game ->
             AlertDialog.Builder(activity)
-                .setItems(arrayOf("Rename", "Archive"), DialogInterface.OnClickListener { dialog, which ->
+                .setItems(arrayOf(context.getString(R.string.rename), context.getString(R.string.archive)), DialogInterface.OnClickListener { dialog, which ->
                     when(which) {
-                        0 -> activity.showAlertEditDialog("Rename game:", game.name) { name ->
+                        0 -> activity.showAlertEditDialog(context.getString(R.string.rename_game_colon), game.name) { name ->
                             controller.renameGame(pos, game, name)
                         }
-                        1 -> activity.showAlertDialog("Archive game?", game.name) {
+                        1 -> activity.showAlertDialog(context.getString(R.string.archive_game_question), game.name) {
                             controller.archiveGameAt(pos)
                         }
                     }
@@ -50,7 +51,7 @@ class ListGamesView @Inject constructor(val activity: MainActivity) : _FrameLayo
     }
 
     override fun showAddGameDialog() {
-        activity.showAlertEditDialog("Game name:") { name ->
+        activity.showAlertEditDialog(context.getString(R.string.game_name_colon)) { name ->
             controller.createGame(name)
         }
     }

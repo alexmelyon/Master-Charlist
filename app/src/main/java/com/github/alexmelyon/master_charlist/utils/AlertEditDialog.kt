@@ -9,6 +9,7 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import com.github.alexmelyon.master_charlist.MainActivity
+import com.github.alexmelyon.master_charlist.R
 import org.jetbrains.anko.singleLine
 
 fun MainActivity.showAlertEditDialog(title: String, message: String = "", okAction: (String) -> Unit) {
@@ -21,7 +22,7 @@ fun MainActivity.showAlertEditDialog(title: String, message: String = "", okActi
         .setTitle(title)
         .setView(edit)
         .setPositiveButton("OK", null)
-        .setNegativeButton("Cancel", null)
+        .setNegativeButton(getString(R.string.cancel), null)
         .create()
     dialog.show()
 
@@ -31,7 +32,7 @@ fun MainActivity.showAlertEditDialog(title: String, message: String = "", okActi
     window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
     dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener { v ->
         if (edit.text.isBlank()) {
-            edit.error = "Please enter name"
+            edit.error = getString(R.string.please_enter_name)
         } else {
             dialog.dismiss()
             okAction(edit.text.trim().toString())

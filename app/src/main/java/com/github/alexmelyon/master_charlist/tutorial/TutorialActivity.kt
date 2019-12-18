@@ -30,43 +30,43 @@ class TutorialActivity : TutorialActivity() {
         }
 
         addFragment(
-            Step.Builder().setTitle("Create worlds")
+            Step.Builder().setTitle(getString(R.string.create_worlds))
                 .setBackgroundColor(Color.parseColor("#ef5350"))
                 .setDrawable(R.drawable.tutorial_1_create_world)
                 .build()
         )
         addFragment(
-            Step.Builder().setTitle("Create games")
+            Step.Builder().setTitle(getString(R.string.create_games))
                 .setBackgroundColor(Color.parseColor("#ec407a"))
                 .setDrawable(R.drawable.tutorial_2_create_game)
                 .build()
         )
         addFragment(
-            Step.Builder().setTitle("Create characters")
+            Step.Builder().setTitle(getString(R.string.create_characters))
                 .setBackgroundColor(Color.parseColor("#ab47bc"))
                 .setDrawable(R.drawable.tutorial_3_create_character)
                 .build()
         )
         addFragment(
-            Step.Builder().setTitle("Create new session")
+            Step.Builder().setTitle(getString(R.string.create_new_session))
                 .setBackgroundColor(Color.parseColor("#7e57c2"))
                 .setDrawable(R.drawable.tutorial_4_create_session)
                 .build()
         )
         addFragment(
-            Step.Builder().setTitle("Change character abilities")
+            Step.Builder().setTitle(getString(R.string.change_character_abilities))
                 .setBackgroundColor(Color.parseColor("#5c6bc0"))
                 .setDrawable(R.drawable.tutorial_5_add_diff)
                 .build()
         )
         addFragment(
-            Step.Builder().setTitle("Close the session")
+            Step.Builder().setTitle(getString(R.string.close_the_session))
                 .setBackgroundColor(Color.parseColor("#42a5f5"))
                 .setDrawable(R.drawable.tutorial_6_close_session)
                 .build()
         )
         addFragment(
-            Step.Builder().setTitle("And see results")
+            Step.Builder().setTitle(getString(R.string.and_see_results))
                 .setBackgroundColor(Color.parseColor("#29b6f6"))
                 .setDrawable(R.drawable.tutorial_7_characters)
                 .build()

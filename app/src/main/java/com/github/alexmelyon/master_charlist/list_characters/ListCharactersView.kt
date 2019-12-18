@@ -5,6 +5,7 @@ import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
 import com.github.alexmelyon.master_charlist.MainActivity
+import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.utils.showAlertDialog
 import com.github.alexmelyon.master_charlist.utils.showAlertEditDialog
 import org.jetbrains.anko._FrameLayout
@@ -21,12 +22,12 @@ class ListCharactersView @Inject constructor(val activity: MainActivity) : _Fram
     override fun createView(container: ViewGroup): View {
         charactersAdapter = ListCharactersAdapter(activity) { pos, item ->
             AlertDialog.Builder(activity)
-                .setItems(arrayOf("Rename", "Archive"), DialogInterface.OnClickListener { dialog, which ->
+                .setItems(arrayOf(context.getString(R.string.alert_rename), context.getString(R.string.alert_archive)), DialogInterface.OnClickListener { dialog, which ->
                     when(which) {
-                        0 -> activity.showAlertEditDialog("Rename character:", item.character.name) { name ->
+                        0 -> activity.showAlertEditDialog(context.getString(R.string.rename_character), item.character.name) { name ->
                             controller.renameCharacter(pos, item.character, name)
                         }
-                        1 -> activity.showAlertDialog("Archive character?", item.character.name) {
+                        1 -> activity.showAlertDialog(context.getString(R.string.archive_character_question), item.character.name) {
                             controller.archiveCharacter(pos, item)
                         }
                     }
@@ -42,7 +43,7 @@ class ListCharactersView @Inject constructor(val activity: MainActivity) : _Fram
     }
 
     override fun showAddCharacterDialog() {
-        activity.showAlertEditDialog("Character name:") { name ->
+        activity.showAlertEditDialog(context.getString(R.string.character_name_headline)) { name ->
             controller.createCharacter(name)
         }
     }

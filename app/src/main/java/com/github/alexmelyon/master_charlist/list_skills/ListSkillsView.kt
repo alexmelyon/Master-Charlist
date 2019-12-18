@@ -5,6 +5,7 @@ import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
 import com.github.alexmelyon.master_charlist.MainActivity
+import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.room.Skill
 import com.github.alexmelyon.master_charlist.ui.RecyclerStringAdapter
 import com.github.alexmelyon.master_charlist.utils.showAlertDialog
@@ -24,12 +25,12 @@ class ListSkillsView @Inject constructor(val activity: MainActivity) : _FrameLay
         skillsAdapter = RecyclerStringAdapter(container.context)
         skillsAdapter.onItemLongclickListener = { pos, skill ->
             AlertDialog.Builder(activity)
-                .setItems(arrayOf("Rename", "Archive"), DialogInterface.OnClickListener { dialog, which ->
+                .setItems(arrayOf(context.getString(R.string.rename), context.getString(R.string.archive)), DialogInterface.OnClickListener { dialog, which ->
                     when(which) {
-                        0 -> activity.showAlertEditDialog("Rename skill:", skill.name) { name ->
+                        0 -> activity.showAlertEditDialog(context.getString(R.string.rename_skill_colon), skill.name) { name ->
                             controller.renameSkill(pos, skill, name)
                         }
-                        1 -> activity.showAlertDialog("Archive skill?", skill.name) {
+                        1 -> activity.showAlertDialog(context.getString(R.string.archive_skill_question), skill.name) {
                             controller.archiveSkill(pos, skill)
                         }
                     }
@@ -50,7 +51,7 @@ class ListSkillsView @Inject constructor(val activity: MainActivity) : _FrameLay
     }
 
     override fun showAddSkillDialog() {
-        activity.showAlertEditDialog("Skill name:") { name ->
+        activity.showAlertEditDialog(context.getString(R.string.skill_name_colon)) { name ->
             controller.createSkill(name)
         }
     }

@@ -34,7 +34,7 @@ class ListCharactersAdapter(val context: Context, val onLongclickListener: (Int,
             frameLayout {
                 layoutParams = ViewGroup.LayoutParams(matchParent, dip(50))
                 backgroundColor = Color.parseColor("#EEEEEE")
-                textView("Character name") {
+                textView(context.getString(R.string.character_name)) {
                     id = R.id.character_name
                     textSize = 20F
                     textColor = Color.parseColor("#555555")
@@ -51,7 +51,7 @@ class ListCharactersAdapter(val context: Context, val onLongclickListener: (Int,
                     id = R.id.character_hp
                     textColor = Color.BLACK
                 }
-                textView("Effects:") {
+                textView(context.getString(R.string.effects_colon)) {
                     typeface = Typeface.DEFAULT_BOLD
                     textColor = Color.BLACK
                 }
@@ -59,7 +59,7 @@ class ListCharactersAdapter(val context: Context, val onLongclickListener: (Int,
                     id = R.id.character_effects
                     textColor = Color.BLACK
                 }
-                textView("Skills:") {
+                textView(context.getString(R.string.skills_colon)) {
                     typeface = Typeface.DEFAULT_BOLD
                     textColor = Color.BLACK
                 }
@@ -67,7 +67,7 @@ class ListCharactersAdapter(val context: Context, val onLongclickListener: (Int,
                     id = R.id.character_skills
                     textColor = Color.BLACK
                 }
-                textView("Items:") {
+                textView(context.getString(R.string.things_colon)) {
                     typeface = Typeface.DEFAULT_BOLD
                     textColor = Color.BLACK
                 }

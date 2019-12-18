@@ -5,6 +5,7 @@ import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
 import com.github.alexmelyon.master_charlist.MainActivity
+import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.room.Skill
 import com.github.alexmelyon.master_charlist.utils.showAlertEditDialog
 import org.jetbrains.anko._FrameLayout
@@ -22,7 +23,7 @@ class ListEffectsView @Inject constructor(val activity: MainActivity) : _FrameLa
         effectsAdapter = ListEffectsAdapter()
         effectsAdapter.onItemClickListener = { pos, row ->
             val skillsForEffect = controller.getAvailableSkillsForEffect(row.effect)
-            val skillNames = listOf("Create new...") + skillsForEffect.map { "Attach ${it.name}" }
+            val skillNames = listOf(context.getString(R.string.create_new)) + skillsForEffect.map { context.getString(R.string.attach_something, it.name) }
             AlertDialog.Builder(activity)
                 .setItems(skillNames.toTypedArray(), DialogInterface.OnClickListener { dialog, which ->
                     if(which == 0) {
@@ -38,12 +39,12 @@ class ListEffectsView @Inject constructor(val activity: MainActivity) : _FrameLa
         }
         effectsAdapter.onItemLongclickListener = { pos, row ->
             val usedSkills = controller.getUsedEffectSkills(row.effect)
-            val usual = listOf("Rename", "Archive effect")
-            val variants = usual + usedSkills.map { "Detach ${it.first}" }
+            val usual = listOf(context.getString(R.string.rename), context.getString(R.string.archive_effect))
+            val variants = usual + usedSkills.map { context.getString(R.string.detach_something, it.first) }
             AlertDialog.Builder(activity)
                 .setItems(variants.toTypedArray(), DialogInterface.OnClickListener { dialog, which ->
                     if(which == 0) {
-                        activity.showAlertEditDialog("Rename effect:", row.effect.name) { name ->
+                        activity.showAlertEditDialog(context.getString(R.string.rename_effect_colon), row.effect.name) { name ->
                             controller.renameEffect(pos, row.effect, name)
                         }
                     } else if(which == 1) {
@@ -70,7 +71,7 @@ class ListEffectsView @Inject constructor(val activity: MainActivity) : _FrameLa
     }
 
     fun showCreateSkillDialog(action: (Skill) -> Unit) {
-        activity.showAlertEditDialog("Skill name:") { name ->
+        activity.showAlertEditDialog(context.getString(R.string.skill_name_headline)) { name ->
             val skill = controller.createSkill(name)
             action(skill)
         }
@@ -78,12 +79,12 @@ class ListEffectsView @Inject constructor(val activity: MainActivity) : _FrameLa
 
     fun confirmArchiveEffect(name: String, action: () -> Unit) {
         AlertDialog.Builder(activity)
-            .setTitle("Archive effect?")
+            .setTitle(context.getString(R.string.archive_effect_question))
             .setMessage(name)
             .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
                 action()
             })
-            .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
+            .setNegativeButton(context.getString(R.string.cancel), DialogInterface.OnClickListener { dialog, which ->
                 dialog.dismiss()
             })
             .show()
@@ -108,7 +109,7 @@ class ListEffectsView @Inject constructor(val activity: MainActivity) : _FrameLa
     }
 
     override fun showAddEffectDialog() {
-        activity.showAlertEditDialog("Effect name:") { name ->
+        activity.showAlertEditDialog(context.getString(R.string.effect_name_headline)) { name ->
             controller.createEffect(name)
         }
     }

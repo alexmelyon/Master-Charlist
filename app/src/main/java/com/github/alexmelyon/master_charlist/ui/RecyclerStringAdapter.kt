@@ -19,7 +19,7 @@ class RecyclerStringAdapter<T>(val context: Context, @LayoutRes val layoutRes: I
     var layoutManager: RecyclerView.LayoutManager? = null
     var onItemLongclickListener: (Int, T) -> Unit = { pos, item -> }
     var onGetDescriptionValue: ((Int) -> String)? = null
-    var onGetHeaderValue: ((Int) -> String)? = null
+    var onGetHeaderValue: ((Int) -> Int)? = null
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
@@ -64,7 +64,7 @@ class RecyclerStringAdapter<T>(val context: Context, @LayoutRes val layoutRes: I
             holder.text2.text = onGetDescriptionValue?.invoke(correctPosition)
         }
         if(onGetHeaderValue != null) {
-            val header = onGetHeaderValue!!.invoke(correctPosition)
+            val header = onGetHeaderValue!!.invoke(correctPosition).let { context.getString(it) }
             if(header.isNotEmpty()) {
                 holder.headerView?.visibility = View.VISIBLE
                 holder.headerText?.text = header

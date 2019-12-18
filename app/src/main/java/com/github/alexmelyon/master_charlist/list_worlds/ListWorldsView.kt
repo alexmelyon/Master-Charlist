@@ -35,12 +35,12 @@ class ListWorldsView @Inject constructor(val activity: MainActivity) : _FrameLay
         worldsAdapter.onItemLongclickListener = { pos, world ->
             // TODO Rename
             AlertDialog.Builder(activity)
-                .setItems(arrayOf("Rename", "Archive"), DialogInterface.OnClickListener { dialog, which ->
+                .setItems(arrayOf(context.getString(R.string.rename), context.getString(R.string.archive)), DialogInterface.OnClickListener { dialog, which ->
                     when(which) {
-                        0 -> activity.showAlertEditDialog("Rename world:", world.name) { name ->
+                        0 -> activity.showAlertEditDialog(context.getString(R.string.rename_world_colon), world.name) { name ->
                             controller.renameWorld(pos, world, name)
                         }
-                        1 -> activity.showAlertDialog("Archive world?", world.name) {
+                        1 -> activity.showAlertDialog(context.getString(R.string.archive_world_question), world.name) {
                             controller.archiveWorldAt(pos)
                         }
                     }
@@ -75,11 +75,8 @@ class ListWorldsView @Inject constructor(val activity: MainActivity) : _FrameLay
 
     override fun showAboutDialog() {
         val dialog = AlertDialog.Builder(activity)
-            .setTitle("Master Charlist")
-            .setMessage("""
-            |Sketchpad for game masters
-            |Version ${activity.packageManager.getPackageInfo(activity.packageName, 0).versionName}
-            |github.com/alexmelyon/Master-Charlist""".trimMargin())
+            .setTitle(context.getString(R.string.app_name))
+            .setMessage((context.getString(R.string.about_app, activity.packageManager.getPackageInfo(activity.packageName, 0).versionName)).trimMargin())
             .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
                 dialog.dismiss()
             })

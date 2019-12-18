@@ -80,10 +80,10 @@ class GamePagerController(args: Bundle) : Controller(args) {
         game = db.gameDao().getAll(args.getLong(GAME_KEY), world.id)
         listCharactersController = ListCharactersController(world.id, game.id)
         screenToController = listOf(
-            ScreenToController("Sessions", ListSessionsController(world.id, game.id).apply {
+            ScreenToController(context.getString(R.string.sessions_header), ListSessionsController(world.id, game.id).apply {
                 delegate = WeakReference(listCharactersController)
             }),
-            ScreenToController("Characters", listCharactersController)
+            ScreenToController(context.getString(R.string.characters_header), listCharactersController)
         )
     }
 

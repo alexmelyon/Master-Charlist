@@ -5,6 +5,7 @@ import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
 import com.github.alexmelyon.master_charlist.MainActivity
+import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.room.Thing
 import com.github.alexmelyon.master_charlist.ui.RecyclerStringAdapter
 import com.github.alexmelyon.master_charlist.utils.showAlertDialog
@@ -24,12 +25,12 @@ class ListThingsView @Inject constructor(val activity: MainActivity) : _FrameLay
         thingsAdapter = RecyclerStringAdapter(container.context)
         thingsAdapter.onItemLongclickListener = { pos, thing ->
             AlertDialog.Builder(activity)
-                .setItems(arrayOf("Rename", "Archive"), DialogInterface.OnClickListener { dialog, which ->
+                .setItems(arrayOf(context.getString(R.string.rename), context.getString(R.string.archive)), DialogInterface.OnClickListener { dialog, which ->
                     when(which) {
-                        0 -> activity.showAlertEditDialog("Rename thing:", thing.name) { name ->
+                        0 -> activity.showAlertEditDialog(context.getString(R.string.rename_thing_colon), thing.name) { name ->
                             controller.renameThing(pos, thing, name)
                         }
-                        1 -> activity.showAlertDialog("Archive thing?", thing.name) {
+                        1 -> activity.showAlertDialog(context.getString(R.string.archive_thing_question), thing.name) {
                             controller.archiveThing(pos, thing)
                         }
                     }
@@ -50,7 +51,7 @@ class ListThingsView @Inject constructor(val activity: MainActivity) : _FrameLay
     }
 
     override fun showAddThingDialog() {
-        activity.showAlertEditDialog("Thing name:") { name ->
+        activity.showAlertEditDialog(context.getString(R.string.thing_name_colon)) { name ->
             controller.createThing(name)
         }
     }

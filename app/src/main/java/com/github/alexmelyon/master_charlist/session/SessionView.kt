@@ -5,6 +5,7 @@ import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
 import com.github.alexmelyon.master_charlist.MainActivity
+import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.room.Effect
 import com.github.alexmelyon.master_charlist.room.GameCharacter
 import com.github.alexmelyon.master_charlist.room.Skill
@@ -43,7 +44,7 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
             }
             onItemClickListener = { pos ->
                 val skillsForEffect = controller.getAvailableSkillsForEffect(pos)
-                val skillNames = listOf("Create new...") + skillsForEffect.map { "Attach ${it.name}" }
+                val skillNames = listOf(context.getString(R.string.create_new)) + skillsForEffect.map { context.getString(R.string.attach_something, it.name) }
                 AlertDialog.Builder(activity)
                     .setItems(skillNames.toTypedArray(), DialogInterface.OnClickListener { dialog, which ->
                         if(which == 0) {
@@ -98,7 +99,15 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
 
     override fun showAddSomethingDialog() {
         AlertDialog.Builder(activity)
-            .setItems(arrayOf("Add Character", "Add Healthpoints", "Add Skill", "Add Thing", "Attach Effect", "Detach effect", "Add Comment"), DialogInterface.OnClickListener { dialog, which ->
+            .setItems(arrayOf(
+                context.getString(R.string.add_character),
+                context.getString(R.string.add_healthpoints),
+                context.getString(R.string.add_skill),
+                context.getString(R.string.add_thing),
+                context.getString(R.string.attach_effect),
+                context.getString(R.string.detach_effect),
+                context.getString(R.string.add_comment)
+            ), DialogInterface.OnClickListener { dialog, which ->
                 controller.onAddSomethingClicked(which)
             })
             .show()
@@ -106,7 +115,7 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
 
     override fun showAddHpDialog(characterNames: List<String>) {
         AlertDialog.Builder(activity)
-            .setTitle("Select character")
+            .setTitle(context.getString(R.string.select_character))
             .setItems(characterNames.toTypedArray(), DialogInterface.OnClickListener { dialog, character ->
                 controller.addHpDiff(character)
             })
@@ -116,12 +125,12 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
     override fun showAddSkillDialog(characters: List<GameCharacter>, skills: List<Skill>) {
         val characterNames = characters.map { it.name }
         AlertDialog.Builder(activity)
-            .setTitle("Select character")
+            .setTitle(context.getString(R.string.select_character))
             .setItems(characterNames.toTypedArray(), DialogInterface.OnClickListener { dialog, whichCharacter ->
                 val character = characters[whichCharacter]
-                val skillNames = listOf("Create new...") + skills.map { it.name }
+                val skillNames = listOf(context.getString(R.string.create_new)) + skills.map { it.name }
                 AlertDialog.Builder(activity)
-                    .setTitle("Select skill")
+                    .setTitle(context.getString(R.string.select_skill))
                     .setItems(skillNames.toTypedArray(), DialogInterface.OnClickListener { dialog, whichSkill ->
                         if(whichSkill == 0) {
                             showCreateSkillDialog { skill ->
@@ -139,12 +148,12 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
     override fun showAddThingDialog(characters: List<GameCharacter>, things: List<Thing>) {
         val characterNames = characters.map { it.name }
         AlertDialog.Builder(activity)
-            .setTitle("Select character")
+            .setTitle(context.getString(R.string.select_character))
             .setItems(characterNames.toTypedArray(), DialogInterface.OnClickListener { dialog, whichCharacter ->
                 val character = characters[whichCharacter]
-                val thingNames = listOf("Create new...") + things.map { it.name }
+                val thingNames = listOf(context.getString(R.string.create_new)) + things.map { it.name }
                 AlertDialog.Builder(activity)
-                    .setTitle("Select thing")
+                    .setTitle(context.getString(R.string.select_thing))
                     .setItems(thingNames.toTypedArray(), DialogInterface.OnClickListener { dialog, whichThing ->
                         if(whichThing == 0) {
                             showCreateThingDialog { thing ->
@@ -161,12 +170,12 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
     override fun showAddEffectDialog(characters: List<GameCharacter>, effects: List<Effect>) {
         val characterNames = characters.map { it.name }
         AlertDialog.Builder(activity)
-            .setTitle("Select character")
+            .setTitle(context.getString(R.string.select_character))
             .setItems(characterNames.toTypedArray(), DialogInterface.OnClickListener { dialog, whichCharacter ->
                 val character = characters[whichCharacter]
-                val effectNames = listOf("Create new...") + effects.map { it.name }
+                val effectNames = listOf(context.getString(R.string.create_new)) + effects.map { it.name }
                 AlertDialog.Builder(activity)
-                    .setTitle("Select effect")
+                    .setTitle(context.getString(R.string.select_effect))
                     .setItems(effectNames.toTypedArray(), DialogInterface.OnClickListener { dialog, whichEffect ->
                         if(whichEffect == 0) {
                             showCreateEffectDialog { effect ->
@@ -184,12 +193,12 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
 
     override fun showRemoveEffectDialog(characterNames: List<String>, characterToEffect: Map<String, List<Effect>>) {
         AlertDialog.Builder(activity)
-            .setTitle("Select character")
+            .setTitle(context.getString(R.string.select_character))
             .setItems(characterNames.toTypedArray(), DialogInterface.OnClickListener { dialog, character ->
                 val characterName = characterNames[character]
                 val usedEffects = characterToEffect[characterName]?.map { it.name } ?: listOf()
                 AlertDialog.Builder(activity)
-                    .setTitle("Select effect")
+                    .setTitle(context.getString(R.string.select_effect))
                     .setItems(usedEffects.toTypedArray(), DialogInterface.OnClickListener { dialog, effect ->
                         controller.addCharacterDetachEffectDiff(character, effect)
                     })
@@ -203,32 +212,32 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
     }
 
     override fun showCreateCharacterDialog() {
-        activity.showAlertEditDialog("Character name:") { name ->
+        activity.showAlertEditDialog(context.getString(R.string.character_name_colon)) { name ->
             controller.createCharacter(name)
             AlertDialog.Builder(activity)
-                .setTitle("Character created")
-                .setMessage("Name: $name")
+                .setTitle(context.getString(R.string.character_created))
+                .setMessage(context.getString(R.string.name_something, name))
                 .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->  })
                 .show()
         }
     }
 
     fun showCreateSkillDialog(action: (Skill) -> Unit) {
-        activity.showAlertEditDialog("Skill name:") { name ->
+        activity.showAlertEditDialog(context.getString(R.string.skill_name_colon)) { name ->
             val skill = controller.createSkill(name)
             action(skill)
         }
     }
 
     fun showCreateThingDialog(action: (Thing) -> Unit) {
-        activity.showAlertEditDialog("Thing name:") { name ->
+        activity.showAlertEditDialog(context.getString(R.string.thing_name_colon)) { name ->
             val thing = controller.createThing(name)
             action(thing)
         }
     }
 
     fun showCreateEffectDialog(action: (Effect) -> Unit) {
-        activity.showAlertEditDialog("Effect name:") { name ->
+        activity.showAlertEditDialog(context.getString(R.string.effect_name_colon)) { name ->
             val effect = controller.createEffect(name)
             action(effect)
         }
@@ -236,12 +245,12 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
 
     override fun showCloseSessionDialog(name: String) {
         AlertDialog.Builder(activity)
-            .setTitle("Close this session?")
+            .setTitle(context.getString(R.string.close_this_session_question))
             .setMessage(name)
             .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
                 controller.closeSession()
             })
-            .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
+            .setNegativeButton(context.getString(R.string.cancel), DialogInterface.OnClickListener { dialog, which ->
                 dialog.dismiss()
             })
             .show()

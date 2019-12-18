@@ -109,14 +109,14 @@ class ListSessionsController(args: Bundle) : Controller(args), ListSessionsContr
         return session.startTime.let { SimpleDateFormat("EEEE d MMMM HH:mm yyyy", Locale.getDefault()).format(it) }
     }
 
-    override fun getHeader(pos: Int): String {
+    override fun getHeaderStringRes(pos: Int): Int {
         if (pos == 0 && sessionsList[0].open) {
-            return "Open sessions"
+            return R.string.open_sessions
         }
         if (pos == firstClosedSessionIndex) {
-            return "Closed sessions"
+            return R.string.closed_sessions
         }
-        return ""
+        return R.string.empty
     }
 
     override fun onItemClick(session: GameSession) {

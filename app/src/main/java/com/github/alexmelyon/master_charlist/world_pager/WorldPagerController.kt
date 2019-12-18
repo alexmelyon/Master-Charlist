@@ -71,10 +71,10 @@ class WorldPagerController(args: Bundle) : Controller(args) {
         ControllerInjector.inject(this)
         world = db.worldDao().getWorldById(args.getLong(WORLD_KEY))
         screenToController = listOf(
-            "Games" to ListGamesController(world.id),
-            "Skills" to ListSkillsController(world.id),
-            "Things" to ListThingsController(world.id),
-            "Effects" to ListEffectsController(world.id))
+            context.getString(R.string.games_header) to ListGamesController(world.id),
+            context.getString(R.string.skills_header) to ListSkillsController(world.id),
+            context.getString(R.string.things_header) to ListThingsController(world.id),
+            context.getString(R.string.effects_header) to ListEffectsController(world.id))
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
