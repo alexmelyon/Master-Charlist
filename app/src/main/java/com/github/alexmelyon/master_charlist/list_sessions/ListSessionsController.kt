@@ -79,7 +79,7 @@ class ListSessionsController(args: Bundle) : Controller(args), ListSessionsContr
     }
 
     fun updateScreen() {
-        sessionsList = db.gameSessionDao().getAll(world.id, game.id, archived = false)
+        sessionsList = db.gameSessionDao().getAll(world.id, game.id)
             .sortedWith(Comparator { o1, o2 ->
                 // TODO My own comparator
                 if (o1.open != o2.open) {

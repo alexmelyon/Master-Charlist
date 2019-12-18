@@ -22,7 +22,7 @@ interface CommentDiffDao {
     fun getFull(): List<CommentDiff>
 
     @Query("SELECT * FROM commentdiff WHERE worldGroup = :worldId AND gameGroup = :gameId AND sessionGroup = :sessionId AND archived = :archived")
-    fun getAll(worldId: Long, gameId: Long, sessionId: Long, archived: Boolean): List<CommentDiff>
+    fun getAll(worldId: Long, gameId: Long, sessionId: Long, archived: Boolean = false): List<CommentDiff>
 
     @Query("SELECT * FROM commentdiff WHERE id = :id")
     fun get(id: Long): CommentDiff

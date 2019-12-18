@@ -15,10 +15,10 @@ interface EffectDiffDao {
     fun getFull(): List<EffectDiff>
 
     @Query("SELECT * FROM effectdiff WHERE worldGroup = :worldId AND gameGroup = :gameId AND sessionGroup = :sessionId AND archived = :archived")
-    fun getAllBySession(worldId: Long, gameId: Long, sessionId: Long, archived: Boolean): List<EffectDiff>
+    fun getAllBySession(worldId: Long, gameId: Long, sessionId: Long, archived: Boolean = false): List<EffectDiff>
 
     @Query("SELECT * FROM effectdiff WHERE worldGroup = :worldId AND gameGroup = :gameId AND characterGroup = :characterId AND archived = :archived")
-    fun getAllByCharacter(worldId: Long, gameId: Long, characterId: Long, archived: Boolean): List<EffectDiff>
+    fun getAllByCharacter(worldId: Long, gameId: Long, characterId: Long, archived: Boolean = false): List<EffectDiff>
 
     @Query("SELECT * FROM effectdiff WHERE id = :id")
     fun get(id: Long): EffectDiff

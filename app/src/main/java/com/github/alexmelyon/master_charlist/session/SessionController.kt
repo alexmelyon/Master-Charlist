@@ -53,19 +53,19 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
         game = db.gameDao().getAll(args.getLong(GAME_KEY), world.id)
         session = db.gameSessionDao().get(world.id, game.id, args.getLong(SESSION_KEY))
 
-        itemsWrapper.addAll(db.hpDiffDao().getAllBySession(world.id, game.id, session.id, archived = false)
+        itemsWrapper.addAll(db.hpDiffDao().getAllBySession(world.id, game.id, session.id)
             .map { SessionItem(it.id, it.time, SessionItemType.ITEM_HP, "HP", getCharacter(it.characterGroup).name, it.value, it.characterGroup) })
-        itemsWrapper.addAll(db.skillDiffDao().getAllBySession(world.id, game.id, session.id, archived = false)
+        itemsWrapper.addAll(db.skillDiffDao().getAllBySession(world.id, game.id, session.id)
             .map { SessionItem(it.id, it.time, SessionItemType.ITEM_SKILL, getSkill(it.skillGroup).name, getCharacter(it.characterGroup).name, it.value, it.characterGroup) })
-        itemsWrapper.addAll(db.thingDiffDao().getAllBySession(world.id, game.id, session.id, archived = false)
+        itemsWrapper.addAll(db.thingDiffDao().getAllBySession(world.id, game.id, session.id)
             .map { SessionItem(it.id, it.time, SessionItemType.ITEM_THING, getThing(it.thingGroup).name, getCharacter(it.characterGroup).name, it.value, it.characterGroup) })
-        itemsWrapper.addAll(db.effectDiffDao().getAllBySession(world.id, game.id, session.id, archived = false)
+        itemsWrapper.addAll(db.effectDiffDao().getAllBySession(world.id, game.id, session.id)
             .map { effectDiff ->
                 val intValue = if(effectDiff.value) 1 else -1
                 val skillToValue = skillNamesToValue(effectDiff)
                 SessionItem(effectDiff.id, effectDiff.time, SessionItemType.ITEM_EFFECT, getEffect(effectDiff.effectGroup).name, getCharacter(effectDiff.characterGroup).name, intValue, effectDiff.characterGroup, effectSkills = skillToValue)
             })
-        itemsWrapper.addAll(db.commentDiffDao().getAll(world.id, game.id, session.id, archived = false)
+        itemsWrapper.addAll(db.commentDiffDao().getAll(world.id, game.id, session.id)
             .map { SessionItem(it.id, it.time, SessionItemType.ITEM_COMMENT, "", "", 0, -1, it.comment) })
     }
 
@@ -325,59 +325,59 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
     }
 
     override fun createCharacter(name: String) {
-        val character = GameCharacter(name, game.id, world.id, archived = false)
+        val character = GameCharacter(name, game.id, world.id)
         val id = db.characterDao().insert(character)
         character.id = id
     }
 
     override fun createSkill(name: String): Skill {
-        val skill = Skill(name, world.id, Calendar.getInstance().time, archived = false)
+        val skill = Skill(name, world.id, Calendar.getInstance().time)
         val id = db.skillDao().insert(skill)
         skill.id = id
         return skill
     }
 
     override fun createThing(name: String): Thing {
-        val thing = Thing(name, world.id, Calendar.getInstance().time, archived = false)
+        val thing = Thing(name, world.id, Calendar.getInstance().time)
         val id = db.thingDao().insert(thing)
         thing.id = id
         return thing
     }
 
     override fun createEffect(name: String): Effect {
-        val effect = Effect(name, world.id, Calendar.getInstance().time, archived = false)
+        val effect = Effect(name, world.id, Calendar.getInstance().time)
         val id = db.effectDao().insert(effect)
         effect.id = id
         return effect
     }
 
     private fun getCharacters(): List<GameCharacter> {
-        return db.characterDao().getAll(world.id, game.id, archived = false)
+        return db.characterDao().getAll(world.id, game.id)
             .sortedBy { it.name }
     }
 
     private fun getSkills(): List<Skill> {
-        return db.skillDao().getAll(world.id, archived = false)
+        return db.skillDao().getAll(world.id)
             .sortedBy { it.name }
     }
 
     private fun getThings(): List<Thing> {
-        return db.thingDao().getAll(world.id, archived = false)
+        return db.thingDao().getAll(world.id)
             .sortedBy { it.name }
     }
 
     private fun getEffects(): List<Effect> {
-        return db.effectDao().getAll(world.id, archived = false)
+        return db.effectDao().getAll(world.id)
             .sortedBy { it.name }
     }
 
     private fun getUsedEffects(): Map<String, List<Effect>> {
         val closedSessions = db.gameSessionDao().getClosed(world.id, game.id)
-        val effects = db.effectDao().getAll(world.id, archived = false)
-        val res = db.characterDao().getAll(world.id, game.id, archived = false).map { character ->
-            val closed = db.effectDiffDao().getAllByCharacter(world.id, game.id, character.id, archived = false)
+        val effects = db.effectDao().getAll(world.id)
+        val res = db.characterDao().getAll(world.id, game.id).map { character ->
+            val closed = db.effectDiffDao().getAllByCharacter(world.id, game.id, character.id)
                 .filter { it.sessionGroup in closedSessions }
-            val current = db.effectDiffDao().getAllBySession(world.id, game.id, session.id, archived = false)
+            val current = db.effectDiffDao().getAllBySession(world.id, game.id, session.id)
             val usedEffects = getUsedEffectsFor(closed + current, effects)
             character.name to usedEffects
         }.toMap()

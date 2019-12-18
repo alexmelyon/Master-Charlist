@@ -24,10 +24,10 @@ interface SkillDiffDao {
     fun getFull(): List<SkillDiff>
 
     @Query("SELECT * FROM skilldiff WHERE worldGroup = :worldId AND gameGroup = :gameId AND characterGroup = :characterId AND archived = :archived")
-    fun getAllByCharacter(worldId: Long, gameId: Long, characterId: Long, archived: Boolean): List<SkillDiff>
+    fun getAllByCharacter(worldId: Long, gameId: Long, characterId: Long, archived: Boolean = false): List<SkillDiff>
 
     @Query("SELECT * FROM skilldiff WHERE worldGroup = :worldId AND gameGroup = :gameId AND sessionGroup = :sessionId AND archived = :archived")
-    fun getAllBySession(worldId: Long, gameId: Long, sessionId: Long, archived: Boolean): List<SkillDiff>
+    fun getAllBySession(worldId: Long, gameId: Long, sessionId: Long, archived: Boolean = false): List<SkillDiff>
 
     @Query("SELECT * FROM skilldiff WHERE worldGroup = :worldId AND gameGroup = :gameId AND sessionGroup = :sessionId AND characterGroup = :characterId AND id = :id")
     fun get(worldId: Long, gameId: Long, sessionId: Long, characterId: Long, id: Long): SkillDiff

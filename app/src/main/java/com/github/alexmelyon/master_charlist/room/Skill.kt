@@ -16,7 +16,7 @@ interface SkillDao {
     fun getFull(): List<Skill>
 
     @Query("SELECT * FROM skill WHERE worldGroup = :worldId AND archived = :archived")
-    fun getAll(worldId: Long, archived: Boolean): List<Skill>
+    fun getAll(worldId: Long, archived: Boolean = false): List<Skill>
 
     @Query("SELECT * FROM skill WHERE id = :skillId")
     fun get(skillId: Long): Skill

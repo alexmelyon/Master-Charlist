@@ -44,12 +44,12 @@ class ListGamesController(args: Bundle) : Controller(args), ListGamesContract.Co
         ControllerInjector.inject(this)
         world = db.worldDao().getWorldById(args.getLong(WORLD_KEY))
 
-        gamesSet.addAll(db.gameDao().getAll(world.id, archived = false))
+        gamesSet.addAll(db.gameDao().getAll(world.id))
     }
 
     override fun onAttach(view: View) {
         super.onAttach(view)
-        val games = db.gameDao().getAll(world.id, archived = false)
+        val games = db.gameDao().getAll(world.id)
             .sortedWith(kotlin.Comparator { o1, o2 ->
                 var res = o2.time.compareTo(o1.time)
                 if(res == 0) {

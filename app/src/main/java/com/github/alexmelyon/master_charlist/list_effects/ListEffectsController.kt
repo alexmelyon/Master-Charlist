@@ -37,7 +37,7 @@ class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContrac
 
     override fun onAttach(view: View) {
         super.onAttach(view)
-        effectItems = db.effectDao().getAll(world.id, archived = false)
+        effectItems = db.effectDao().getAll(world.id)
             .sortedWith(compareByDescending<Effect> { it.lastUsed }
                 .thenBy { it.name }
             ).map { effect ->

@@ -17,7 +17,7 @@ interface GameSessionDao {
     fun getFull(): List<GameSession>
 
     @Query("SELECT * FROM gamesession WHERE worldGroup = :worldId AND gameGroup = :gameId AND archived = :archived")
-    fun getAll(worldId: Long, gameId: Long, archived: Boolean): List<GameSession>
+    fun getAll(worldId: Long, gameId: Long, archived: Boolean = false): List<GameSession>
 
     @Query("SELECT id FROM gamesession WHERE worldGroup = :worldId AND gameGroup = :gameId AND open = 0 AND archived = 0")
     fun getClosed(worldId: Long, gameId: Long): List<Long>

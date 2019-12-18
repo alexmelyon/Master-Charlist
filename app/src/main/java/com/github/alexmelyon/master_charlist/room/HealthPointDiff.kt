@@ -23,10 +23,10 @@ interface HpDiffDao {
     fun getFull(): List<HealthPointDiff>
 
     @Query("SELECT * FROM healthpointdiff WHERE worldGroup = :worldId AND gameGroup = :gameId AND characterGroup = :characterId AND archived = :archived")
-    fun getAllByCharacter(worldId: Long, gameId: Long, characterId: Long, archived: Boolean): List<HealthPointDiff>
+    fun getAllByCharacter(worldId: Long, gameId: Long, characterId: Long, archived: Boolean = false): List<HealthPointDiff>
 
     @Query("SELECT * FROM healthpointdiff WHERE worldGroup = :worldId AND gameGroup = :gameId AND sessionGroup = :sessionId AND archived = :archived")
-    fun getAllBySession(worldId: Long, gameId: Long, sessionId: Long, archived: Boolean): List<HealthPointDiff>
+    fun getAllBySession(worldId: Long, gameId: Long, sessionId: Long, archived: Boolean = false): List<HealthPointDiff>
 
     @Query("SELECT * FROM healthpointdiff WHERE worldGroup = :worldId AND gameGroup = :gameId AND sessionGroup = :sessionId AND characterGroup = :characterId AND id = :id")
     fun get(worldId: Long, gameId: Long, sessionId: Long, characterId: Long, id: Long): HealthPointDiff

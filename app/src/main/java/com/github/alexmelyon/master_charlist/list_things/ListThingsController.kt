@@ -39,7 +39,7 @@ class ListThingsController(args: Bundle) : Controller(args), ListThingsContract.
 
     override fun onAttach(view: View) {
         super.onAttach(view)
-        val things = db.thingDao().getAll(world.id, archived = false)
+        val things = db.thingDao().getAll(world.id)
             .filterNot { it.archived }
             .sortedWith(kotlin.Comparator { o1, o2 ->
                 var res = o2.lastUsed.compareTo(o1.lastUsed)

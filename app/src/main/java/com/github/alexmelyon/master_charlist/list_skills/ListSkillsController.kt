@@ -38,7 +38,7 @@ class ListSkillsController(args: Bundle) : Controller(args), ListSkillsContract.
 
     override fun onAttach(view: View) {
         super.onAttach(view)
-        val skills = db.skillDao().getAll(world.id, archived = false)
+        val skills = db.skillDao().getAll(world.id)
             .sortedWith(kotlin.Comparator { o1, o2 ->
                 var res = o2.lastUsed.compareTo(o1.lastUsed)
                 if(res == 0) {

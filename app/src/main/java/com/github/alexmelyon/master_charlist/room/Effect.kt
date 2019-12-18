@@ -17,7 +17,7 @@ interface EffectDao {
     fun getFull(): List<Effect>
 
     @Query("SELECT * FROM effect WHERE worldGroup = :worldId AND archived = :archived")
-    fun getAll(worldId: Long, archived: Boolean): List<Effect>
+    fun getAll(worldId: Long, archived: Boolean = false): List<Effect>
 
     @Query("SELECT * FROM effect WHERE id = :id")
     fun get(id: Long): Effect
@@ -31,7 +31,7 @@ interface EffectDao {
 
 fun Effect.getAvailableSkills(db: AppDatabase): List<Skill> {
     val effect = this
-    val allSkills = db.skillDao().getAll(effect.worldGroup, archived = false)
+    val allSkills = db.skillDao().getAll(effect.worldGroup)
     val usedSkills = db.effectSkillDao().getAllByEffect(effect.worldGroup, effect.id)
         .map { db.skillDao().get(it.skillGroup) }
         .map { it.id }

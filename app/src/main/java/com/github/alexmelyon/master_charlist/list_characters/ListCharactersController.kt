@@ -12,7 +12,6 @@ import com.github.alexmelyon.master_charlist.room.*
 import ru.napoleonit.talan.di.ControllerInjector
 import java.util.*
 import javax.inject.Inject
-import kotlin.NoSuchElementException
 
 interface ListCharactersDelegate {
     fun updateCharactersScreen()
@@ -74,22 +73,22 @@ class ListCharactersController(args: Bundle) : Controller(args), ListCharactersC
 
     fun updateScreen() {
         characterItems.clear()
-        val characters = db.characterDao().getAll(world.id, game.id, archived = false)
-        val closedSessions = db.gameSessionDao().getAll(world.id, game.id, archived = false)
+        val characters = db.characterDao().getAll(world.id, game.id)
+        val closedSessions = db.gameSessionDao().getAll(world.id, game.id)
             .filterNot { it.open }
             .map { it.id }
         characters.forEach { character ->
-            val hp = db.hpDiffDao().getAllByCharacter(world.id, game.id, character.id, archived = false)
+            val hp = db.hpDiffDao().getAllByCharacter(world.id, game.id, character.id)
                 .filter { closedSessions.contains(it.sessionGroup) }
                 .sumBy { it.value }
 
-            val effects = db.effectDao().getAll(world.id, archived = false)
-            val closedEffectDiffs = db.effectDiffDao().getAllByCharacter(world.id, game.id, character.id, archived = false)
+            val effects = db.effectDao().getAll(world.id)
+            val closedEffectDiffs = db.effectDiffDao().getAllByCharacter(world.id, game.id, character.id)
                 .filter { it.sessionGroup in closedSessions }
             val effectDiffs = getUsedEffectsFor(closedEffectDiffs, effects)
             val effectDiffNames = effectDiffs.map { it.name }
 
-            val skillIdToModifier = db.effectDiffDao().getAllByCharacter(world.id, game.id, character.id, archived = false)
+            val skillIdToModifier = db.effectDiffDao().getAllByCharacter(world.id, game.id, character.id)
                 .filter { it.sessionGroup in closedSessions }
                 .map { it.effectGroup to if(it.value) +1 else -1 }
                 .groupBy { it.first }
@@ -102,27 +101,33 @@ class ListCharactersController(args: Bundle) : Controller(args), ListCharactersC
                 .map { it.key.id to it.value.sumBy { it.second } }
                 .toMap()
 
-            val skills = db.skillDao().getAll(world.id, archived = false)
+            val skills = db.skillDao().getAll(world.id)
             data class SkillToValue(val skill: Skill, val value: Int)
-            val skillDiffs = try {
-                db.skillDiffDao().getAllByCharacter(world.id, game.id, character.id, archived = false)
+            val skillDiffs = db.skillDiffDao().getAllByCharacter(world.id, game.id, character.id)
                     .asSequence()
                     .filter { closedSessions.contains(it.sessionGroup) }
                     .map { skill -> SkillToValue(skills.single { it.id == skill.skillGroup },skill.value) }
                     .groupBy { it.skill }
                     .map { SkillToValue(it.key, it.value.sumBy { it.value }) }
-                    .map { SkillValueModifier(it.skill, it.value, skillIdToModifier.getValue(it.skill.id)) } // NoSuchElementException: Key 1 is missing in the map.
+                    .map { SkillValueModifier(it.skill, it.value, skillIdToModifier[it.skill.id] ?: 0) }
                     .filter { it.value != 0 || it.modifier != 0 }
                     .toList()
-            } catch (t: NoSuchElementException) {
-                Log.e("JCD", "", t)
-                emptyList<SkillValueModifier>()
+            val skillDiffNames = skillDiffs.map {
+                if(it.modifier == 0) {
+                    "%s: %d".format(it.skill.name, it.value)
+                } else {
+                    "%s: %d (%+d) %d".format(
+                        it.skill.name,
+                        it.value,
+                        it.modifier,
+                        it.value + it.modifier
+                    )
+                }
             }
-            val skillDiffNames = skillDiffs.map { "%s: %d (%+d) %d".format(it.skill.name, it.value, it.modifier, it.value + it.modifier) }
 
-            val things = db.thingDao().getAll(world.id, archived = false)
+            val things = db.thingDao().getAll(world.id)
             // TODO Refactor this boilerplate
-            val thingDiffs = db.thingDiffDao().getAllByCharacter(world.id, game.id, character.id, archived = false)
+            val thingDiffs = db.thingDiffDao().getAllByCharacter(world.id, game.id, character.id)
                 .asSequence()
                 .filter { closedSessions.contains(it.sessionGroup) }
                 .map { thing -> things.single { it.id == thing.thingGroup } to thing.value }
@@ -150,7 +155,7 @@ class ListCharactersController(args: Bundle) : Controller(args), ListCharactersC
     }
 
     override fun createCharacter(characterName: String) {
-        val character = GameCharacter(characterName, game.id, world.id, archived = false)
+        val character = GameCharacter(characterName, game.id, world.id)
         val id = db.characterDao().insert(character)
         character.id = id
 

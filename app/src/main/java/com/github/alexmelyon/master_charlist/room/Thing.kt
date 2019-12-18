@@ -17,7 +17,7 @@ interface ThingDao {
     fun getFull(): List<Thing>
 
     @Query("SELECT * FROM thing WHERE worldGroup = :worldId AND archived = :archived")
-    fun getAll(worldId: Long, archived: Boolean): List<Thing>
+    fun getAll(worldId: Long, archived: Boolean = false): List<Thing>
 
     @Insert
     fun insert(thing: Thing): Long

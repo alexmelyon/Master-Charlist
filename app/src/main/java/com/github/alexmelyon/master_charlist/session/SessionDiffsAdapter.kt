@@ -176,7 +176,6 @@ class SessionDiffsAdapter(val context: Context, val editable: Boolean) : Recycle
     class ItemEffectViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val title = view.findViewById<TextView>(R.id.effect_title)
         val desc = view.findViewById<TextView>(R.id.effect_desc)
-//        val attachedSkills = view.findViewById<TextView>(R.id.attached_skills)
         val attachedSkills = view.findViewById<LinearLayout>(R.id.attached_skills)
     }
 

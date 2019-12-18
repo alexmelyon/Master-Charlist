@@ -19,7 +19,7 @@ interface WorldDao {
     fun getFull(): List<World>
 
     @Query("SELECT * FROM world WHERE archived = :archived")
-    fun getAll(archived: Boolean): List<World>
+    fun getAll(archived: Boolean = false): List<World>
 
     @Query("SELECT * FROM world WHERE id = :worldId")
     fun getWorldById(worldId: Long): World
