@@ -47,7 +47,7 @@
     <string name="add_thing">Добавить вещь</string>
     <string name="attach_effect">Добавить эффект</string>
     <string name="detach_effect">Снять эффект</string>
-    <string name="add_comment">Добавить коммент</string>
+    <string name="add_comment">Добавить комментарий</string>
     <string name="select_thing">Выберите вещь</string>
     <string name="close_this_session_question">Закрыть эту сессию?</string>
     <string name="character_name_colon">Имя персонажа:</string>

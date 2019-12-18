@@ -104,14 +104,20 @@ class ListCharactersController(args: Bundle) : Controller(args), ListCharactersC
             val skills = db.skillDao().getAll(world.id)
             data class SkillToValue(val skill: Skill, val value: Int)
             val skillDiffs = db.skillDiffDao().getAllByCharacter(world.id, game.id, character.id)
-                    .asSequence()
-                    .filter { closedSessions.contains(it.sessionGroup) }
-                    .map { skill -> SkillToValue(skills.single { it.id == skill.skillGroup },skill.value) }
-                    .groupBy { it.skill }
-                    .map { SkillToValue(it.key, it.value.sumBy { it.value }) }
-                    .map { SkillValueModifier(it.skill, it.value, skillIdToModifier[it.skill.id] ?: 0) }
-                    .filter { it.value != 0 || it.modifier != 0 }
-                    .toList()
+                .asSequence()
+                .filter { closedSessions.contains(it.sessionGroup) }
+                .map { skill -> SkillToValue(skills.single { it.id == skill.skillGroup },skill.value) }
+                .toMutableList()
+                .apply {
+                    val existingSkillIds = this.map { it.skill.id }
+                    val missedSkills = skillIdToModifier.filter { it.key !in existingSkillIds }
+                    addAll(missedSkills.map { missed -> SkillToValue(skills.single { it.id == missed.key }, 0) })
+                }
+                .groupBy { it.skill }
+                .map { SkillToValue(it.key, it.value.sumBy { it.value }) }
+                .map { SkillValueModifier(it.skill, it.value, skillIdToModifier[it.skill.id] ?: 0) }
+                .filter { it.value != 0 || it.modifier != 0 }
+                .toList()
             val skillDiffNames = skillDiffs.map {
                 if(it.modifier == 0) {
                     "%s: %d".format(it.skill.name, it.value)

@@ -4,7 +4,7 @@ import android.arch.persistence.room.*
 import java.util.*
 
 @Entity
-class Skill(var name: String, val worldGroup: Long, var lastUsed: Date, var archived: Boolean = false) {
+data class Skill(var name: String, val worldGroup: Long, var lastUsed: Date, var archived: Boolean = false) {
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
     override fun toString() = name
