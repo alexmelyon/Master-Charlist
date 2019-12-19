@@ -43,7 +43,7 @@ class ListCharactersView @Inject constructor(val activity: MainActivity) : _Fram
     }
 
     override fun showAddCharacterDialog() {
-        activity.showAlertEditDialog(context.getString(R.string.character_name_headline)) { name ->
+        activity.showAlertEditDialog(context.getString(R.string.character_name_colon)) { name ->
             controller.createCharacter(name)
         }
     }

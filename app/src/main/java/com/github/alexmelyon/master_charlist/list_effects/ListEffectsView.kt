@@ -71,7 +71,7 @@ class ListEffectsView @Inject constructor(val activity: MainActivity) : _FrameLa
     }
 
     fun showCreateSkillDialog(action: (Skill) -> Unit) {
-        activity.showAlertEditDialog(context.getString(R.string.skill_name_headline)) { name ->
+        activity.showAlertEditDialog(context.getString(R.string.skill_name_colon)) { name ->
             val skill = controller.createSkill(name)
             action(skill)
         }
@@ -109,7 +109,7 @@ class ListEffectsView @Inject constructor(val activity: MainActivity) : _FrameLa
     }
 
     override fun showAddEffectDialog() {
-        activity.showAlertEditDialog(context.getString(R.string.effect_name_headline)) { name ->
+        activity.showAlertEditDialog(context.getString(R.string.effect_name_colon)) { name ->
             controller.createEffect(name)
         }
     }

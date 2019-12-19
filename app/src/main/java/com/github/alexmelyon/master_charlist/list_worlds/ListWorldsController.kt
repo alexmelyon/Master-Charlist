@@ -2,6 +2,7 @@ package com.github.alexmelyon.master_charlist.list_worlds
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.*
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.RouterTransaction
@@ -10,6 +11,7 @@ import com.github.alexmelyon.master_charlist.room.AppDatabase
 import com.github.alexmelyon.master_charlist.room.World
 import com.github.alexmelyon.master_charlist.tutorial.TutorialActivity
 import com.github.alexmelyon.master_charlist.world_pager.WorldPagerController
+import org.jetbrains.anko.windowManager
 import ru.napoleonit.talan.di.ControllerInjector
 import java.util.*
 import javax.inject.Inject
@@ -49,10 +51,14 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.list_worlds, menu)
+        menu.findItem(R.id.menu_update).isVisible = true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.menu_update -> {
+                Log.d("JCD", "UPDATE")
+            }
             R.id.menu_add_world -> {
                 view.showCreateWorldDialog()
                 return true

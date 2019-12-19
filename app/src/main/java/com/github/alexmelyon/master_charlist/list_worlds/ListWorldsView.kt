@@ -1,11 +1,15 @@
 package com.github.alexmelyon.master_charlist.list_worlds
 
 import android.content.DialogInterface
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.RecyclerView
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
+import android.util.Log
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import com.github.alexmelyon.master_charlist.MainActivity
 import com.github.alexmelyon.master_charlist.R
@@ -14,6 +18,7 @@ import com.github.alexmelyon.master_charlist.ui.RecyclerStringAdapter
 import com.github.alexmelyon.master_charlist.utils.showAlertDialog
 import com.github.alexmelyon.master_charlist.utils.showAlertEditDialog
 import org.jetbrains.anko._FrameLayout
+import org.jetbrains.anko.backgroundDrawable
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.verticalLayout

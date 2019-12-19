@@ -5,4 +5,5 @@
     <item name="character_effects" type="id"/>
     <item name="character_skills" type="id"/>
     <item name="character_things" type="id"/>
+    <item name="list_worlds_menu" type="id"/>
 </resources>

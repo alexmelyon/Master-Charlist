@@ -10,7 +10,7 @@
     <string name="alert_archive">Archive</string>
     <string name="rename_character">Rename character:</string>
     <string name="archive_character_question">Archive character?</string>
-    <string name="character_name_headline">Character name:</string>
+    <string name="character_name_colon">Character name:</string>
     <string name="archive_effect_question">Archive effect?</string>
     <string name="cancel">Cancel</string>
     <string name="create_new">Create new…</string>
@@ -19,8 +19,8 @@
     <string name="rename">Rename</string>
     <string name="detach_something">Detach %s</string>
     <string name="rename_effect_colon">Rename effect:</string>
-    <string name="effect_name_headline">Effect name:</string>
-    <string name="skill_name_headline">Skill name:</string>
+    <string name="effect_name_colon">Effect name:</string>
+    <string name="skill_name_colon">Skill name:</string>
     <string name="archive">Archive</string>
     <string name="rename_game_colon">Rename game:</string>
     <string name="archive_game_question">Archive game?</string>
@@ -32,7 +32,6 @@
     <string name="archive_session_question">Archive session?</string>
     <string name="rename_skill_colon">Rename skill:</string>
     <string name="archive_skill_question">Archive skill?</string>
-    <string name="skill_name_colon">Skill name:</string>
     <string name="rename_thing_colon">Rename thing:</string>
     <string name="archive_thing_question">Archive thing?</string>
     <string name="thing_name_colon">Thing name:</string>
@@ -53,10 +52,8 @@
     <string name="add_comment">Add Comment</string>
     <string name="select_thing">Select thing</string>
     <string name="close_this_session_question">Close this session?</string>
-    <string name="character_name_colon">Character name:</string>
     <string name="character_created">Character created</string>
     <string name="name_something">Name: %s</string>
-    <string name="effect_name_colon">Effect name:</string>
     <string name="create_worlds">Create worlds</string>
     <string name="create_games">Create games</string>
     <string name="create_characters">Create characters</string>
