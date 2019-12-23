@@ -4,5 +4,5 @@
           android:icon="@drawable/baseline_add_white_24"
           app:showAsAction="ifRoom"
           android:title=""/>
-    <item android:id="@+id/session_close" android:title="Close session"/>
+    <item android:id="@+id/session_close" android:title="@string/close_session"/>
 </menu>

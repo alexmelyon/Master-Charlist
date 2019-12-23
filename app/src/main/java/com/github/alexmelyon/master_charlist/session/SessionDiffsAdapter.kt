@@ -2,8 +2,6 @@ package com.github.alexmelyon.master_charlist.session
 
 import android.content.Context
 import android.graphics.Paint
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -13,6 +11,8 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.github.alexmelyon.master_charlist.R
 import kotlinx.android.synthetic.main.session_item_comment.view.*
 import kotlinx.android.synthetic.main.session_item_int.view.*

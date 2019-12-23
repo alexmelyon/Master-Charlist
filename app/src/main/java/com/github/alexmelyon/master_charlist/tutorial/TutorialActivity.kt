@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import com.crashlytics.android.Crashlytics
 import com.github.alexmelyon.master_charlist.MainActivity
 import com.github.alexmelyon.master_charlist.R
 import com.hololo.tutorial.library.Step
@@ -21,6 +22,7 @@ class TutorialActivity : TutorialActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Crashlytics.log(Log.INFO, javaClass.simpleName, "onCreate")
         super.onCreate(savedInstanceState)
 
         val forcedTutorial = intent.extras?.getBoolean(FORCED_TUTORIAL) ?: false

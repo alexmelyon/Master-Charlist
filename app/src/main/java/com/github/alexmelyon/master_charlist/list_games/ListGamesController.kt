@@ -2,9 +2,11 @@ package com.github.alexmelyon.master_charlist.list_games
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.RouterTransaction
+import com.crashlytics.android.Crashlytics
 import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.game_pager.GamePagerController
 import com.github.alexmelyon.master_charlist.room.AppDatabase
@@ -36,6 +38,7 @@ class ListGamesController(args: Bundle) : Controller(args), ListGamesContract.Co
     })
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
+        Crashlytics.log(Log.INFO, javaClass.simpleName, "onCreateView")
         return view.createView(container)
     }
 

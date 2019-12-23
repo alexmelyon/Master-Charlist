@@ -1,9 +1,9 @@
 package com.github.alexmelyon.master_charlist.list_games
 
 import android.content.DialogInterface
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.RecyclerView
 import com.github.alexmelyon.master_charlist.MainActivity
 import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.room.Game

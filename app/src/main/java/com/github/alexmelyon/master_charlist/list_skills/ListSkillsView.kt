@@ -1,9 +1,9 @@
 package com.github.alexmelyon.master_charlist.list_skills
 
 import android.content.DialogInterface
-import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import com.github.alexmelyon.master_charlist.MainActivity
 import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.room.Skill

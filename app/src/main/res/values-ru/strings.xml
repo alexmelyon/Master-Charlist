@@ -5,7 +5,7 @@
     <string name="character_name">Имя персонажа</string>
     <string name="effects_colon">Эффекты:</string>
     <string name="skills_colon">Скиллы:</string>
-    <string name="things_colon">Вещи:</string>
+    <string name="things_colon">Предметы:</string>
     <string name="alert_rename">Переименовать</string>
     <string name="alert_archive">Архивировать</string>
     <string name="rename_character">Переименовать персонажа:</string>
@@ -30,9 +30,9 @@
     <string name="rename_skill_colon">Переименовать скилл:</string>
     <string name="archive_skill_question">Архивировать скилл?</string>
     <string name="skill_name_colon">Имя скилла:</string>
-    <string name="rename_thing_colon">Переименовать вещь:</string>
-    <string name="archive_thing_question">Архивировать вещь?</string>
-    <string name="thing_name_colon">Имя вещи:</string>
+    <string name="rename_thing_colon">Переименовать предмет:</string>
+    <string name="archive_thing_question">Архивировать предмет?</string>
+    <string name="thing_name_colon">Имя предмета:</string>
     <string name="rename_world_colon">Переименовать мир:</string>
     <string name="archive_world_question">Архивировать мир?</string>
     <string name="about_app" >Блокнот для игровых мастеров\n
@@ -44,11 +44,11 @@
     <string name="add_character">Добавить персонажа</string>
     <string name="add_healthpoints">Добавить очки жизней</string>
     <string name="add_skill">Добавить скилл</string>
-    <string name="add_thing">Добавить вещь</string>
+    <string name="add_thing">Добавить предмет</string>
     <string name="attach_effect">Добавить эффект</string>
     <string name="detach_effect">Снять эффект</string>
     <string name="add_comment">Добавить комментарий</string>
-    <string name="select_thing">Выберите вещь</string>
+    <string name="select_thing">Выберите предмет</string>
     <string name="close_this_session_question">Закрыть эту сессию?</string>
     <string name="character_name_colon">Имя персонажа:</string>
     <string name="character_created">Персонаж создан</string>
@@ -64,6 +64,9 @@
     <string name="please_enter_name">Пожалуйста, введите имя</string>
     <string name="games_header">Игры</string>
     <string name="skills_header">Скиллы</string>
-    <string name="things_header">Вещи</string>
+    <string name="things_header">Предметы</string>
     <string name="effects_header">Эффекты</string>
+    <string name="world_name_colon">Имя мира:</string>
+    <string name="close_session">Закрыть сессию</string>
+    <string name="add_modifiers">Добавить модификаторы…</string>
 </resources>

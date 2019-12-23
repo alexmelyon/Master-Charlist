@@ -2,9 +2,11 @@ package com.github.alexmelyon.master_charlist.list_worlds
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.*
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.RouterTransaction
+import com.crashlytics.android.Crashlytics
 import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.room.AppDatabase
 import com.github.alexmelyon.master_charlist.room.World
@@ -24,6 +26,7 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
     private lateinit var setWorlds: TreeSet<World>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
+        Crashlytics.log(Log.INFO, javaClass.simpleName, "onCreateView")
         setHasOptionsMenu(true)
         return view.createView(container)
     }

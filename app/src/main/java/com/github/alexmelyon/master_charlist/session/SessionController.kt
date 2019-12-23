@@ -2,8 +2,10 @@ package com.github.alexmelyon.master_charlist.session
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import com.bluelinelabs.conductor.Controller
+import com.crashlytics.android.Crashlytics
 import com.github.alexmelyon.master_charlist.*
 import com.github.alexmelyon.master_charlist.list_games.WORLD_KEY
 import com.github.alexmelyon.master_charlist.list_sessions.GAME_KEY
@@ -96,6 +98,7 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
+        Crashlytics.log(Log.INFO, javaClass.simpleName, "onCreateView")
         setHasOptionsMenu(true)
         return view.createView(container)
     }

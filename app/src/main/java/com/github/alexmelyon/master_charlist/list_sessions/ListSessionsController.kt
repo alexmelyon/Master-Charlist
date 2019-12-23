@@ -3,9 +3,11 @@ package com.github.alexmelyon.master_charlist.list_sessions
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.RouterTransaction
+import com.crashlytics.android.Crashlytics
 import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.list_characters.ListCharactersDelegate
 import com.github.alexmelyon.master_charlist.list_games.WORLD_KEY
@@ -55,6 +57,7 @@ class ListSessionsController(args: Bundle) : Controller(args), ListSessionsContr
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
+        Crashlytics.log(Log.INFO, javaClass.simpleName, "onCreateView")
         return view.createView(container)
     }
 
@@ -81,7 +84,6 @@ class ListSessionsController(args: Bundle) : Controller(args), ListSessionsContr
     fun updateScreen() {
         sessionsList = db.gameSessionDao().getAll(world.id, game.id)
             .sortedWith(Comparator { o1, o2 ->
-                // TODO My own comparator
                 if (o1.open != o2.open) {
                     return@Comparator o2.open.compareTo(o1.open)
                 }
@@ -132,7 +134,7 @@ class ListSessionsController(args: Bundle) : Controller(args), ListSessionsContr
 
     override fun createSession() {
         val now = Calendar.getInstance().time
-        val name = now.let { SimpleDateFormat("EEEE d MMMM HH:mm yyyy", Locale.getDefault()).format(it) }
+        val name = now.let { SimpleDateFormat("EEEE d MMMM HH:mm yyyy", Locale.getDefault()).format(it).capitalize() }
         val session = GameSession(name, game.id, world.id, now, open = true, endTime = now)
         val id = db.gameSessionDao().insert(session)
         session.id = id

@@ -1,6 +1,6 @@
 package com.github.alexmelyon.master_charlist.room
 
-import android.arch.persistence.room.*
+import androidx.room.*
 
 @Entity
 class EffectSkill(var value: Int, var effectGroup: Long, var skillGroup: Long, var worldGroup: Long) {

@@ -1,6 +1,6 @@
 package com.github.alexmelyon.master_charlist.room
 
-import android.arch.persistence.room.*
+import androidx.room.*
 import java.util.*
 
 @Entity

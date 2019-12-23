@@ -69,4 +69,7 @@
     <string name="skills_header">Skills</string>
     <string name="things_header">Things</string>
     <string name="effects_header">Effects</string>
+    <string name="world_name_colon">World name:</string>
+    <string name="close_session">Close session</string>
+    <string name="add_modifiers">Add modifiers…</string>
 </resources>

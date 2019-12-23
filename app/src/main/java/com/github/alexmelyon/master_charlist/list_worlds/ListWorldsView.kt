@@ -1,12 +1,12 @@
 package com.github.alexmelyon.master_charlist.list_worlds
 
 import android.content.DialogInterface
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.RecyclerView
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.RecyclerView
 import com.github.alexmelyon.master_charlist.MainActivity
 import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.room.World
@@ -33,7 +33,6 @@ class ListWorldsView @Inject constructor(val activity: MainActivity) : _FrameLay
             controller.onItemClick(world)
         }
         worldsAdapter.onItemLongclickListener = { pos, world ->
-            // TODO Rename
             AlertDialog.Builder(activity)
                 .setItems(arrayOf(context.getString(R.string.rename), context.getString(R.string.archive)), DialogInterface.OnClickListener { dialog, which ->
                     when(which) {
@@ -68,7 +67,7 @@ class ListWorldsView @Inject constructor(val activity: MainActivity) : _FrameLay
     }
 
     override fun showCreateWorldDialog() {
-        activity.showAlertEditDialog("World name:") { name ->
+        activity.showAlertEditDialog(context.getString(R.string.world_name_colon)) { name ->
             controller.createWorld(name)
         }
     }
@@ -83,8 +82,9 @@ class ListWorldsView @Inject constructor(val activity: MainActivity) : _FrameLay
             .create()
 
         dialog.show()
-        val message = dialog.findViewById<TextView>(android.R.id.message)
-        Linkify.addLinks(message, Linkify.WEB_URLS)
-        message?.movementMethod = LinkMovementMethod.getInstance()
+        dialog.findViewById<TextView>(android.R.id.message)?.let { message ->
+            Linkify.addLinks(message, Linkify.WEB_URLS)
+            message.movementMethod = LinkMovementMethod.getInstance()
+        }
     }
 }

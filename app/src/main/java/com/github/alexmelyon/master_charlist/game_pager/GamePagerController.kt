@@ -4,14 +4,15 @@ package com.github.alexmelyon.master_charlist.game_pager
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.support.design.widget.TabLayout
-import android.support.v4.view.ViewPager
+import android.util.Log
 import android.view.*
 import android.widget.LinearLayout
+import androidx.viewpager.widget.ViewPager
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
+import com.crashlytics.android.Crashlytics
 import com.github.alexmelyon.master_charlist.MainActivity
 import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.list_characters.ListCharactersController
@@ -21,6 +22,7 @@ import com.github.alexmelyon.master_charlist.list_sessions.ListSessionsControlle
 import com.github.alexmelyon.master_charlist.room.AppDatabase
 import com.github.alexmelyon.master_charlist.room.Game
 import com.github.alexmelyon.master_charlist.room.World
+import com.google.android.material.tabs.TabLayout
 import org.jetbrains.anko.design.tabLayout
 import org.jetbrains.anko.linearLayout
 import org.jetbrains.anko.matchParent
@@ -88,6 +90,7 @@ class GamePagerController(args: Bundle) : Controller(args) {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
+        Crashlytics.log(Log.INFO, javaClass.simpleName, "onCreateView")
         (activity as MainActivity).supportActionBar!!.title = game.name
         setHasOptionsMenu(true)
 

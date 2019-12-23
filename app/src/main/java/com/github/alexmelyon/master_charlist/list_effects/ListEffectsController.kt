@@ -2,8 +2,10 @@ package com.github.alexmelyon.master_charlist.list_effects
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import com.bluelinelabs.conductor.Controller
+import com.crashlytics.android.Crashlytics
 import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.list_games.WORLD_KEY
 import com.github.alexmelyon.master_charlist.room.*
@@ -32,6 +34,7 @@ class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContrac
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
+        Crashlytics.log(Log.INFO, javaClass.simpleName, "onCreateView")
         return view.createView(container)
     }
 

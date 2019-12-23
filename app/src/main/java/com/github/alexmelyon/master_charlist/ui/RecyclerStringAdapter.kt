@@ -2,14 +2,14 @@ package com.github.alexmelyon.master_charlist.ui
 
 import android.content.Context
 import android.graphics.Color
-import android.support.annotation.LayoutRes
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.annotation.LayoutRes
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.github.alexmelyon.master_charlist.R
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.textColor

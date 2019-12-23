@@ -1,6 +1,6 @@
 package com.github.alexmelyon.master_charlist.room
 
-import android.arch.persistence.room.*
+import androidx.room.*
 
 @Entity
 class GameCharacter(var name: String, val gameGroup: Long, val worldGroup: Long, var archived: Boolean = false) {
