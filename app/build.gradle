@@ -10,7 +10,7 @@ android {
     compileSdkVersion 29
     defaultConfig {
         applicationId "com.helloandroid"
-        minSdkVersion 17
+        minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
         versionName "1.0.$versionCode"
@@ -72,13 +72,9 @@ dependencies {
     // Tutorial view
     implementation 'com.github.msayan:tutorial-view:v1.0.8'
 
-}
+    implementation 'org.jsoup:jsoup:1.12.1'
 
-//compileKotlin {
-//    kotlinOptions {
-//        freeCompilerArgs = ["-XXLanguage:+InlineClasses"]
-//    }
-//}
+}
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     sourceCompatibility = JavaVersion.VERSION_1_8

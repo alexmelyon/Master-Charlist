@@ -5,7 +5,7 @@ import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
 
 @Database(
-    version = 3,
+    version = 1,
     entities = [
         World::class,
         Game::class,

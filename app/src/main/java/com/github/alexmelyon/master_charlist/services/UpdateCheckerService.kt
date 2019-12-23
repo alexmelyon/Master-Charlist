@@ -1,18 +1,21 @@
 package com.github.alexmelyon.master_charlist.services
 
 import android.content.Context
-import javax.inject.Inject
 
-class UpdateCheckerService {
+class UpdateCheckerService(val context: Context) {
 
-    @Inject
-    lateinit var context: Context
+    val getVersionCode = GetVersionCode(context)
 
-    fun isUpdateAvailable(): Boolean {
-        context.packageManager.packagen
+    fun checkAvailable(onPost: (Boolean) -> Unit) {
+        val currentVersion = context.packageManager.getPackageInfo(context.packageName, 0).versionName
+        getVersionCode.onPost = { version ->
+            version
+        }
+        getVersionCode.execute()
     }
 
     fun openGooglePlay() {
 
     }
+
 }
