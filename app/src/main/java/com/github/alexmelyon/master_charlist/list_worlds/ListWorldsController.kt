@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.view.*
+import androidx.appcompat.app.AlertDialog
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.RouterTransaction
 import com.crashlytics.android.Crashlytics
@@ -58,6 +59,12 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.list_worlds, menu)
+        FirebaseAuth.getInstance().currentUser?.let { user ->
+            menu.findItem(R.id.menu_login).isVisible = false
+            menu.findItem(R.id.menu_username).isVisible = true
+            menu.findItem(R.id.menu_username).title = user.displayName
+            menu.findItem(R.id.menu_logout).isVisible = true
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -74,6 +81,13 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
                         .setAvailableProviders(providers)
                         .build(),
                     RC_SIGN_IN)
+            }
+            R.id.menu_logout -> {
+                AuthUI.getInstance()
+                    .signOut(activity!!)
+                    .addOnCompleteListener {
+                        activity?.invalidateOptionsMenu()
+                    }
             }
             R.id.menu_show_tutorial -> {
                 startActivity(Intent(applicationContext, TutorialActivity::class.java).apply {
@@ -97,9 +111,14 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
 
             if (resultCode == Activity.RESULT_OK) {
                 val user = FirebaseAuth.getInstance().currentUser
-                Log.d("JCD", "LOGIN OK ${user?.uid}")
+                Log.d("JCD", "Login ${user?.uid}")
+                activity?.invalidateOptionsMenu()
             } else {
-                Log.d("JCD", "LOGIN FAILED ${response?.error?.errorCode} ${response?.error?.message}")
+                AlertDialog.Builder(activity!!)
+                    .setTitle(activity?.getString(R.string.error))
+                    .setMessage(response?.error?.message)
+                    .setPositiveButton("OK", { dialog, which ->  })
+                    .show()
             }
         }
     }

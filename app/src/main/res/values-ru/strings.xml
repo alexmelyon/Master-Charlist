@@ -70,7 +70,9 @@
     <string name="close_session">Закрыть сессию</string>
     <string name="add_modifiers">Добавить модификаторы…</string>
     <string name="add_world">Создать мир</string>
-    <string name="syncronize">Синхронизировать…</string>
     <string name="show_tutorial">Туториал</string>
     <string name="about">О приложении</string>
+    <string name="login">Войти…</string>
+    <string name="logout">Выйти</string>
+    <string name="error">Ошибка</string>
 </resources>
