@@ -1,5 +1,6 @@
 package com.github.alexmelyon.master_charlist.list_worlds
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -7,16 +8,21 @@ import android.view.*
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.RouterTransaction
 import com.crashlytics.android.Crashlytics
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.IdpResponse
 import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.room.AppDatabase
 import com.github.alexmelyon.master_charlist.room.World
 import com.github.alexmelyon.master_charlist.tutorial.TutorialActivity
 import com.github.alexmelyon.master_charlist.world_pager.WorldPagerController
+import com.google.firebase.auth.FirebaseAuth
 import ru.napoleonit.talan.di.ControllerInjector
 import java.util.*
 import javax.inject.Inject
 
 class ListWorldsController : Controller(), ListWorldsContract.Controller {
+
+    private val RC_SIGN_IN: Int = 1001
 
     @Inject
     lateinit var view: ListWorldsContract.View
@@ -60,6 +66,15 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
                 view.showCreateWorldDialog()
                 return true
             }
+            R.id.menu_login -> {
+                val providers = arrayListOf(AuthUI.IdpConfig.GoogleBuilder().build())
+                startActivityForResult(
+                    AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(providers)
+                        .build(),
+                    RC_SIGN_IN)
+            }
             R.id.menu_show_tutorial -> {
                 startActivity(Intent(applicationContext, TutorialActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
@@ -73,6 +88,20 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+        if (requestCode == RC_SIGN_IN) {
+            val response = IdpResponse.fromResultIntent(data)
+
+            if (resultCode == Activity.RESULT_OK) {
+                val user = FirebaseAuth.getInstance().currentUser
+                Log.d("JCD", "LOGIN OK ${user?.uid}")
+            } else {
+                Log.d("JCD", "LOGIN FAILED ${response?.error?.errorCode} ${response?.error?.message}")
+            }
+        }
     }
 
     override fun onItemClick(world: World) {

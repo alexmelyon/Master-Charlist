@@ -69,4 +69,8 @@
     <string name="world_name_colon">Имя мира:</string>
     <string name="close_session">Закрыть сессию</string>
     <string name="add_modifiers">Добавить модификаторы…</string>
+    <string name="add_world">Создать мир</string>
+    <string name="syncronize">Синхронизировать…</string>
+    <string name="show_tutorial">Туториал</string>
+    <string name="about">О приложении</string>
 </resources>

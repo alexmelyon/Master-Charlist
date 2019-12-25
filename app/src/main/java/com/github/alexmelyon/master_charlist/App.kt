@@ -1,17 +1,18 @@
 package com.github.alexmelyon.master_charlist
 
 import android.app.Activity
-import android.app.Application
+import androidx.multidex.MultiDexApplication
 import com.github.alexmelyon.master_charlist.dagger.AppComponent
 import com.github.alexmelyon.master_charlist.dagger.DaggerAppComponent
-import com.github.alexmelyon.master_charlist.room.*
+import com.github.alexmelyon.master_charlist.room.AppDatabaseModule
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
 import javax.inject.Inject
 
 
-class App : Application(), HasActivityInjector {
+class App : MultiDexApplication(), HasActivityInjector {
 
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Activity>
@@ -35,8 +36,11 @@ class App : Application(), HasActivityInjector {
             .appDatabaseModule(AppDatabaseModule(this))
             .build()
         appComponent.inject(this)
+
+        val db = FirebaseFirestore.getInstance()
+
     }
 }
 // TODO Комментарий по персонажу, Состояния, особенности (плюсы минусы), дополнительные скиллы, заклинания, баффы, дебаффы, ачивки
-// TODO Пресеты по DND, Fallout, SW:KotOR
+// TODO Пресеты по DND, Fallout, SW:KotOR, VTM
 // TODO Кубик
