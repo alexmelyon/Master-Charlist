@@ -11,12 +11,15 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.crashlytics.android.Crashlytics
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
+import com.github.alexmelyon.master_charlist.App
 import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.room.AppDatabase
+import com.github.alexmelyon.master_charlist.room.User
 import com.github.alexmelyon.master_charlist.room.World
 import com.github.alexmelyon.master_charlist.tutorial.TutorialActivity
 import com.github.alexmelyon.master_charlist.world_pager.WorldPagerController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import ru.napoleonit.talan.di.ControllerInjector
 import java.util.*
 import javax.inject.Inject
@@ -27,8 +30,6 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
 
     @Inject
     lateinit var view: ListWorldsContract.View
-    @Inject
-    lateinit var db: AppDatabase
 
     private lateinit var setWorlds: TreeSet<World>
 
@@ -52,8 +53,10 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
             }
             return@Comparator res
         })
-        setWorlds.addAll(db.worldDao().getAll(archived = false))
-        this.view.setData(setWorlds.toMutableList())
+        App.instance.worldService.getAll {
+            setWorlds.addAll(it)
+            this.view.setData(setWorlds.toMutableList())
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -110,9 +113,12 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
             val response = IdpResponse.fromResultIntent(data)
 
             if (resultCode == Activity.RESULT_OK) {
-                val user = FirebaseAuth.getInstance().currentUser
-                Log.d("JCD", "Login ${user?.uid}")
+                val user = FirebaseAuth.getInstance().currentUser!!
+                Log.d("JCD", "Login ${user.uid}")
                 activity?.invalidateOptionsMenu()
+
+                App.instance.userService.create(user.uid, user.displayName ?: "")
+                // TODO Download all worlds for this device
             } else {
                 AlertDialog.Builder(activity!!)
                     .setTitle(activity?.getString(R.string.error))
@@ -128,9 +134,7 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
     }
 
     override fun createWorld(worldName: String) {
-        val world = World(worldName, Calendar.getInstance().time)
-        val id = db.worldDao().insert(world)
-        world.id = id
+        val world = App.instance.worldService.create(worldName)
 
         setWorlds.add(world)
         view.addedAt(0, world)
@@ -138,16 +142,14 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
 
     override fun archiveWorldAt(pos: Int) {
         val world = setWorlds.toList()[pos]
-        world.archived = true
-        db.worldDao().update(world)
+        App.instance.worldService.archive(world)
 
         setWorlds.remove(world)
         view.archivedAt(pos)
     }
 
     override fun renameWorld(pos: Int, world: World, name: String) {
-        world.name = name
-        db.worldDao().update(world)
+        App.instance.worldService.rename(world, name)
         view.itemChangedAt(pos)
     }
 }

@@ -5,7 +5,8 @@ import androidx.multidex.MultiDexApplication
 import com.github.alexmelyon.master_charlist.dagger.AppComponent
 import com.github.alexmelyon.master_charlist.dagger.DaggerAppComponent
 import com.github.alexmelyon.master_charlist.room.AppDatabaseModule
-import com.google.firebase.firestore.FirebaseFirestore
+import com.github.alexmelyon.master_charlist.room.UserService
+import com.github.alexmelyon.master_charlist.room.WorldStorage
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
@@ -28,6 +29,9 @@ class App : MultiDexApplication(), HasActivityInjector {
             private set
     }
 
+    val userService = UserService()
+    val worldService = WorldStorage(userService)
+
     override fun onCreate() {
         super.onCreate()
         instance = this
@@ -36,8 +40,6 @@ class App : MultiDexApplication(), HasActivityInjector {
             .appDatabaseModule(AppDatabaseModule(this))
             .build()
         appComponent.inject(this)
-
-        val db = FirebaseFirestore.getInstance()
 
     }
 }
