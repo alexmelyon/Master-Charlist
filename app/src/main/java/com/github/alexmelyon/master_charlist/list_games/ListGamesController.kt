@@ -47,7 +47,7 @@ class ListGamesController(args: Bundle) : Controller(args), ListGamesContract.Co
         ControllerInjector.inject(this)
         world = db.worldDao().getWorldById(args.getLong(WORLD_KEY))
 
-        gamesSet.addAll(db.gameDao().getAll(world.id))
+        gamesSet.addAll(db.gameDao().getAll(world.id)) // FIXME lateinit property world has not been initialized
     }
 
     override fun onAttach(view: View) {

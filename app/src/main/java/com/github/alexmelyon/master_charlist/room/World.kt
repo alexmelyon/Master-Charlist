@@ -10,7 +10,7 @@ import java.util.*
 /** @property origin - One of deviceId or userUid */
 @Entity
 class World(
-    var uid: String = "",
+    var uuid: String = "",
     var origin: String = "",
     var deviceId: String = "",
     var userUid: String? = null,
@@ -20,7 +20,9 @@ class World(
 ) {
     @Exclude
     var firestoreId: String = ""
+    @Exclude
     @PrimaryKey(autoGenerate = true)
+    @Deprecated("Deprecated since include Firestore")
     var id: Long = 0L
 
     override fun toString() = name
@@ -84,6 +86,10 @@ class WorldStorage(val userService: UserService, val deviceService: DeviceServic
                 }.filter { !it.archived }
                 onSuccess(worlds)
             }
+    }
+
+    fun get(worldId: String, onSuccess: (World) -> Unit) {
+        worldsCollection.document(worldId).get().addOnSuccessListener { onSuccess(it.toObject(World::class.java)!!) }
     }
 }
 

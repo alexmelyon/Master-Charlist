@@ -49,7 +49,7 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
 
     override fun onAttach(view: View) {
         super.onAttach(view)
-        App.instance.worldService.getAll {
+        App.instance.worldStorage.getAll {
             setWorlds.clear()
             setWorlds.addAll(it)
             this.view.setData(setWorlds.toMutableList())
@@ -115,7 +115,7 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
                 activity?.invalidateOptionsMenu()
 
                 App.instance.userService.getOrCreate(user.uid, user.displayName ?: "")
-                App.instance.worldService.updateLocalWorlds {
+                App.instance.worldStorage.updateLocalWorlds {
                     setWorlds.clear()
                     setWorlds.addAll(it)
                     this.view.setData(setWorlds.toMutableList())
@@ -131,11 +131,11 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
     }
 
     override fun onItemClick(world: World) {
-        router.pushController(RouterTransaction.with(WorldPagerController(world.id)))
+        router.pushController(RouterTransaction.with(WorldPagerController(world.firestoreId)))
     }
 
     override fun createWorld(worldName: String) {
-        val world = App.instance.worldService.create(worldName)
+        val world = App.instance.worldStorage.create(worldName)
 
         setWorlds.add(world)
         view.addedAt(0, world)
@@ -143,14 +143,14 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
 
     override fun archiveWorldAt(pos: Int) {
         val world = setWorlds.toList()[pos]
-        App.instance.worldService.archive(world)
+        App.instance.worldStorage.archive(world)
 
         setWorlds.remove(world)
         view.archivedAt(pos)
     }
 
     override fun renameWorld(pos: Int, world: World, name: String) {
-        App.instance.worldService.rename(world, name)
+        App.instance.worldStorage.rename(world, name)
         view.itemChangedAt(pos)
     }
 }

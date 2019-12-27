@@ -13,6 +13,7 @@ import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.support.RouterPagerAdapter
 import com.crashlytics.android.Crashlytics
+import com.github.alexmelyon.master_charlist.App
 import com.github.alexmelyon.master_charlist.MainActivity
 import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.list_effects.ListEffectsController
@@ -38,14 +39,14 @@ class WorldPagerController(args: Bundle) : Controller(args) {
 
     private lateinit var world: World
 
-    constructor(worldId: Long) : this(Bundle().apply {
-        putLong(WORLD_KEY, worldId)
+    constructor(worldId: String) : this(Bundle().apply {
+        putString(WORLD_KEY, worldId)
     })
 
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager
     private val pagerAdapter: PagerAdapter
-    private lateinit var screenToController: List<Pair<String, Controller>>
+    private var screenToController: List<Pair<String, Controller>> = listOf()
     private lateinit var menu: Menu
     private lateinit var menuInflater: MenuInflater
 
@@ -71,17 +72,25 @@ class WorldPagerController(args: Bundle) : Controller(args) {
     override fun onContextAvailable(context: Context) {
         super.onContextAvailable(context)
         ControllerInjector.inject(this)
-        world = db.worldDao().getWorldById(args.getLong(WORLD_KEY))
-        screenToController = listOf(
-            context.getString(R.string.games_header) to ListGamesController(world.id),
-            context.getString(R.string.skills_header) to ListSkillsController(world.id),
-            context.getString(R.string.things_header) to ListThingsController(world.id),
-            context.getString(R.string.effects_header) to ListEffectsController(world.id))
+        val worldId = args.getString(WORLD_KEY)!!
+        App.instance.worldStorage.get(worldId) { world ->
+            this@WorldPagerController.world = world
+            (activity as MainActivity).supportActionBar!!.title = world.name
+
+            screenToController = listOf(
+                context.getString(R.string.games_header) to ListGamesController(world.id),
+                context.getString(R.string.skills_header) to ListSkillsController(world.id),
+                context.getString(R.string.things_header) to ListThingsController(world.id),
+                context.getString(R.string.effects_header) to ListEffectsController(world.id)
+            )
+
+            pagerAdapter.notifyDataSetChanged()
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
         Crashlytics.log(Log.INFO, javaClass.simpleName, "onCreateView")
-        (activity as MainActivity).supportActionBar!!.title = world.name
+//        (activity as MainActivity).supportActionBar!!.title = world.name
         setHasOptionsMenu(true)
 
         val view = container.context.linearLayout {
