@@ -13,13 +13,10 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.github.alexmelyon.master_charlist.App
 import com.github.alexmelyon.master_charlist.R
-import com.github.alexmelyon.master_charlist.room.AppDatabase
-import com.github.alexmelyon.master_charlist.room.User
 import com.github.alexmelyon.master_charlist.room.World
 import com.github.alexmelyon.master_charlist.tutorial.TutorialActivity
 import com.github.alexmelyon.master_charlist.world_pager.WorldPagerController
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import ru.napoleonit.talan.di.ControllerInjector
 import java.util.*
 import javax.inject.Inject
@@ -31,7 +28,13 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
     @Inject
     lateinit var view: ListWorldsContract.View
 
-    private lateinit var setWorlds: TreeSet<World>
+    private val setWorlds: TreeSet<World> = TreeSet(kotlin.Comparator { o1, o2 ->
+        val res = o2.createTime.compareTo(o1.createTime)
+        if (res == 0) {
+            return@Comparator o1.name.compareTo(o2.name)
+        }
+        return@Comparator res
+    })
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
         Crashlytics.log(Log.INFO, javaClass.simpleName, "onCreateView")
@@ -46,14 +49,8 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
 
     override fun onAttach(view: View) {
         super.onAttach(view)
-        setWorlds = TreeSet(kotlin.Comparator { o1, o2 ->
-            val res = o2.createTime.compareTo(o1.createTime)
-            if (res == 0) {
-                return@Comparator o1.name.compareTo(o2.name)
-            }
-            return@Comparator res
-        })
         App.instance.worldService.getAll {
+            setWorlds.clear()
             setWorlds.addAll(it)
             this.view.setData(setWorlds.toMutableList())
         }
@@ -117,8 +114,12 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
                 Log.d("JCD", "Login ${user.uid}")
                 activity?.invalidateOptionsMenu()
 
-                App.instance.userService.create(user.uid, user.displayName ?: "")
-                // TODO Download all worlds for this device
+                App.instance.userService.getOrCreate(user.uid, user.displayName ?: "")
+                App.instance.worldService.updateLocalWorlds {
+                    setWorlds.clear()
+                    setWorlds.addAll(it)
+                    this.view.setData(setWorlds.toMutableList())
+                }
             } else {
                 AlertDialog.Builder(activity!!)
                     .setTitle(activity?.getString(R.string.error))
