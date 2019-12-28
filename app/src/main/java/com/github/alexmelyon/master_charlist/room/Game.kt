@@ -1,7 +1,7 @@
 package com.github.alexmelyon.master_charlist.room
 
+import android.util.Log
 import androidx.room.*
-import com.github.alexmelyon.master_charlist.room.WorldStorage.Companion.WORLD_GROUP
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
@@ -35,7 +35,6 @@ class GameStorage(val userService: UserService, val deviceService: DeviceService
 
     fun getAll(world: World, onSuccess: (List<Game>) -> Unit) {
         gamesCollection.whereEqualTo(WORLD_GROUP, world.firestoreId)
-            .orderBy("time")
             .get()
             .addOnSuccessListener { querySnapshot ->
                 val games = querySnapshot.toObjects(Game::class.java)
@@ -52,6 +51,16 @@ class GameStorage(val userService: UserService, val deviceService: DeviceService
             game.firestoreId = it.id
             onSuccess(game)
         }
+    }
+
+    fun archive(game: Game) {
+        game.archived = true
+        gamesCollection.document(game.firestoreId).update(FIELD_ARCHIVED, true)
+    }
+
+    fun rename(game: Game, name: String) {
+        game.name = name
+        gamesCollection.document(game.firestoreId).update(FIELD_NAME, name)
     }
 }
 

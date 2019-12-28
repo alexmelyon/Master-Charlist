@@ -36,30 +36,20 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
         return@Comparator res
     })
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {//2 start
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
         Crashlytics.log(Log.INFO, javaClass.simpleName, "onCreateView")
         setHasOptionsMenu(true)
         return view.createView(container)
     }
 
-    override fun onContextAvailable(context: Context) {//1 start, 2 forw
+    override fun onContextAvailable(context: Context) {
         super.onContextAvailable(context)
         ControllerInjector.inject(this)
     }
 
-    override fun onAttach(view: View) {//4 start
+    override fun onAttach(view: View) {
         super.onAttach(view)
         updateWorlds()
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) { // 1 forw
-        super.onRestoreInstanceState(savedInstanceState)
-        activity?.invalidateOptionsMenu()
-        updateWorlds()
-    }
-
-    override fun onActivityResumed(activity: Activity) {//3 start, 3 forw
-        super.onActivityResumed(activity)
     }
 
     fun updateWorlds() {

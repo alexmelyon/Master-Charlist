@@ -41,15 +41,19 @@ class ListGamesController(args: Bundle) : Controller(args), ListGamesContract.Co
         return@Comparator res
     })
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {//2 create
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
         Crashlytics.log(Log.INFO, javaClass.simpleName, "onCreateView")
         return view.createView(container)
     }
 
-    override fun onContextAvailable(context: Context) {//1 create
+    override fun onContextAvailable(context: Context) {
         super.onContextAvailable(context)
         ControllerInjector.inject(this)
         world = args.getParcelable<World>(WORLD_KEY)!!
+    }
+
+    override fun onAttach(view: View) {
+        super.onAttach(view)
         updateGames()
     }
 
@@ -58,39 +62,6 @@ class ListGamesController(args: Bundle) : Controller(args), ListGamesContract.Co
             gamesSet.addAll(games)
             this.view.setData(gamesSet.toMutableList())
         }
-    }
-
-    override fun onAttach(view: View) {//3 create
-        super.onAttach(view)
-//        App.instance.gameStorage.getAll(world) { games ->
-//            this.view.setData(games.toMutableList())
-//        }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {//3 to back
-        super.onSaveInstanceState(outState)
-        outState.putParcelable(WORLD_KEY, world)
-    }
-
-    override fun onSaveViewState(view: View, outState: Bundle) {//2 to back
-        super.onSaveViewState(view, outState)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {//1 to forw
-        super.onRestoreInstanceState(savedInstanceState)
-        world = savedInstanceState.getParcelable<World>(WORLD_KEY)!!
-    }
-
-    override fun onRestoreViewState(view: View, savedViewState: Bundle) {
-        super.onRestoreViewState(view, savedViewState)
-    }
-
-    override fun onActivityPaused(activity: Activity) {//1 to back
-        super.onActivityPaused(activity)
-    }
-
-    override fun onActivityResumed(activity: Activity) {//2 to forw
-        super.onActivityResumed(activity)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -126,16 +97,14 @@ class ListGamesController(args: Bundle) : Controller(args), ListGamesContract.Co
 
     override fun archiveGameAt(pos: Int) {
         val game = gamesSet.toList()[pos]
-        game.archived = true
+        App.instance.gameStorage.archive(game)
 
-        db.gameDao().update(game)
         gamesSet.remove(game)
         view.archivedAt(pos)
     }
 
     override fun renameGame(pos: Int, game: Game, name: String) {
-        game.name = name
-        db.gameDao().update(game)
+        App.instance.gameStorage.rename(game, name)
         view.itemChangedAt(pos)
     }
 }

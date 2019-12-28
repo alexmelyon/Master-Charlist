@@ -12,6 +12,12 @@ import kotlinx.android.parcel.Parcelize
 import java.lang.Exception
 import java.util.*
 
+
+const val WORLD_GROUP = "worldGroup"
+const val FIELD_NAME = "name"
+const val FIELD_ARCHIVED = "archived"
+const val FIELD_ORIGIN = "origin"
+
 /** @property origin - One of deviceId or userUid */
 @Entity
 @Parcelize
@@ -35,13 +41,6 @@ class World(
 }
 
 class WorldStorage(val userService: UserService, val deviceService: DeviceService) {
-
-    companion object {
-        const val WORLD_GROUP = "worldGroup"
-        const val FIELD_NAME = "name"
-        const val FIELD_ARCHIVED = "archived"
-        const val FIELD_ORIGIN = "origin"
-    }
 
     private val worldsCollection by lazy {
         FirebaseFirestore.getInstance().collection("worlds")
@@ -100,7 +99,7 @@ class WorldStorage(val userService: UserService, val deviceService: DeviceServic
                 querySnapshot.forEach { docRef ->
                     worldsCollection.document(docRef.id).update(mapOf(FIELD_ORIGIN to userUid, FIELD_USER_UID to userUid))
                 }
-                val worlds = querySnapshot.map { docSnapshot ->
+                querySnapshot.map { docSnapshot ->
                     docSnapshot.toObject(World::class.java).apply {
                         firestoreId = docSnapshot.id
                     }
@@ -109,9 +108,9 @@ class WorldStorage(val userService: UserService, val deviceService: DeviceServic
             }
     }
 
-    fun get(worldId: String, onSuccess: (World) -> Unit) {
-        worldsCollection.document(worldId).get().addOnSuccessListener { onSuccess(it.toObject(World::class.java)!!) }
-    }
+//    fun get(worldId: String, onSuccess: (World) -> Unit) {
+//        worldsCollection.document(worldId).get().addOnSuccessListener { onSuccess(it.toObject(World::class.java)!!) }
+//    }
 }
 
 @Dao

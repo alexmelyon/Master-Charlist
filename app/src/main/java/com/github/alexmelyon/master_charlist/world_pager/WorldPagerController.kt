@@ -99,6 +99,7 @@ class WorldPagerController(args: Bundle) : Controller(args) {
             }.lparams(matchParent, wrapContent)
             this@WorldPagerController.viewPager = viewPager {
                 adapter = pagerAdapter
+                offscreenPageLimit = 4
             }.lparams(matchParent, matchParent)
         }
         tabLayout.setupWithViewPager(viewPager)
