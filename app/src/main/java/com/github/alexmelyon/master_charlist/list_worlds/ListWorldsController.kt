@@ -30,28 +30,36 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
     @Inject
     lateinit var db: AppDatabase
 
-    private lateinit var setWorlds: TreeSet<World>
+    private val setWorlds: TreeSet<World> = TreeSet(kotlin.Comparator { o1, o2 ->
+        val res = o2.createTime.compareTo(o1.createTime)
+        if (res == 0) {
+            return@Comparator o1.name.compareTo(o2.name)
+        }
+        return@Comparator res
+    })
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
+    override fun onContextAvailable(context: Context) {//1 start, 1 forw
+        super.onContextAvailable(context)
+        ControllerInjector.inject(this)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {//2 start, 2 forw
         Crashlytics.log(Log.INFO, javaClass.simpleName, "onCreateView")
         setHasOptionsMenu(true)
         return view.createView(container)
     }
 
-    override fun onContextAvailable(context: Context) {
-        super.onContextAvailable(context)
-        ControllerInjector.inject(this)
+    override fun onActivityResumed(activity: Activity) {//3 start, 3 forw
+        super.onActivityResumed(activity)
     }
 
-    override fun onAttach(view: View) {
+    override fun onAttach(view: View) {//4 start, 4 forw
         super.onAttach(view)
-        setWorlds = TreeSet(kotlin.Comparator { o1, o2 ->
-            val res = o2.createTime.compareTo(o1.createTime)
-            if (res == 0) {
-                return@Comparator o1.name.compareTo(o2.name)
-            }
-            return@Comparator res
-        })
+        updateWorlds()
+    }
+
+    fun updateWorlds() {
+        setWorlds.clear()
         setWorlds.addAll(db.worldDao().getAll(archived = false))
         this.view.setData(setWorlds.toMutableList())
     }
