@@ -4,10 +4,7 @@ import android.app.Activity
 import androidx.multidex.MultiDexApplication
 import com.github.alexmelyon.master_charlist.dagger.AppComponent
 import com.github.alexmelyon.master_charlist.dagger.DaggerAppComponent
-import com.github.alexmelyon.master_charlist.room.AppDatabaseModule
-import com.github.alexmelyon.master_charlist.room.DeviceService
-import com.github.alexmelyon.master_charlist.room.UserService
-import com.github.alexmelyon.master_charlist.room.WorldStorage
+import com.github.alexmelyon.master_charlist.room.*
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
@@ -33,6 +30,7 @@ class App : MultiDexApplication(), HasActivityInjector {
     val userService = UserService()
     val deviceService = DeviceService()
     val worldStorage = WorldStorage(userService, deviceService)
+    val gameStorage = GameStorage(userService, deviceService)
 
     override fun onCreate() {
         super.onCreate()

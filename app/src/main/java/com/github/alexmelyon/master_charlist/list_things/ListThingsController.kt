@@ -24,8 +24,8 @@ class ListThingsController(args: Bundle) : Controller(args), ListThingsContract.
 
     lateinit var world: World
 
-    constructor(worldId: Long) : this(Bundle().apply {
-        putLong(WORLD_KEY, worldId)
+    constructor(world: World) : this(Bundle().apply {
+        putParcelable(WORLD_KEY, world)
     })
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
@@ -37,7 +37,7 @@ class ListThingsController(args: Bundle) : Controller(args), ListThingsContract.
     override fun onContextAvailable(context: Context) {
         super.onContextAvailable(context)
         ControllerInjector.inject(this)
-        world = db.worldDao().getWorldById(args.getLong(WORLD_KEY))
+        world = args.getParcelable<World>(WORLD_KEY)!!
     }
 
     override fun onAttach(view: View) {

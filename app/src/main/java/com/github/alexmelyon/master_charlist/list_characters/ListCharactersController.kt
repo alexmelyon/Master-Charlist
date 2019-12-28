@@ -36,15 +36,15 @@ class ListCharactersController(args: Bundle) : Controller(args), ListCharactersC
         return@Comparator o1.character.name.compareTo(o2.character.name)
     })
 
-    constructor(worldId: Long, gameId: Long) : this(Bundle().apply {
-        putLong(WORLD_KEY, worldId)
+    constructor(world: World, gameId: Long) : this(Bundle().apply {
+        putParcelable(WORLD_KEY, world)
         putLong(GAME_KEY, gameId)
     })
 
     override fun onContextAvailable(context: Context) {
         super.onContextAvailable(context)
         ControllerInjector.inject(this)
-        world = db.worldDao().getWorldById(args.getLong(WORLD_KEY))
+        world = args.getParcelable<World>(WORLD_KEY)!!
         game = db.gameDao().getAll(args.getLong(GAME_KEY), world.id)
         updateScreen()
     }

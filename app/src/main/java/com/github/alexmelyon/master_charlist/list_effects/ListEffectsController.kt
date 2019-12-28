@@ -23,14 +23,14 @@ class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContrac
     lateinit var world: World
     lateinit var effectItems: MutableList<EffectRow>
 
-    constructor(worldId: Long) : this(Bundle().apply {
-        putLong(WORLD_KEY, worldId)
+    constructor(world: World) : this(Bundle().apply {
+        putParcelable(WORLD_KEY, world)
     })
 
     override fun onContextAvailable(context: Context) {
         super.onContextAvailable(context)
         ControllerInjector.inject(this)
-        world = db.worldDao().getWorldById(args.getLong(WORLD_KEY))
+        world = args.getParcelable<World>(WORLD_KEY)!!
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {

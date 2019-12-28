@@ -8,6 +8,10 @@ apply plugin: 'kotlin-kapt'
 
 apply plugin: 'io.fabric'
 
+androidExtensions {
+    experimental = true
+}
+
 android {
     compileSdkVersion 29
     defaultConfig {

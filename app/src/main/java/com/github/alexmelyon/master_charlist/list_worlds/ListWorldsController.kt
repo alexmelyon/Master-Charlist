@@ -3,6 +3,7 @@ package com.github.alexmelyon.master_charlist.list_worlds
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AlertDialog
@@ -16,7 +17,6 @@ import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.room.World
 import com.github.alexmelyon.master_charlist.tutorial.TutorialActivity
 import com.github.alexmelyon.master_charlist.world_pager.WorldPagerController
-import com.google.firebase.auth.FirebaseAuth
 import ru.napoleonit.talan.di.ControllerInjector
 import java.util.*
 import javax.inject.Inject
@@ -36,19 +36,33 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
         return@Comparator res
     })
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {//2 start
         Crashlytics.log(Log.INFO, javaClass.simpleName, "onCreateView")
         setHasOptionsMenu(true)
         return view.createView(container)
     }
 
-    override fun onContextAvailable(context: Context) {
+    override fun onContextAvailable(context: Context) {//1 start, 2 forw
         super.onContextAvailable(context)
         ControllerInjector.inject(this)
     }
 
-    override fun onAttach(view: View) {
+    override fun onAttach(view: View) {//4 start
         super.onAttach(view)
+        updateWorlds()
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) { // 1 forw
+        super.onRestoreInstanceState(savedInstanceState)
+        activity?.invalidateOptionsMenu()
+        updateWorlds()
+    }
+
+    override fun onActivityResumed(activity: Activity) {//3 start, 3 forw
+        super.onActivityResumed(activity)
+    }
+
+    fun updateWorlds() {
         App.instance.worldStorage.getAll {
             setWorlds.clear()
             setWorlds.addAll(it)
@@ -59,7 +73,7 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.list_worlds, menu)
-        FirebaseAuth.getInstance().currentUser?.let { user ->
+        App.instance.userService.currentUser?.let { user ->
             menu.findItem(R.id.menu_login).isVisible = false
             menu.findItem(R.id.menu_username).isVisible = true
             menu.findItem(R.id.menu_username).title = user.displayName
@@ -110,15 +124,13 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
             val response = IdpResponse.fromResultIntent(data)
 
             if (resultCode == Activity.RESULT_OK) {
-                val user = FirebaseAuth.getInstance().currentUser!!
+                val user = App.instance.userService.currentUser!!
                 Log.d("JCD", "Login ${user.uid}")
                 activity?.invalidateOptionsMenu()
 
                 App.instance.userService.getOrCreate(user.uid, user.displayName ?: "")
                 App.instance.worldStorage.updateLocalWorlds {
-                    setWorlds.clear()
-                    setWorlds.addAll(it)
-                    this.view.setData(setWorlds.toMutableList())
+                    updateWorlds()
                 }
             } else {
                 AlertDialog.Builder(activity!!)
@@ -131,14 +143,14 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
     }
 
     override fun onItemClick(world: World) {
-        router.pushController(RouterTransaction.with(WorldPagerController(world.firestoreId)))
+        router.pushController(RouterTransaction.with(WorldPagerController(world)))
     }
 
     override fun createWorld(worldName: String) {
-        val world = App.instance.worldStorage.create(worldName)
-
-        setWorlds.add(world)
-        view.addedAt(0, world)
+        App.instance.worldStorage.create(worldName) { world ->
+            setWorlds.add(world)
+            view.addedAt(0, world)
+        }
     }
 
     override fun archiveWorldAt(pos: Int) {

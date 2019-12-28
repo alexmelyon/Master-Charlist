@@ -1,5 +1,6 @@
 package com.github.alexmelyon.master_charlist.list_games
 
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -7,6 +8,7 @@ import android.view.*
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.RouterTransaction
 import com.crashlytics.android.Crashlytics
+import com.github.alexmelyon.master_charlist.App
 import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.game_pager.GamePagerController
 import com.github.alexmelyon.master_charlist.room.AppDatabase
@@ -22,7 +24,9 @@ class ListGamesController(args: Bundle) : Controller(args), ListGamesContract.Co
 
     lateinit var world: World
 
-    constructor(worldId: Long) : this(Bundle().apply { putLong(WORLD_KEY, worldId) })
+    constructor(world: World) : this(Bundle().apply {
+        putParcelable(WORLD_KEY, world)
+    })
 
     @Inject
     lateinit var view: ListGamesContract.View
@@ -37,30 +41,56 @@ class ListGamesController(args: Bundle) : Controller(args), ListGamesContract.Co
         return@Comparator res
     })
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {//2 create
         Crashlytics.log(Log.INFO, javaClass.simpleName, "onCreateView")
         return view.createView(container)
     }
 
-    override fun onContextAvailable(context: Context) {
+    override fun onContextAvailable(context: Context) {//1 create
         super.onContextAvailable(context)
         ControllerInjector.inject(this)
-        world = db.worldDao().getWorldById(args.getLong(WORLD_KEY))
-
-        gamesSet.addAll(db.gameDao().getAll(world.id)) // FIXME lateinit property world has not been initialized
+        world = args.getParcelable<World>(WORLD_KEY)!!
+        updateGames()
     }
 
-    override fun onAttach(view: View) {
+    fun updateGames() {
+        App.instance.gameStorage.getAll(world) { games ->
+            gamesSet.addAll(games)
+            this.view.setData(gamesSet.toMutableList())
+        }
+    }
+
+    override fun onAttach(view: View) {//3 create
         super.onAttach(view)
-        val games = db.gameDao().getAll(world.id)
-            .sortedWith(kotlin.Comparator { o1, o2 ->
-                var res = o2.time.compareTo(o1.time)
-                if(res == 0) {
-                    res = o1.name.compareTo(o2.name)
-                }
-                return@Comparator res
-            })
-        this.view.setData(games.toMutableList())
+//        App.instance.gameStorage.getAll(world) { games ->
+//            this.view.setData(games.toMutableList())
+//        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {//3 to back
+        super.onSaveInstanceState(outState)
+        outState.putParcelable(WORLD_KEY, world)
+    }
+
+    override fun onSaveViewState(view: View, outState: Bundle) {//2 to back
+        super.onSaveViewState(view, outState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {//1 to forw
+        super.onRestoreInstanceState(savedInstanceState)
+        world = savedInstanceState.getParcelable<World>(WORLD_KEY)!!
+    }
+
+    override fun onRestoreViewState(view: View, savedViewState: Bundle) {
+        super.onRestoreViewState(view, savedViewState)
+    }
+
+    override fun onActivityPaused(activity: Activity) {//1 to back
+        super.onActivityPaused(activity)
+    }
+
+    override fun onActivityResumed(activity: Activity) {//2 to forw
+        super.onActivityResumed(activity)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -80,19 +110,18 @@ class ListGamesController(args: Bundle) : Controller(args), ListGamesContract.Co
 
     override fun onItemClick(game: Game) {
         val router = parentController?.router ?: router
-        router.pushController(RouterTransaction.with(GamePagerController(world.id, game.id)))
+        router.pushController(RouterTransaction.with(GamePagerController(world, game.id)))
     }
 
     override fun getWorldName(): String {
         return world.name
     }
 
-    override fun createGame(gameName: String) {
-        val game = Game(gameName, world.id, Calendar.getInstance().time)
-        gamesSet.add(game)
-        val id = db.gameDao().insert(game)
-        game.id = id
-        view.addedAt(0, game)
+    override fun createGame(name: String) {
+        App.instance.gameStorage.create(name, world) { game ->
+            gamesSet.add(game)
+            view.addedAt(0, game)
+        }
     }
 
     override fun archiveGameAt(pos: Int) {

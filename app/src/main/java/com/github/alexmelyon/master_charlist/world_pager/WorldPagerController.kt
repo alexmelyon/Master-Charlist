@@ -3,6 +3,7 @@ package com.github.alexmelyon.master_charlist.world_pager
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import android.view.*
 import android.widget.LinearLayout
@@ -39,8 +40,8 @@ class WorldPagerController(args: Bundle) : Controller(args) {
 
     private lateinit var world: World
 
-    constructor(worldId: String) : this(Bundle().apply {
-        putString(WORLD_KEY, worldId)
+    constructor(world: World) : this(Bundle().apply {
+        putParcelable(WORLD_KEY, world)
     })
 
     private lateinit var tabLayout: TabLayout
@@ -72,25 +73,22 @@ class WorldPagerController(args: Bundle) : Controller(args) {
     override fun onContextAvailable(context: Context) {
         super.onContextAvailable(context)
         ControllerInjector.inject(this)
-        val worldId = args.getString(WORLD_KEY)!!
-        App.instance.worldStorage.get(worldId) { world ->
-            this@WorldPagerController.world = world
-            (activity as MainActivity).supportActionBar!!.title = world.name
+        world = args.getParcelable<World>(WORLD_KEY)!!
 
-            screenToController = listOf(
-                context.getString(R.string.games_header) to ListGamesController(world.id),
-                context.getString(R.string.skills_header) to ListSkillsController(world.id),
-                context.getString(R.string.things_header) to ListThingsController(world.id),
-                context.getString(R.string.effects_header) to ListEffectsController(world.id)
-            )
+        (activity as MainActivity).supportActionBar!!.title = world.name
 
-            pagerAdapter.notifyDataSetChanged()
-        }
+        screenToController = listOf(
+            context.getString(R.string.games_header) to ListGamesController(world),
+            context.getString(R.string.skills_header) to ListSkillsController(world),
+            context.getString(R.string.things_header) to ListThingsController(world),
+            context.getString(R.string.effects_header) to ListEffectsController(world)
+        )
+
+        pagerAdapter.notifyDataSetChanged()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
         Crashlytics.log(Log.INFO, javaClass.simpleName, "onCreateView")
-//        (activity as MainActivity).supportActionBar!!.title = world.name
         setHasOptionsMenu(true)
 
         val view = container.context.linearLayout {
@@ -111,7 +109,7 @@ class WorldPagerController(args: Bundle) : Controller(args) {
         if(activity?.isChangingConfigurations() ?: false) {
             viewPager.adapter = null
         }
-        tabLayout.setupWithViewPager(null)
+        tabLayout.setupWithViewPager(null) // lateinit property tabLayout has not been initialized
         super.onDestroy()
     }
 

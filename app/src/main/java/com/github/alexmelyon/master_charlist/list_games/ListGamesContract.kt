@@ -16,7 +16,7 @@ interface ListGamesContract {
     interface Controller {
         fun onItemClick(game: Game)
         fun getWorldName(): String
-        fun createGame(gameName: String)
+        fun createGame(name: String)
         fun archiveGameAt(pos: Int)
         fun renameGame(pos: Int, game: Game, name: String)
     }

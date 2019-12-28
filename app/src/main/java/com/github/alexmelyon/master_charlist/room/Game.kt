@@ -1,14 +1,58 @@
 package com.github.alexmelyon.master_charlist.room
 
 import androidx.room.*
+import com.github.alexmelyon.master_charlist.room.WorldStorage.Companion.WORLD_GROUP
+import com.google.firebase.firestore.Exclude
+import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
 
 @Entity
-class Game(var name: String, val worldGroup: Long, val time: Date, var archived: Boolean = false) {
+class Game(
+    var origin: String = "",
+    var deviceId: String = "",
+    var userGroup: String? = null,
+    var name: String = "",
+    var worldGroup: String = "",
+    var time: Date = Date(),
+    var archived: Boolean = false
+) {
+    @Exclude
+    var firestoreId: String = ""
+
+    @Exclude
     @PrimaryKey(autoGenerate = true)
+    @Deprecated("Deprecated since include Firestore")
     var id: Long = 0
 
     override fun toString() = name
+}
+
+class GameStorage(val userService: UserService, val deviceService: DeviceService) {
+
+    private val gamesCollection by lazy {
+        FirebaseFirestore.getInstance().collection("games")
+    }
+
+    fun getAll(world: World, onSuccess: (List<Game>) -> Unit) {
+        gamesCollection.whereEqualTo(WORLD_GROUP, world.firestoreId)
+            .orderBy("time")
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val games = querySnapshot.toObjects(Game::class.java)
+                onSuccess(games)
+            }
+    }
+
+    fun create(name: String, world: World, onSuccess: (Game) -> Unit) {
+        val userId = userService.currentUserUid
+        val deviceId = deviceService.deviceId
+        val origin = userId ?: deviceId
+        val game = Game(origin, deviceId, userId, name, world.firestoreId, Calendar.getInstance().time)
+        gamesCollection.add(game).addOnSuccessListener {
+            game.firestoreId = it.id
+            onSuccess(game)
+        }
+    }
 }
 
 @Dao
