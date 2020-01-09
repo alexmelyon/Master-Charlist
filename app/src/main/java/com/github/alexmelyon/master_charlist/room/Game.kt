@@ -1,7 +1,6 @@
 package com.github.alexmelyon.master_charlist.room
 
 import android.os.Parcelable
-import android.util.Log
 import androidx.room.*
 import com.github.alexmelyon.master_charlist.room.UserService.Companion.FIELD_USER_UID
 import com.google.firebase.firestore.Exclude
@@ -31,7 +30,11 @@ class Game (
     override fun toString() = name
 }
 
-class GameStorage(val userService: UserService, val deviceService: DeviceService) {
+class GameStorage(
+    val userService: UserService,
+    val deviceService: DeviceService,
+    val firestoreService: FirestoreService
+) {
 
     private val gamesCollection by lazy {
         FirebaseFirestore.getInstance().collection("games")
@@ -43,7 +46,7 @@ class GameStorage(val userService: UserService, val deviceService: DeviceService
         gamesCollection.whereIn(FIELD_ORIGIN, origins)
             .whereEqualTo(WORLD_GROUP, world.firestoreId)
             .whereEqualTo(FIELD_ARCHIVED, false)
-            .get()
+            .get(firestoreService.source)
             .addOnSuccessListener { querySnapshot ->
                 val games = querySnapshot.map { docSnapshot ->
                     docSnapshot.toObject(Game::class.java).apply {
@@ -87,7 +90,7 @@ class GameStorage(val userService: UserService, val deviceService: DeviceService
         val deviceId = deviceService.deviceId
         val userUid = userService.currentUserUid!!
         gamesCollection.whereEqualTo(FIELD_ORIGIN, deviceId)
-            .get()
+            .get(firestoreService.source)
             .addOnSuccessListener { querySnapshot ->
                 querySnapshot.forEach { docRef ->
                     gamesCollection.document(docRef.id)

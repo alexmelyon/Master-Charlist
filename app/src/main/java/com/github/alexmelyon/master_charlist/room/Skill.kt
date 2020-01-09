@@ -28,7 +28,11 @@ class Skill(
     override fun toString() = name
 }
 
-class SkillStorage(val userService: UserService, val deviceService: DeviceService) {
+class SkillStorage(
+    val userService: UserService,
+    val deviceService: DeviceService,
+    val firestoreService: FirestoreService
+) {
 
     private val skillsCollection by lazy {
         FirebaseFirestore.getInstance().collection("skills")
@@ -60,6 +64,36 @@ class SkillStorage(val userService: UserService, val deviceService: DeviceServic
             .update(FIELD_ARCHIVED, true)
             .addOnSuccessListener {
                 onSuccess()
+            }
+    }
+
+    fun getAll(world: World, onSuccess: (List<Skill>) -> Unit) {
+        val origins = mutableListOf(deviceService.deviceId)
+        userService.currentUserUid?.let { origins.add(it) }
+        skillsCollection.whereIn(FIELD_ORIGIN, origins)
+            .whereEqualTo(WORLD_GROUP, world.firestoreId)
+            .whereEqualTo(FIELD_ARCHIVED, false)
+            .get(firestoreService.source)
+            .addOnSuccessListener { querySnapshot ->
+                val skills = querySnapshot.map { docSnapshot ->
+                    docSnapshot.toObject(Skill::class.java).apply {
+                        firestoreId = docSnapshot.id
+                    }
+                }
+                onSuccess(skills)
+            }
+    }
+
+    fun updateLocalSkills() {
+        val deviceId = deviceService.deviceId
+        val userUid = userService.currentUserUid!!
+        skillsCollection.whereEqualTo(FIELD_ORIGIN, deviceId)
+            .get(firestoreService.source)
+            .addOnSuccessListener { querySnapshot ->
+                querySnapshot.forEach { docRef ->
+                    skillsCollection.document(docRef.id)
+                        .update(mapOf(FIELD_ORIGIN to userUid, UserService.FIELD_USER_UID to userUid))
+                }
             }
     }
 }

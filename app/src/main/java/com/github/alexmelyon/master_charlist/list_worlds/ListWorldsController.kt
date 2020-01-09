@@ -123,7 +123,7 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
                     updateWorlds()
                 }
                 App.instance.gameStorage.updateLocalGames()
-                // TODO Update skills
+                App.instance.skillStorage.updateLocalSkills()
                 // TODO Update things
                 // TODO Update effects
                 // TODO Update sessions

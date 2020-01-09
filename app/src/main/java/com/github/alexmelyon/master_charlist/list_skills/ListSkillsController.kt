@@ -42,16 +42,24 @@ class ListSkillsController(args: Bundle) : Controller(args), ListSkillsContract.
 
     override fun onAttach(view: View) {
         super.onAttach(view)
-        val skills = db.skillDao().getAll(world.id)
-            .sortedWith(kotlin.Comparator { o1, o2 ->
-                var res = o2.lastUsed.compareTo(o1.lastUsed)
-                if(res == 0) {
-                    res =  o1.name.compareTo(o2.name)
-                }
-                return@Comparator res
-            })
-            .toMutableList()
-        this.view.setData(skills)
+//        val skills = db.skillDao().getAll(world.id)
+//            .sortedWith(kotlin.Comparator { o1, o2 ->
+//                var res = o2.lastUsed.compareTo(o1.lastUsed)
+//                if(res == 0) {
+//                    res =  o1.name.compareTo(o2.name)
+//                }
+//                return@Comparator res
+//            })
+//            .toMutableList()
+//        this.view.setData(skills)
+
+        updateSkills()
+    }
+
+    fun updateSkills() {
+        App.instance.skillStorage.getAll(world) { skills ->
+            this.view.setData(skills.toMutableList())
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

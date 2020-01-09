@@ -4,10 +4,8 @@ import android.os.Parcelable
 import android.util.Log
 import androidx.room.*
 import com.github.alexmelyon.master_charlist.room.UserService.Companion.FIELD_USER_UID
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.parcel.Parcelize
 import java.lang.Exception
 import java.util.*
@@ -40,7 +38,11 @@ class World(
     override fun toString() = name
 }
 
-class WorldStorage(val userService: UserService, val deviceService: DeviceService) {
+class WorldStorage(
+    val userService: UserService,
+    val deviceService: DeviceService,
+    val firestoreService: FirestoreService
+) {
 
     private val worldsCollection by lazy {
         FirebaseFirestore.getInstance().collection("worlds")
@@ -81,7 +83,7 @@ class WorldStorage(val userService: UserService, val deviceService: DeviceServic
         val ex = Exception()
         worldsCollection.whereIn(FIELD_ORIGIN, origins)
             .whereEqualTo(FIELD_ARCHIVED, false)
-            .get()
+            .get(firestoreService.source)
             .addOnSuccessListener { querySnapshot ->
                 val worlds = querySnapshot.map { docSnapshot ->
                     docSnapshot.toObject(World::class.java).apply {
@@ -102,7 +104,7 @@ class WorldStorage(val userService: UserService, val deviceService: DeviceServic
         val deviceId = deviceService.deviceId
         val userUid = userService.currentUserUid!!
         worldsCollection.whereEqualTo(FIELD_ORIGIN, deviceId)
-            .get()
+            .get(firestoreService.source)
             .addOnSuccessListener { querySnapshot ->
                 querySnapshot.forEach { docRef ->
                     worldsCollection.document(docRef.id)
