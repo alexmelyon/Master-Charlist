@@ -24,7 +24,7 @@ interface ListEffectsContract {
         fun detachSkillForEffect(pos: Int, effect: Effect, effectSkill: EffectSkill)
         fun onEffectSkillChanged(pos: Int, effect: Effect, skill: Skill, delta: Int)
         fun renameEffect(pos: Int, effect: Effect, name: String)
-        fun createSkill(name: String): Skill
+        fun createSkill(name: String, onSuccess: (Skill) -> Unit)
     }
 }
 

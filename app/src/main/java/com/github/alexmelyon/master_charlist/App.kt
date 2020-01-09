@@ -31,6 +31,7 @@ class App : MultiDexApplication(), HasActivityInjector {
     val deviceService = DeviceService()
     val worldStorage = WorldStorage(userService, deviceService)
     val gameStorage = GameStorage(userService, deviceService)
+    val skillStorage = SkillStorage(userService, deviceService)
 
     override fun onCreate() {
         super.onCreate()

@@ -65,14 +65,22 @@ class GameStorage(val userService: UserService, val deviceService: DeviceService
         }
     }
 
-    fun archive(game: Game) {
+    fun archive(game: Game, onSuccess: () -> Unit) {
         game.archived = true
-        gamesCollection.document(game.firestoreId).update(FIELD_ARCHIVED, true)
+        gamesCollection.document(game.firestoreId)
+            .update(FIELD_ARCHIVED, true)
+            .addOnSuccessListener {
+                onSuccess()
+            }
     }
 
-    fun rename(game: Game, name: String) {
+    fun rename(game: Game, name: String, onSuccess: () -> Unit) {
         game.name = name
-        gamesCollection.document(game.firestoreId).update(FIELD_NAME, name)
+        gamesCollection.document(game.firestoreId)
+            .update(FIELD_NAME, name)
+            .addOnSuccessListener {
+                onSuccess()
+            }
     }
 
     fun updateLocalGames() {

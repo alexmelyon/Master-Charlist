@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.*
 import com.bluelinelabs.conductor.Controller
 import com.crashlytics.android.Crashlytics
+import com.github.alexmelyon.master_charlist.App
 import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.list_games.WORLD_KEY
 import com.github.alexmelyon.master_charlist.room.AppDatabase
@@ -69,23 +70,20 @@ class ListSkillsController(args: Bundle) : Controller(args), ListSkillsContract.
     }
 
     override fun archiveSkill(pos: Int, skill: Skill) {
-        skill.archived = true
-        db.skillDao().update(skill)
-
-        view.archivedAt(pos)
+        App.instance.skillStorage.archive(skill) {
+            view.archivedAt(pos)
+        }
     }
 
     override fun createSkill(skillName: String) {
-        val skill = Skill(skillName, world.id, Calendar.getInstance().time)
-        val id = db.skillDao().insert(skill)
-        skill.id = id
-
-        view.addedAt(0, skill)
+        App.instance.skillStorage.create(skillName, world) { skill ->
+            view.addedAt(0, skill)
+        }
     }
 
     override fun renameSkill(pos: Int, skill: Skill, name: String) {
-        skill.name = name
-        db.skillDao().update(skill)
-        view.itemChangedAt(pos)
+        App.instance.skillStorage.rename(skill, name) {
+            view.itemChangedAt(pos)
+        }
     }
 }

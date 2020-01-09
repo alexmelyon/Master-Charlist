@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.*
 import com.bluelinelabs.conductor.Controller
 import com.crashlytics.android.Crashlytics
+import com.github.alexmelyon.master_charlist.App
 import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.list_games.WORLD_KEY
 import com.github.alexmelyon.master_charlist.room.*
@@ -66,11 +67,15 @@ class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContrac
         return super.onOptionsItemSelected(item)
     }
 
-    override fun createSkill(name: String): Skill {
-        val skill = Skill(name, world.id, Calendar.getInstance().time)
-        val id = db.skillDao().insert(skill)
-        skill.id = id
-        return skill
+    // TODO Don't create skills in ListEffectsController
+    override fun createSkill(name: String, onSuccess: (Skill) -> Unit) {
+//        val skill = Skill(name, world.id, Calendar.getInstance().time)
+//        val id = db.skillDao().insert(skill)
+//        skill.id = id
+//        return skill
+        App.instance.skillStorage.create(name, world) { skill ->
+            onSuccess(skill)
+        }
     }
 
     override fun createEffect(effectName: String) {

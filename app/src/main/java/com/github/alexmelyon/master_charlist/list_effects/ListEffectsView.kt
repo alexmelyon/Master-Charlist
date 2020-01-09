@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import com.github.alexmelyon.master_charlist.App
 import com.github.alexmelyon.master_charlist.MainActivity
 import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.room.Skill
@@ -72,8 +73,9 @@ class ListEffectsView @Inject constructor(val activity: MainActivity) : _FrameLa
 
     fun showCreateSkillDialog(action: (Skill) -> Unit) {
         activity.showAlertEditDialog(context.getString(R.string.skill_name_headline)) { name ->
-            val skill = controller.createSkill(name)
-            action(skill)
+            controller.createSkill(name) { skill ->
+                action(skill)
+            }
         }
     }
 

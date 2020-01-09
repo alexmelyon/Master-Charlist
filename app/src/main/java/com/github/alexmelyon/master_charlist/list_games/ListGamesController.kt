@@ -89,7 +89,6 @@ class ListGamesController(args: Bundle) : Controller(args), ListGamesContract.Co
     }
 
     override fun createGame(name: String) {
-        // TODO
         App.instance.gameStorage.create(name, world) { game ->
             gamesSet.add(game)
             view.addedAt(0, game)
@@ -98,14 +97,15 @@ class ListGamesController(args: Bundle) : Controller(args), ListGamesContract.Co
 
     override fun archiveGameAt(pos: Int) {
         val game = gamesSet.toList()[pos]
-        App.instance.gameStorage.archive(game)
-
-        gamesSet.remove(game)
-        view.archivedAt(pos)
+        App.instance.gameStorage.archive(game) {
+            gamesSet.remove(game)
+            view.archivedAt(pos)
+        }
     }
 
     override fun renameGame(pos: Int, game: Game, name: String) {
-        App.instance.gameStorage.rename(game, name)
-        view.itemChangedAt(pos)
+        App.instance.gameStorage.rename(game, name) {
+            view.itemChangedAt(pos)
+        }
     }
 }

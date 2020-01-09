@@ -224,8 +224,9 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
 
     fun showCreateSkillDialog(action: (Skill) -> Unit) {
         activity.showAlertEditDialog(context.getString(R.string.skill_name_colon)) { name ->
-            val skill = controller.createSkill(name)
-            action(skill)
+            controller.createSkill(name) { skill ->
+                action(skill)
+            }
         }
     }
 

@@ -57,14 +57,22 @@ class WorldStorage(val userService: UserService, val deviceService: DeviceServic
         }
     }
 
-    fun rename(world: World, name: String) {
+    fun rename(world: World, name: String, onSuccess: () -> Unit) {
         world.name = name
-        worldsCollection.document(world.firestoreId).update(FIELD_NAME, name)
+        worldsCollection.document(world.firestoreId)
+            .update(FIELD_NAME, name)
+            .addOnSuccessListener {
+                onSuccess()
+            }
     }
 
-    fun archive(world: World) {
+    fun archive(world: World, onSuccess: () -> Unit) {
         world.archived = true
-        worldsCollection.document(world.firestoreId).update(FIELD_ARCHIVED, true)
+        worldsCollection.document(world.firestoreId)
+            .update(FIELD_ARCHIVED, true)
+            .addOnSuccessListener {
+                onSuccess()
+            }
     }
 
     fun getAll(onSuccess: (List<World>) -> Unit) {

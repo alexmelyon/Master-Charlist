@@ -333,11 +333,15 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
         character.id = id
     }
 
-    override fun createSkill(name: String): Skill {
-        val skill = Skill(name, world.id, Calendar.getInstance().time)
-        val id = db.skillDao().insert(skill)
-        skill.id = id
-        return skill
+    // TODO Don't create skill in SessionController
+    override fun createSkill(name: String, onSuccess: (Skill) -> Unit) {
+//        val skill = Skill(name, world.id, Calendar.getInstance().time)
+//        val id = db.skillDao().insert(skill)
+//        skill.id = id
+//        return skill
+        App.instance.skillStorage.create(name, world) { skill ->
+            onSuccess(skill)
+        }
     }
 
     override fun createThing(name: String): Thing {

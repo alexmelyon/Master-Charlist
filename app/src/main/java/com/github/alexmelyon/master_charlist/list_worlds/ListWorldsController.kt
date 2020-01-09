@@ -156,14 +156,15 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
 
     override fun archiveWorldAt(pos: Int) {
         val world = setWorlds.toList()[pos]
-        App.instance.worldStorage.archive(world)
-
-        setWorlds.remove(world)
-        view.archivedAt(pos)
+        App.instance.worldStorage.archive(world) {
+            setWorlds.remove(world)
+            view.archivedAt(pos)
+        }
     }
 
     override fun renameWorld(pos: Int, world: World, name: String) {
-        App.instance.worldStorage.rename(world, name)
-        view.itemChangedAt(pos)
+        App.instance.worldStorage.rename(world, name) {
+            view.itemChangedAt(pos)
+        }
     }
 }
