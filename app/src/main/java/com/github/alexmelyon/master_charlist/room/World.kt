@@ -71,8 +71,8 @@ class WorldStorage(val userService: UserService, val deviceService: DeviceServic
         val origins = mutableListOf(deviceService.deviceId)
         userService.currentUserUid?.let { origins.add(it) }
         val ex = Exception()
-        worldsCollection.whereEqualTo(FIELD_ARCHIVED, false)
-            .whereIn(FIELD_ORIGIN, origins)
+        worldsCollection.whereIn(FIELD_ORIGIN, origins)
+            .whereEqualTo(FIELD_ARCHIVED, false)
             .get()
             .addOnSuccessListener { querySnapshot ->
                 val worlds = querySnapshot.map { docSnapshot ->
@@ -97,20 +97,12 @@ class WorldStorage(val userService: UserService, val deviceService: DeviceServic
             .get()
             .addOnSuccessListener { querySnapshot ->
                 querySnapshot.forEach { docRef ->
-                    worldsCollection.document(docRef.id).update(mapOf(FIELD_ORIGIN to userUid, FIELD_USER_UID to userUid))
+                    worldsCollection.document(docRef.id)
+                        .update(mapOf(FIELD_ORIGIN to userUid, FIELD_USER_UID to userUid))
                 }
-                querySnapshot.map { docSnapshot ->
-                    docSnapshot.toObject(World::class.java).apply {
-                        firestoreId = docSnapshot.id
-                    }
-                }.filter { !it.archived }
                 onSuccess()
             }
     }
-
-//    fun get(worldId: String, onSuccess: (World) -> Unit) {
-//        worldsCollection.document(worldId).get().addOnSuccessListener { onSuccess(it.toObject(World::class.java)!!) }
-//    }
 }
 
 @Dao

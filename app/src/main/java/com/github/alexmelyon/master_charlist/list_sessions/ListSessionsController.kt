@@ -42,9 +42,9 @@ class ListSessionsController(args: Bundle) : Controller(args), ListSessionsContr
     private lateinit var sessionsList: MutableList<GameSession>
     private var firstClosedSessionIndex = 0
 
-    constructor(world: World, gameId: Long) : this(Bundle().apply {
+    constructor(world: World, game: Game) : this(Bundle().apply {
         putParcelable(WORLD_KEY, world)
-        putLong(GAME_KEY, gameId)
+        putParcelable(GAME_KEY, game)
     })
 
     override fun onContextAvailable(context: Context) {
@@ -52,7 +52,7 @@ class ListSessionsController(args: Bundle) : Controller(args), ListSessionsContr
         ControllerInjector.inject(this)
 
         world = args.getParcelable<World>(WORLD_KEY)!!
-        game = db.gameDao().getAll(args.getLong(GAME_KEY), world.id)
+        game = args.getParcelable<Game>(GAME_KEY)!!
         updateScreen()
     }
 
@@ -123,7 +123,7 @@ class ListSessionsController(args: Bundle) : Controller(args), ListSessionsContr
 
     override fun onItemClick(session: GameSession) {
         val router = parentController?.router ?: this.router
-        router.pushController(RouterTransaction.with(SessionController(session.id, game.id, world).apply {
+        router.pushController(RouterTransaction.with(SessionController(session.id, game, world).apply {
             delegate = WeakReference(this@ListSessionsController)
         }))
     }

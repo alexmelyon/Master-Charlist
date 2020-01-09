@@ -37,9 +37,9 @@ class GamePagerController(args: Bundle) : Controller(args) {
     private lateinit var world: World
     private lateinit var game: Game
 
-    constructor(world: World, gameId: Long) : this(Bundle().apply {
+    constructor(world: World, game: Game) : this(Bundle().apply {
         putParcelable(WORLD_KEY, world)
-        putLong(GAME_KEY, gameId)
+        putParcelable(GAME_KEY, game)
     })
 
     @Inject
@@ -79,10 +79,10 @@ class GamePagerController(args: Bundle) : Controller(args) {
         ControllerInjector.inject(this)
 
         world = args.getParcelable<World>(WORLD_KEY)!!
-        game = db.gameDao().getAll(args.getLong(GAME_KEY), world.id)
-        listCharactersController = ListCharactersController(world, game.id)
+        game = args.getParcelable<Game>(GAME_KEY)!!
+        listCharactersController = ListCharactersController(world, game)
         screenToController = listOf(
-            ScreenToController(context.getString(R.string.sessions_header), ListSessionsController(world, game.id).apply {
+            ScreenToController(context.getString(R.string.sessions_header), ListSessionsController(world, game).apply {
                 delegate = WeakReference(listCharactersController)
             }),
             ScreenToController(context.getString(R.string.characters_header), listCharactersController)

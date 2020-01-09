@@ -1,10 +1,17 @@
 package com.github.alexmelyon.master_charlist.room
 
+import android.os.Parcelable
 import androidx.room.*
+import kotlinx.android.parcel.Parcelize
 import java.util.*
 
 @Entity
-data class Skill(var name: String, val worldGroup: Long, var lastUsed: Date, var archived: Boolean = false) {
+@Parcelize
+class Skill(
+//    var origin: String = "",
+//    var deviceId: String = "",
+
+    var name: String, val worldGroup: Long, var lastUsed: Date, var archived: Boolean = false) : Parcelable {
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
     override fun toString() = name

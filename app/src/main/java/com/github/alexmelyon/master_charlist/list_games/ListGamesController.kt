@@ -81,7 +81,7 @@ class ListGamesController(args: Bundle) : Controller(args), ListGamesContract.Co
 
     override fun onItemClick(game: Game) {
         val router = parentController?.router ?: router
-        router.pushController(RouterTransaction.with(GamePagerController(world, game.id)))
+        router.pushController(RouterTransaction.with(GamePagerController(world, game)))
     }
 
     override fun getWorldName(): String {
@@ -89,6 +89,7 @@ class ListGamesController(args: Bundle) : Controller(args), ListGamesContract.Co
     }
 
     override fun createGame(name: String) {
+        // TODO
         App.instance.gameStorage.create(name, world) { game ->
             gamesSet.add(game)
             view.addedAt(0, game)

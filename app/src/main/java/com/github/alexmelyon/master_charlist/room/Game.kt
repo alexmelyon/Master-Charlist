@@ -1,13 +1,17 @@
 package com.github.alexmelyon.master_charlist.room
 
+import android.os.Parcelable
 import android.util.Log
 import androidx.room.*
+import com.github.alexmelyon.master_charlist.room.UserService.Companion.FIELD_USER_UID
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.parcel.Parcelize
 import java.util.*
 
 @Entity
-class Game(
+@Parcelize
+class Game (
     var origin: String = "",
     var deviceId: String = "",
     var userGroup: String? = null,
@@ -15,7 +19,7 @@ class Game(
     var worldGroup: String = "",
     var time: Date = Date(),
     var archived: Boolean = false
-) {
+) : Parcelable {
     @Exclude
     var firestoreId: String = ""
 
@@ -34,10 +38,18 @@ class GameStorage(val userService: UserService, val deviceService: DeviceService
     }
 
     fun getAll(world: World, onSuccess: (List<Game>) -> Unit) {
-        gamesCollection.whereEqualTo(WORLD_GROUP, world.firestoreId)
+        val origins = mutableListOf(deviceService.deviceId)
+        userService.currentUserUid?.let { origins.add(it) }
+        gamesCollection.whereIn(FIELD_ORIGIN, origins)
+            .whereEqualTo(WORLD_GROUP, world.firestoreId)
+            .whereEqualTo(FIELD_ARCHIVED, false)
             .get()
             .addOnSuccessListener { querySnapshot ->
-                val games = querySnapshot.toObjects(Game::class.java)
+                val games = querySnapshot.map { docSnapshot ->
+                    docSnapshot.toObject(Game::class.java).apply {
+                        firestoreId = docSnapshot.id
+                    }
+                }
                 onSuccess(games)
             }
     }
@@ -62,8 +74,20 @@ class GameStorage(val userService: UserService, val deviceService: DeviceService
         game.name = name
         gamesCollection.document(game.firestoreId).update(FIELD_NAME, name)
     }
-}
 
+    fun updateLocalGames() {
+        val deviceId = deviceService.deviceId
+        val userUid = userService.currentUserUid!!
+        gamesCollection.whereEqualTo(FIELD_ORIGIN, deviceId)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                querySnapshot.forEach { docRef ->
+                    gamesCollection.document(docRef.id)
+                        .update(mapOf(FIELD_ORIGIN to userUid, FIELD_USER_UID to userUid))
+                }
+            }
+    }
+}
 @Dao
 interface GameDao {
 

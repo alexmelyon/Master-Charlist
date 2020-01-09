@@ -41,10 +41,10 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
 
     val itemsWrapper = SessionItemsWrapper()
 
-    constructor(sessionId: Long, gameId: Long, world: World) : this(Bundle().apply {
+    constructor(sessionId: Long, game: Game, world: World) : this(Bundle().apply {
         putLong(SESSION_KEY, sessionId)
-        putLong(GAME_KEY, gameId)
         putParcelable(WORLD_KEY, world)
+        putParcelable(GAME_KEY, game)
     })
 
     override fun onContextAvailable(context: Context) {
@@ -52,7 +52,7 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
         ControllerInjector.inject(this)
 
         world = args.getParcelable<World>(WORLD_KEY)!!
-        game = db.gameDao().getAll(args.getLong(GAME_KEY), world.id)
+        game = args.getParcelable<Game>(GAME_KEY)!!
         session = db.gameSessionDao().get(world.id, game.id, args.getLong(SESSION_KEY))
 
         itemsWrapper.addAll(db.hpDiffDao().getAllBySession(world.id, game.id, session.id)

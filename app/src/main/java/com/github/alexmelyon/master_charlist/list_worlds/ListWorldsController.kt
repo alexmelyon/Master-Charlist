@@ -122,6 +122,17 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
                 App.instance.worldStorage.updateLocalWorlds {
                     updateWorlds()
                 }
+                App.instance.gameStorage.updateLocalGames()
+                // TODO Update skills
+                // TODO Update things
+                // TODO Update effects
+                // TODO Update sessions
+                // TODO Update hp diffs
+                // TODO Update skill diffs
+                // TODO Update thing diffs
+                // TODO Update effect diffs
+                // TODO Update effectSkill diffs
+                // TODO Update comment diffs
             } else {
                 AlertDialog.Builder(activity!!)
                     .setTitle(activity?.getString(R.string.error))
