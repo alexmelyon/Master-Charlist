@@ -43,7 +43,7 @@ interface SessionContract {
         fun isSessionOpen(): Boolean
         fun createCharacter(name: String)
         fun createSkill(name: String, onSuccess: (Skill) -> Unit)
-        fun createThing(name: String): Thing
+        fun createThing(name: String, onSuccess: (Thing) -> Unit)
         fun createEffect(name: String): Effect
         fun getUsedEffectSkills(pos: Int): List<Pair<String, EffectSkill>>
     }

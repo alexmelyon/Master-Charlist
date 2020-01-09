@@ -3,18 +3,11 @@ package com.github.alexmelyon.master_charlist.room
 import android.os.Parcelable
 import android.util.Log
 import androidx.room.*
-import com.github.alexmelyon.master_charlist.room.UserService.Companion.FIELD_USER_UID
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.parcel.Parcelize
 import java.lang.Exception
 import java.util.*
-
-
-const val WORLD_GROUP = "worldGroup"
-const val FIELD_NAME = "name"
-const val FIELD_ARCHIVED = "archived"
-const val FIELD_ORIGIN = "origin"
 
 /** @property origin - One of deviceId or userUid */
 @Entity
@@ -22,7 +15,7 @@ const val FIELD_ORIGIN = "origin"
 class World(
     var origin: String = "",
     var deviceId: String = "",
-    var userGroup: String? = null,
+    var userUid: String? = null,
     var name: String = "",
     var createTime: Date = Date(),
     var archived: Boolean = false

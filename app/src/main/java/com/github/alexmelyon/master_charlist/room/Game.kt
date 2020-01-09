@@ -2,7 +2,6 @@ package com.github.alexmelyon.master_charlist.room
 
 import android.os.Parcelable
 import androidx.room.*
-import com.github.alexmelyon.master_charlist.room.UserService.Companion.FIELD_USER_UID
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.parcel.Parcelize
@@ -13,7 +12,7 @@ import java.util.*
 class Game (
     var origin: String = "",
     var deviceId: String = "",
-    var userGroup: String? = null,
+    var userUid: String? = null,
     var name: String = "",
     var worldGroup: String = "",
     var time: Date = Date(),

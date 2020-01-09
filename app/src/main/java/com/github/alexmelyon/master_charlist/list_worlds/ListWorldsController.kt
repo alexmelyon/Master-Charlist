@@ -124,7 +124,7 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
                 }
                 App.instance.gameStorage.updateLocalGames()
                 App.instance.skillStorage.updateLocalSkills()
-                // TODO Update things
+                App.instance.thingStorage.updateLocalThings()
                 // TODO Update effects
                 // TODO Update sessions
                 // TODO Update hp diffs

@@ -232,8 +232,9 @@ class SessionView @Inject constructor(val activity: MainActivity) : _FrameLayout
 
     fun showCreateThingDialog(action: (Thing) -> Unit) {
         activity.showAlertEditDialog(context.getString(R.string.thing_name_colon)) { name ->
-            val thing = controller.createThing(name)
-            action(thing)
+            controller.createThing(name) { thing ->
+                action(thing)
+            }
         }
     }
 

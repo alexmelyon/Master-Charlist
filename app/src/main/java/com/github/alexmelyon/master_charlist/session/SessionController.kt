@@ -344,11 +344,14 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
         }
     }
 
-    override fun createThing(name: String): Thing {
-        val thing = Thing(name, world.id, Calendar.getInstance().time)
-        val id = db.thingDao().insert(thing)
-        thing.id = id
-        return thing
+    override fun createThing(name: String, onSuccess: (Thing) -> Unit) {
+//        val thing = Thing(name, world.id, Calendar.getInstance().time)
+//        val id = db.thingDao().insert(thing)
+//        thing.id = id
+//        return thing
+        App.instance.thingStorage.create(name, world) {
+
+        }
     }
 
     override fun createEffect(name: String): Effect {

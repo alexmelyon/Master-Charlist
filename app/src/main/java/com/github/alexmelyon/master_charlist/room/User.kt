@@ -9,10 +9,6 @@ class User(var uid: String, var name: String, val createTime: Date)
 
 class UserService {
 
-    companion object {
-        const val FIELD_USER_UID = "userUid"
-    }
-
     val currentUser: FirebaseUser?
         get() = FirebaseAuth.getInstance().currentUser
 

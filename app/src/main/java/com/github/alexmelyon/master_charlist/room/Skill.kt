@@ -12,7 +12,7 @@ import java.util.*
 class Skill(
     var origin: String = "",
     var deviceId: String = "",
-    var userGroup: String? = null,
+    var userUid: String? = null,
     var name: String = "",
     var worldGroup: String = "",
     var lastUsed: Date = Date(),
@@ -92,7 +92,7 @@ class SkillStorage(
             .addOnSuccessListener { querySnapshot ->
                 querySnapshot.forEach { docRef ->
                     skillsCollection.document(docRef.id)
-                        .update(mapOf(FIELD_ORIGIN to userUid, UserService.FIELD_USER_UID to userUid))
+                        .update(mapOf(FIELD_ORIGIN to userUid, FIELD_USER_UID to userUid))
                 }
             }
     }
