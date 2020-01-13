@@ -3,7 +3,6 @@ package com.github.alexmelyon.master_charlist.list_worlds
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AlertDialog
@@ -125,7 +124,7 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
                 App.instance.gameStorage.updateLocalGames()
                 App.instance.skillStorage.updateLocalSkills()
                 App.instance.thingStorage.updateLocalThings()
-                // TODO Update effects
+                App.instance.effectStorage.updateLocalEffects()
                 // TODO Update sessions
                 // TODO Update hp diffs
                 // TODO Update skill diffs

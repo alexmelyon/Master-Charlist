@@ -11,7 +11,6 @@ import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.list_games.WORLD_KEY
 import com.github.alexmelyon.master_charlist.room.*
 import ru.napoleonit.talan.di.ControllerInjector
-import java.util.*
 import javax.inject.Inject
 
 class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContract.Controller {
@@ -41,15 +40,28 @@ class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContrac
 
     override fun onAttach(view: View) {
         super.onAttach(view)
-        effectItems = db.effectDao().getAll(world.id)
-            .sortedWith(compareByDescending<Effect> { it.lastUsed }
-                .thenBy { it.name }
-            ).map { effect ->
-                val effectSkills = effect.getSkillToValue(db)
+//        effectItems = db.effectDao().getAll(world.id)
+//            .sortedWith(compareByDescending<Effect> { it.lastUsed }
+//                .thenBy { it.name }
+//            ).map { effect ->
+//                val effectSkills = effect.getSkillToValue(db)
+//                    .map { EffectSkillRow(it.first.name, it.second, it.first) }
+//                EffectRow(effect.name, effectSkills, effect)
+//            }.toMutableList()
+//        this.view.setData(effectItems)
+
+        updateEffects()
+    }
+
+    fun updateEffects() {
+        App.instance.effectStorage.getAll(world) { effects ->
+            val effectRows = effects.map {
+                val effectSkills = it.getSkillToValue()
                     .map { EffectSkillRow(it.first.name, it.second, it.first) }
-                EffectRow(effect.name, effectSkills, effect)
-            }.toMutableList()
-        this.view.setData(effectItems)
+                EffectRow(it.name, effectSkills, it)
+            }
+            this.view.setData(effectRows)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -69,37 +81,41 @@ class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContrac
 
     // TODO Don't create skills in ListEffectsController
     override fun createSkill(name: String, onSuccess: (Skill) -> Unit) {
-//        val skill = Skill(name, world.id, Calendar.getInstance().time)
-//        val id = db.skillDao().insert(skill)
-//        skill.id = id
-//        return skill
         App.instance.skillStorage.create(name, world) { skill ->
             onSuccess(skill)
         }
     }
 
     override fun createEffect(effectName: String) {
-        val effect = Effect(effectName, world.id, Calendar.getInstance().time)
-        val id = db.effectDao().insert(effect)
-        effect.id = id
+//        val effect = Effect(effectName, world.id, Calendar.getInstance().time)
+//        val id = db.effectDao().insert(effect)
+//        effect.id = id
+//        val effectRow = EffectRow(effect.name, listOf(), effect)
+//        view.itemAddedAt(0, effectRow)
 
-        val effectRow = EffectRow(effect.name, listOf(), effect)
-        view.itemAddedAt(0, effectRow)
+        App.instance.effectStorage.create(effectName, world) { effect ->
+            val effectRow = EffectRow(effect.name, listOf(), effect)
+            view.itemAddedAt(0, effectRow)
+        }
     }
 
     override fun archiveEffect(pos: Int, effect: Effect) {
-        effect.archived = true
-        db.effectDao().update(effect)
-
-        view.itemArchivedAt(pos)
+//        effect.archived = true
+//        db.effectDao().update(effect)
+//        view.itemArchivedAt(pos)
+        App.instance.effectStorage.archive(effect) {
+            view.itemArchivedAt(pos)
+        }
     }
 
     override fun renameEffect(pos: Int, effect: Effect, name: String) {
-        effect.name = name
-        db.effectDao().update(effect)
-
-        effectItems[pos].name = name
-        view.itemChangedAt(pos)
+//        effect.name = name
+//        db.effectDao().update(effect)
+//        effectItems[pos].name = name
+//        view.itemChangedAt(pos)
+        App.instance.effectStorage.rename(effect, name) {
+            view.itemChangedAt(pos)
+        }
     }
 
     override fun getAvailableSkillsForEffect(effect: Effect): List<Skill> {

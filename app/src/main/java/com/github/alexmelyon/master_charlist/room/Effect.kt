@@ -1,56 +1,126 @@
 package com.github.alexmelyon.master_charlist.room
 
-import androidx.room.*
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.google.firebase.firestore.Exclude
+import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
 
 @Entity
-class Effect(var name: String, val worldGroup: Long, var lastUsed: Date, var archived: Boolean = false) {
+class Effect(
+    var origin: String = "",
+    var deviceId: String = "",
+    var userUid: String? = null,
+    var name: String = "",
+    val worldGroup: String = "",
+    var lastUsed: Date = Date(),
+    var archived: Boolean = false
+) {
+    @Exclude
+    var firestoreId = ""
+
+    @Deprecated("Use firestoreId")
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
 
     override fun toString() = name
 }
 
-@Dao
-interface EffectDao {
-    @Query("SELECT * FROM effect")
-    fun getFull(): List<Effect>
+class EffectStorage(
+    val userService: UserService,
+    val deviceService: DeviceService,
+    val firestoreService: FirestoreService
+) {
 
-    @Query("SELECT * FROM effect WHERE worldGroup = :worldId AND archived = :archived")
-    fun getAll(worldId: Long, archived: Boolean = false): List<Effect>
+    private val effectsCollection by lazy {
+        FirebaseFirestore.getInstance().collection("effects")
+    }
 
-    @Query("SELECT * FROM effect WHERE id = :id")
-    fun get(id: Long): Effect
 
-    @Insert
-    fun insert(effect: Effect): Long
 
-    @Update
-    fun update(effect: Effect)
+    fun create(name: String, world: World, onSuccess: (Effect) -> Unit) {
+        val userId = userService.currentUserUid
+        val deviceId = deviceService.deviceId
+        val origin = userId ?: deviceId
+        val effect = Effect(origin, deviceId, userId, name, world.firestoreId, Calendar.getInstance().time)
+        effectsCollection.add(effect).addOnSuccessListener {
+            effect.firestoreId = it.id
+            onSuccess(effect)
+        }
+    }
+
+    fun rename(effect: Effect, name: String, onSuccess: () -> Unit) {
+        effect.name = name
+        effectsCollection.document(effect.firestoreId)
+            .update(FIELD_NAME, name)
+            .addOnSuccessListener {
+                onSuccess()
+            }
+    }
+
+    fun archive(effect: Effect, onSuccess: () -> Unit) {
+        effect.archived = true
+        effectsCollection.document(effect.firestoreId)
+            .update(FIELD_ARCHIVED, true)
+            .addOnSuccessListener {
+                onSuccess()
+            }
+    }
+
+    fun getAll(world: World, onSuccess: (List<Effect>) -> Unit) {
+        val origins = mutableListOf(deviceService.deviceId)
+        userService.currentUserUid?.let { origins.add(it) }
+        effectsCollection.whereIn(FIELD_ORIGIN, origins)
+            .whereEqualTo(WORLD_GROUP, world.firestoreId)
+            .whereEqualTo(FIELD_ARCHIVED, false)
+            .get(firestoreService.source)
+            .addOnSuccessListener { querySnapshot ->
+                val effects = querySnapshot.map { docSnapshot ->
+                    docSnapshot.toObject(Effect::class.java).apply {
+                        firestoreId = docSnapshot.id
+                    }
+                }
+                onSuccess(effects)
+            }
+    }
+
+    fun updateLocalEffects() {
+        val deviceId = deviceService.deviceId
+        val userUid = userService.currentUserUid!!
+        effectsCollection.whereEqualTo(FIELD_ORIGIN, deviceId)
+            .get(firestoreService.source)
+            .addOnSuccessListener { querySnapshot ->
+                querySnapshot.forEach { docRef ->
+                    effectsCollection.document(docRef.id)
+                        .update(mapOf(FIELD_ORIGIN to userUid, FIELD_USER_UID to userUid))
+                }
+            }
+    }
 }
 
-fun Effect.getAvailableSkills(db: AppDatabase): List<Skill> {
+fun Effect.getAvailableSkills(skillStorage: SkillStorage): List<Skill> {
     val effect = this
-    val allSkills = db.skillDao().getAll(effect.worldGroup)
-    val usedSkills = db.effectSkillDao().getAllByEffect(effect.worldGroup, effect.id)
-        .map { db.skillDao().get(it.skillGroup) }
+    val allSkills = skillStorage.skillDao().getAll(effect.worldGroup)
+    val usedSkills = skillStorage.effectSkillDao().getAllByEffect(effect.worldGroup, effect.id)
+        .map { skillStorage.skillDao().get(it.skillGroup) }
         .map { it.id }
     val possible = allSkills.filterNot { it.id in usedSkills }
         .sortedBy { it.name }
     return possible
 }
 
-fun Effect.getUsedEffectSkills(db: AppDatabase): List<Pair<String, EffectSkill>> {
+fun Effect.getUsedEffectSkills(skillStorage: SkillStorage): List<Pair<String, EffectSkill>> {
     val effect = this
-    val used = db.effectSkillDao().getAllByEffect(effect.worldGroup, effect.id)
-        .map { db.skillDao().get(it.skillGroup).name to it }
+    val used = skillStorage.effectSkillDao().getAllByEffect(effect.worldGroup, effect.id)
+        .map { skillStorage.skillDao().get(it.skillGroup).name to it }
         .sortedBy { it.first }
     return used
 }
 
-fun Effect.getSkillToValue(db: AppDatabase): List<Pair<Skill, Int>> {
+data class SkillToValue(val skill: Skill, val value: Int)
+fun Effect.getSkillToValue(skillStorage: SkillStorage): List<SkillToValue> {
     val effect = this
-    return db.effectSkillDao().getAllByEffect(effect.worldGroup, effect.id)
-        .map { db.skillDao().get(it.skillGroup) to it.value }
+    return skillStorage.effectSkillDao().getAllByEffect(effect.worldGroup, effect.id)
+        .map { skillStorage.skillDao().get(it.skillGroup) to it.value }
         .sortedBy { it.first.name }
 }

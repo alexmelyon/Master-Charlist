@@ -34,6 +34,7 @@ class App : MultiDexApplication(), HasActivityInjector {
     val gameStorage = GameStorage(userService, deviceService, firestoreService)
     val skillStorage = SkillStorage(userService, deviceService, firestoreService)
     val thingStorage = ThingStorage(userService, deviceService, firestoreService)
+    val effectStorage = EffectStorage(userService, deviceService, firestoreService)
 
     override fun onCreate() {
         super.onCreate()
@@ -49,3 +50,4 @@ class App : MultiDexApplication(), HasActivityInjector {
 // TODO Комментарий по персонажу, Состояния, особенности (плюсы минусы), дополнительные скиллы, заклинания, баффы, дебаффы, ачивки
 // TODO Пресеты по DND, Fallout, SW:KotOR, VTM
 // TODO Кубик
+// TODO EffectHPDiff
