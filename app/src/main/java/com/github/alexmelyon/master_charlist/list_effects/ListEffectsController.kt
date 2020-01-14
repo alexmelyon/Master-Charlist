@@ -40,27 +40,17 @@ class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContrac
 
     override fun onAttach(view: View) {
         super.onAttach(view)
-//        effectItems = db.effectDao().getAll(world.id)
-//            .sortedWith(compareByDescending<Effect> { it.lastUsed }
-//                .thenBy { it.name }
-//            ).map { effect ->
-//                val effectSkills = effect.getSkillToValue(db)
-//                    .map { EffectSkillRow(it.first.name, it.second, it.first) }
-//                EffectRow(effect.name, effectSkills, effect)
-//            }.toMutableList()
-//        this.view.setData(effectItems)
-
         updateEffects()
     }
 
     fun updateEffects() {
         App.instance.effectStorage.getAll(world) { effects ->
             val effectRows = effects.map {
-                val effectSkills = it.getSkillToValue()
-                    .map { EffectSkillRow(it.first.name, it.second, it.first) }
+                val effectSkills = it.getSkillToValue(App.instance.skillStorage)
+                    .map { EffectSkillRow(it.skill.name, it.value, it.skill) }
                 EffectRow(it.name, effectSkills, it)
             }
-            this.view.setData(effectRows)
+            this.view.setData(effectRows.toMutableList())
         }
     }
 
@@ -87,12 +77,6 @@ class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContrac
     }
 
     override fun createEffect(effectName: String) {
-//        val effect = Effect(effectName, world.id, Calendar.getInstance().time)
-//        val id = db.effectDao().insert(effect)
-//        effect.id = id
-//        val effectRow = EffectRow(effect.name, listOf(), effect)
-//        view.itemAddedAt(0, effectRow)
-
         App.instance.effectStorage.create(effectName, world) { effect ->
             val effectRow = EffectRow(effect.name, listOf(), effect)
             view.itemAddedAt(0, effectRow)
@@ -100,48 +84,35 @@ class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContrac
     }
 
     override fun archiveEffect(pos: Int, effect: Effect) {
-//        effect.archived = true
-//        db.effectDao().update(effect)
-//        view.itemArchivedAt(pos)
         App.instance.effectStorage.archive(effect) {
             view.itemArchivedAt(pos)
         }
     }
 
     override fun renameEffect(pos: Int, effect: Effect, name: String) {
-//        effect.name = name
-//        db.effectDao().update(effect)
-//        effectItems[pos].name = name
-//        view.itemChangedAt(pos)
         App.instance.effectStorage.rename(effect, name) {
             view.itemChangedAt(pos)
         }
     }
 
     override fun getAvailableSkillsForEffect(effect: Effect): List<Skill> {
-        return effect.getAvailableSkills(db)
+        return effect.getAvailableSkills(App.instance.skillStorage)
     }
 
     override fun attachSkillForEffect(pos: Int, effect: Effect, skill: Skill) {
-        val effectSkill = EffectSkill(0, effect.id, skill.id, world.id)
-        val id = db.effectSkillDao().insert(effectSkill)
-        effectSkill.id = id
-
-        effectItems[pos].effectSkills = effect.getSkillToValue(db)
-            .map { EffectSkillRow(it.first.name, it.second, it.first) }
-        view.itemChangedAt(pos)
+        App.instance.effectStorage.attachSkillForEffect(effect, skill) {
+            view.itemChangedAt(pos)
+        }
     }
 
     override fun getUsedEffectSkills(effect: Effect): List<Pair<String, EffectSkill>> {
-        return effect.getUsedEffectSkills(db)
+        return effect.getUsedEffectSkills(App.instance.skillStorage)
     }
 
     override fun detachSkillForEffect(pos: Int, effect: Effect, effectSkill: EffectSkill) {
-        db.effectSkillDao().delete(effectSkill)
-        effectItems[pos].effectSkills = effect.getSkillToValue(db)
-            .map { EffectSkillRow(it.first.name, it.second, it.first) }
-
-        view.itemChangedAt(pos)
+        App.instance.effectStorage.detachSkillFromEffect(effect, effectSkill) {
+            view.itemChangedAt(pos)
+        }
     }
 
     override fun onEffectSkillChanged(pos: Int, effect: Effect, skill: Skill, delta: Int) {
@@ -149,8 +120,8 @@ class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContrac
         effectSkill.value += delta
         db.effectSkillDao().update(effectSkill)
 
-        effectItems[pos].effectSkills = effect.getSkillToValue(db)
-            .map { EffectSkillRow(it.first.name, it.second, it.first) }
+        effectItems[pos].effectSkills = effect.getSkillToValue(App.instance.skillStorage)
+            .map { EffectSkillRow(it.skill.name, it.value, it.skill) }
         view.itemChangedAt(pos)
     }
 }

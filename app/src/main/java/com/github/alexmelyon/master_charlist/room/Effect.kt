@@ -36,8 +36,6 @@ class EffectStorage(
         FirebaseFirestore.getInstance().collection("effects")
     }
 
-
-
     fun create(name: String, world: World, onSuccess: (Effect) -> Unit) {
         val userId = userService.currentUserUid
         val deviceId = deviceService.deviceId
@@ -96,12 +94,27 @@ class EffectStorage(
                 }
             }
     }
+
+    fun attachSkillForEffect(effect: Effect, skill: Skill, onSuccess: () -> Unit) {
+//        val effectSkill = EffectSkill(0, effect.id, skill.id, world.id)
+//        val id = db.effectSkillDao().insert(effectSkill)
+//        effectSkill.id = id
+//        effectItems[pos].effectSkills = effect.getSkillToValue(App.instance.skillStorage)
+//            .map { EffectSkillRow(it.skill.name, it.value, it.skill) }
+    }
+
+    fun detachSkillFromEffect(effect: Effect, effectSkill: EffectSkill, onSuccess: () -> Unit) {
+//        db.effectSkillDao().delete(effectSkill)
+//        effectItems[pos].effectSkills = effect.getSkillToValue(App.instance.skillStorage)
+//            .map { EffectSkillRow(it.skill.name, it.value, it.skill) }
+    }
 }
 
 fun Effect.getAvailableSkills(skillStorage: SkillStorage): List<Skill> {
     val effect = this
+//    val allSkills = skillStorage.skillDao().getAll(effect.worldGroup)
     val allSkills = skillStorage.skillDao().getAll(effect.worldGroup)
-    val usedSkills = skillStorage.effectSkillDao().getAllByEffect(effect.worldGroup, effect.id)
+    val usedSkills = skillStorage.effectSkillDao().getAllByEffect(effect.id)
         .map { skillStorage.skillDao().get(it.skillGroup) }
         .map { it.id }
     val possible = allSkills.filterNot { it.id in usedSkills }
