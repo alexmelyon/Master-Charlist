@@ -23,41 +23,43 @@ class ListEffectsView @Inject constructor(val activity: MainActivity) : _FrameLa
     override fun createView(container: ViewGroup): View {
         effectsAdapter = ListEffectsAdapter()
         effectsAdapter.onItemClickListener = { pos, row ->
-            val skillsForEffect = controller.getAvailableSkillsForEffect(row.effect)
-            val skillNames = listOf(context.getString(R.string.create_new)) + skillsForEffect.map { context.getString(R.string.attach_something, it.name) }
-            AlertDialog.Builder(activity)
-                .setItems(skillNames.toTypedArray(), DialogInterface.OnClickListener { dialog, which ->
-                    if(which == 0) {
-                        showCreateSkillDialog { skill ->
+            controller.getAvailableSkillsForEffect(row.effect) { skillsForEffect ->
+                val skillNames = listOf(context.getString(R.string.create_new)) + skillsForEffect.map { context.getString(R.string.attach_something, it.name) }
+                AlertDialog.Builder(activity)
+                    .setItems(skillNames.toTypedArray(), DialogInterface.OnClickListener { dialog, which ->
+                        if(which == 0) {
+                            showCreateSkillDialog { skill ->
+                                controller.attachSkillForEffect(pos, row.effect, skill)
+                            }
+                        } else {
+                            val skill = skillsForEffect[which - 1]
                             controller.attachSkillForEffect(pos, row.effect, skill)
                         }
-                    } else {
-                        val skill = skillsForEffect[which - 1]
-                        controller.attachSkillForEffect(pos, row.effect, skill)
-                    }
-                })
-                .show()
+                    })
+                    .show()
+            }
         }
         effectsAdapter.onItemLongclickListener = { pos, row ->
-            val usedSkills = controller.getUsedEffectSkills(row.effect)
-            val usual = listOf(context.getString(R.string.rename), context.getString(R.string.archive_effect))
-            val variants = usual + usedSkills.map { context.getString(R.string.detach_something, it.first) }
-            AlertDialog.Builder(activity)
-                .setItems(variants.toTypedArray(), DialogInterface.OnClickListener { dialog, which ->
-                    if(which == 0) {
-                        activity.showAlertEditDialog(context.getString(R.string.rename_effect_colon), row.effect.name) { name ->
-                            controller.renameEffect(pos, row.effect, name)
+            controller.getUsedEffectSkills(row.effect) { usedSkills ->
+                val usual = listOf(context.getString(R.string.rename), context.getString(R.string.archive_effect))
+                val variants = usual + usedSkills.map { context.getString(R.string.detach_something, it.skillName) }
+                AlertDialog.Builder(activity)
+                    .setItems(variants.toTypedArray(), DialogInterface.OnClickListener { dialog, which ->
+                        if(which == 0) {
+                            activity.showAlertEditDialog(context.getString(R.string.rename_effect_colon), row.effect.name) { name ->
+                                controller.renameEffect(pos, row.effect, name)
+                            }
+                        } else if(which == 1) {
+                            confirmArchiveEffect(row.effect.name) {
+                                controller.archiveEffect(pos, row.effect)
+                            }
+                        } else {
+                            val effectSkill = usedSkills[which - usual.size]
+                            controller.detachSkillForEffect(pos, row.effect, effectSkill.effectSkill)
                         }
-                    } else if(which == 1) {
-                        confirmArchiveEffect(row.effect.name) {
-                            controller.archiveEffect(pos, row.effect)
-                        }
-                    } else {
-                        val effectSkill = usedSkills[which - usual.size]
-                        controller.detachSkillForEffect(pos, row.effect, effectSkill.second)
-                    }
-                })
-                .show()
+                    })
+                    .show()
+            }
         }
         effectsAdapter.onSubitemPlus = { pos, effect, skill ->
             controller.onEffectSkillChanged(pos, effect, skill, +1)

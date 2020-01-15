@@ -1,9 +1,21 @@
 package com.github.alexmelyon.master_charlist.room
 
 import androidx.room.*
+import com.google.firebase.firestore.Exclude
+import com.google.firebase.firestore.FirebaseFirestore
+import java.util.*
 
 @Entity
-class EffectSkill(var value: Int, var effectGroup: Long, var skillGroup: Long, var worldGroup: Long) {
+class EffectSkill(
+    var skillGroup: String = "",
+    var value: Int = 0
+) {
+    @Deprecated("")
+    var worldGroup: Long = 0L
+    @Deprecated("")
+    var effectGroup: String = ""
+    @Exclude
+    @Deprecated("Use firestoreId instead")
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
 }

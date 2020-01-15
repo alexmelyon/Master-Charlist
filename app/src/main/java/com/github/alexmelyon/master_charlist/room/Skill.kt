@@ -68,10 +68,16 @@ class SkillStorage(
     }
 
     fun getAll(world: World, onSuccess: (List<Skill>) -> Unit) {
+        getAll(world.firestoreId) { skills ->
+            onSuccess(skills)
+        }
+    }
+
+    fun getAll(worldGroup: String, onSuccess: (List<Skill>) -> Unit) {
         val origins = mutableListOf(deviceService.deviceId)
         userService.currentUserUid?.let { origins.add(it) }
         skillsCollection.whereIn(FIELD_ORIGIN, origins)
-            .whereEqualTo(WORLD_GROUP, world.firestoreId)
+            .whereEqualTo(FIELD_WORLD_GROUP, worldGroup)
             .whereEqualTo(FIELD_ARCHIVED, false)
             .get(firestoreService.source)
             .addOnSuccessListener { querySnapshot ->
@@ -96,6 +102,11 @@ class SkillStorage(
                 }
             }
     }
+
+    fun getBySkillGroup(skillGroup: List<String>, onSuccess: (List<Skill>) -> Unit) {
+
+    }
+
 }
 
 @Dao

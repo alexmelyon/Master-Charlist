@@ -4,6 +4,7 @@ import android.view.ViewGroup
 import com.github.alexmelyon.master_charlist.room.Effect
 import com.github.alexmelyon.master_charlist.room.EffectSkill
 import com.github.alexmelyon.master_charlist.room.Skill
+import com.github.alexmelyon.master_charlist.room.SkillnameToEffectskill
 
 interface ListEffectsContract {
     interface View {
@@ -18,8 +19,8 @@ interface ListEffectsContract {
     interface Controller {
         fun createEffect(effectName: String)
         fun archiveEffect(pos: Int, effect: Effect)
-        fun getAvailableSkillsForEffect(effect: Effect): List<Skill>
-        fun getUsedEffectSkills(effect: Effect): List<Pair<String, EffectSkill>>
+        fun getAvailableSkillsForEffect(effect: Effect, onSuccess: (List<Skill>) -> Unit)
+        fun getUsedEffectSkills(effect: Effect, onSuccess: (List<SkillnameToEffectskill>) -> Unit)
         fun attachSkillForEffect(pos: Int, effect: Effect, skill: Skill)
         fun detachSkillForEffect(pos: Int, effect: Effect, effectSkill: EffectSkill)
         fun onEffectSkillChanged(pos: Int, effect: Effect, skill: Skill, delta: Int)

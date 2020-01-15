@@ -73,7 +73,7 @@ class ThingStorage(
         val origins = mutableListOf(deviceService.deviceId)
         userService.currentUserUid?.let { origins.add(it) }
         thingsCollection.whereIn(FIELD_ORIGIN, origins)
-            .whereEqualTo(WORLD_GROUP, world.firestoreId)
+            .whereEqualTo(FIELD_WORLD_GROUP, world.firestoreId)
             .whereEqualTo(FIELD_ARCHIVED, false)
             .get(firestoreService.source)
             .addOnSuccessListener { querySnapshot ->

@@ -11,6 +11,7 @@ import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.list_games.WORLD_KEY
 import com.github.alexmelyon.master_charlist.room.*
 import ru.napoleonit.talan.di.ControllerInjector
+import java.util.concurrent.CountDownLatch
 import javax.inject.Inject
 
 class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContract.Controller {
@@ -45,11 +46,17 @@ class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContrac
 
     fun updateEffects() {
         App.instance.effectStorage.getAll(world) { effects ->
-            val effectRows = effects.map {
-                val effectSkills = it.getSkillToValue(App.instance.skillStorage)
-                    .map { EffectSkillRow(it.skill.name, it.value, it.skill) }
-                EffectRow(it.name, effectSkills, it)
+            val countDownLatch = CountDownLatch(effects.size)
+            val effectRows = mutableListOf<EffectRow>()
+            effects.forEach { effect ->
+                effect.getSkillToValue(App.instance.skillStorage) { skillToValueList ->
+                    val effectSkillRows = skillToValueList.map { EffectSkillRow(it.skill.name, it.value, it.skill) }
+                    val effectRow = EffectRow(effect.name, effectSkillRows, effect)
+                    effectRows.add(effectRow)
+                    countDownLatch.countDown()
+                }
             }
+            countDownLatch.await()
             this.view.setData(effectRows.toMutableList())
         }
     }
@@ -69,7 +76,6 @@ class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContrac
         return super.onOptionsItemSelected(item)
     }
 
-    // TODO Don't create skills in ListEffectsController
     override fun createSkill(name: String, onSuccess: (Skill) -> Unit) {
         App.instance.skillStorage.create(name, world) { skill ->
             onSuccess(skill)
@@ -95,33 +101,46 @@ class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContrac
         }
     }
 
-    override fun getAvailableSkillsForEffect(effect: Effect): List<Skill> {
-        return effect.getAvailableSkills(App.instance.skillStorage)
+    override fun getAvailableSkillsForEffect(effect: Effect, onSuccess: (List<Skill>) -> Unit) {
+        effect.getAvailableSkills(App.instance.skillStorage) { skills ->
+            onSuccess(skills)
+        }
+    }
+
+    override fun getUsedEffectSkills(effect: Effect, onSuccess: (List<SkillnameToEffectskill>) -> Unit) {
+        effect.getUsedEffectSkills(App.instance.skillStorage) { list ->
+            onSuccess(list)
+        }
     }
 
     override fun attachSkillForEffect(pos: Int, effect: Effect, skill: Skill) {
         App.instance.effectStorage.attachSkillForEffect(effect, skill) {
-            view.itemChangedAt(pos)
+            updateEffectRow(effectItems[pos], effect) {
+                view.itemChangedAt(pos)
+            }
         }
-    }
-
-    override fun getUsedEffectSkills(effect: Effect): List<Pair<String, EffectSkill>> {
-        return effect.getUsedEffectSkills(App.instance.skillStorage)
     }
 
     override fun detachSkillForEffect(pos: Int, effect: Effect, effectSkill: EffectSkill) {
         App.instance.effectStorage.detachSkillFromEffect(effect, effectSkill) {
-            view.itemChangedAt(pos)
+            updateEffectRow(effectItems[pos], effect) {
+                view.itemChangedAt(pos)
+            }
         }
     }
 
     override fun onEffectSkillChanged(pos: Int, effect: Effect, skill: Skill, delta: Int) {
-        val effectSkill = db.effectSkillDao().get(world.id, effect.id, skill.id)
-        effectSkill.value += delta
-        db.effectSkillDao().update(effectSkill)
+        App.instance.effectStorage.updateEffectSkillValue(effect, skill, delta) {
+            updateEffectRow(effectItems[pos], effect) {
+                view.itemChangedAt(pos)
+            }
+        }
+    }
 
-        effectItems[pos].effectSkills = effect.getSkillToValue(App.instance.skillStorage)
-            .map { EffectSkillRow(it.skill.name, it.value, it.skill) }
-        view.itemChangedAt(pos)
+    fun updateEffectRow(effectRow: EffectRow, effect: Effect, onSuccess: () -> Unit) {
+        effect.getSkillToValue(App.instance.skillStorage) { skillToValue ->
+            effectRow.effectSkills = skillToValue.map { EffectSkillRow(it.skill.name, it.value, it.skill) }
+            onSuccess()
+        }
     }
 }
