@@ -72,8 +72,10 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
     }
 
     private fun skillToValue(effectDiff: EffectDiff): List<Pair<Skill, Int>> {
-        val effect = db.effectDao().get(effectDiff.effectGroup)
-        return effect.getSkillToValue(db)
+//        val effect = db.effectDao().get(effectDiff.effectGroup)
+//        return effect.getSkillToValue(db)
+        return App.instance.effectStorage.get(effectDiff.effectGroup)
+            .getSkillToValue(App.instance.skillStorage)
     }
 
     private fun skillNamesToValue(effectDiff: EffectDiff): List<Pair<String, Int>> {

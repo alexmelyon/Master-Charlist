@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.*
 import com.bluelinelabs.conductor.Controller
 import com.crashlytics.android.Crashlytics
+import com.github.alexmelyon.master_charlist.App
 import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.list_games.WORLD_KEY
 import com.github.alexmelyon.master_charlist.list_sessions.GAME_KEY
@@ -90,18 +91,19 @@ class ListCharactersController(args: Bundle) : Controller(args), ListCharactersC
             val effectDiffs = getUsedEffectsFor(closedEffectDiffs, effects)
             val effectDiffNames = effectDiffs.map { it.name }
 
-            val skillIdToModifier = db.effectDiffDao().getAllByCharacter(world.id, game.id, character.id)
-                .filter { it.sessionGroup in closedSessions }
-                .map { it.effectGroup to if(it.value) +1 else -1 }
-                .groupBy { it.first }
-                .map { it.key to it.value.sumBy { it.second } }
-                .flatMap { (effectId, amount) ->
-                    val effectSkills = db.effectSkillDao().getAllByEffect(world.id, effectId)
-                        .map { db.skillDao().get(it.skillGroup) to it.value }
-                    effectSkills.map { it.first to it.second * amount }
-                }.groupBy { it.first }
-                .map { it.key.id to it.value.sumBy { it.second } }
-                .toMap()
+//            val skillIdToModifier = db.effectDiffDao().getAllByCharacter(world.id, game.id, character.id)
+//                .filter { it.sessionGroup in closedSessions }
+//                .map { it.effectGroup to if(it.value) +1 else -1 }
+//                .groupBy { it.first }
+//                .map { it.key to it.value.sumBy { it.second } }
+//                .flatMap { (effectId, amount) ->
+//                    val effectSkills = db.effectSkillDao().getAllByEffect(world.id, effectId)
+//                        .map { db.skillDao().get(it.skillGroup) to it.value }
+//                    effectSkills.map { it.first to it.second * amount }
+//                }.groupBy { it.first }
+//                .map { it.key.id to it.value.sumBy { it.second } }
+//                .toMap()
+            val skillIdToModifier = mapOf<Long, Int>()
 
             val skills = db.skillDao().getAll(world.id)
             data class SkillToValue(val skill: Skill, val value: Int)

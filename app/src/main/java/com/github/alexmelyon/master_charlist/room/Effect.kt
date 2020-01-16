@@ -1,9 +1,13 @@
 package com.github.alexmelyon.master_charlist.room
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import java.util.*
 
 @Entity
@@ -12,8 +16,9 @@ class Effect(
     var deviceId: String = "",
     var userUid: String? = null,
     var name: String = "",
-    val worldGroup: String = "",
+    var worldGroup: String = "",
     var lastUsed: Date = Date(),
+    @Ignore
     var effectSkills: MutableList<EffectSkill> = mutableListOf(),
     var archived: Boolean = false
 ) {
@@ -25,6 +30,24 @@ class Effect(
     var id: Long = 0
 
     override fun toString() = name
+}
+
+@Dao
+interface EffectDao {
+    @Query("SELECT * FROM effect")
+    fun getFull(): List<Effect>
+
+    @Query("SELECT * FROM effect WHERE worldGroup = :worldId AND archived = :archived")
+    fun getAll(worldId: Long, archived: Boolean = false): List<Effect>
+
+    @Query("SELECT * FROM effect WHERE id = :id")
+    fun get(id: Long): Effect
+
+    @Insert
+    fun insert(effect: Effect): Long
+
+    @Update
+    fun update(effect: Effect)
 }
 
 class EffectStorage(
@@ -127,6 +150,16 @@ class EffectStorage(
             .addOnSuccessListener {
                 onSuccess()
             }
+    }
+
+    fun get(effectGroup: String): Effect {
+        return runBlocking {
+            val effect = effectsCollection.document(effectGroup)
+                .get()
+                .await()
+                .toObject(Effect::class.java)
+            return@runBlocking effect!!
+        }
     }
 }
 

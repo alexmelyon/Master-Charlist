@@ -125,7 +125,6 @@ class ListWorldsController : Controller(), ListWorldsContract.Controller {
                 App.instance.skillStorage.updateLocalSkills()
                 App.instance.thingStorage.updateLocalThings()
                 App.instance.effectStorage.updateLocalEffects()
-                App.instance.effectSkillStorage.updateLocalEffectSkills()
                 // TODO Update sessions
                 // TODO Update hp diffs
                 // TODO Update skill diffs

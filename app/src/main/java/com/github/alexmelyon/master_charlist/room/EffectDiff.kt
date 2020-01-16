@@ -4,7 +4,17 @@ import androidx.room.*
 import java.util.*
 
 @Entity
-data class EffectDiff(var value: Boolean, var time: Date, val characterGroup: Long, var effectGroup: Long, var sessionGroup: Long, var gameGroup: Long, var worldGroup: Long, var archived: Boolean = false) {
+data class EffectDiff(
+    var value: Boolean,
+    var time: Date,
+    var characterGroup: Long,
+    var effectGroup: String,
+    var sessionGroup: Long,
+    var gameGroup: String,
+    var worldGroup: String,
+    var archived: Boolean = false
+) {
+
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
 }
