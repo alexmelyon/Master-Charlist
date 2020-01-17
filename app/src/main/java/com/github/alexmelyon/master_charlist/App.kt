@@ -35,6 +35,7 @@ class App : MultiDexApplication(), HasActivityInjector {
     val skillStorage = SkillStorage(userService, deviceService, firestoreService)
     val thingStorage = ThingStorage(userService, deviceService, firestoreService)
     val effectStorage = EffectStorage(userService, deviceService, firestoreService)
+    val characterStorage = CharacterStorage()
 
     override fun onCreate() {
         super.onCreate()
