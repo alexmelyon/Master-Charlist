@@ -71,11 +71,12 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
             .map { SessionItem(it.id, it.time, SessionItemType.ITEM_COMMENT, "", "", 0, -1, it.comment) })
     }
 
-    private fun skillToValue(effectDiff: EffectDiff): List<Pair<Skill, Int>> {
+    private fun skillToValue(effectDiff: EffectDiff): List<SkillToValue> {
 //        val effect = db.effectDao().get(effectDiff.effectGroup)
 //        return effect.getSkillToValue(db)
         return App.instance.effectStorage.get(effectDiff.effectGroup)
             .getSkillToValue(App.instance.skillStorage)
+
     }
 
     private fun skillNamesToValue(effectDiff: EffectDiff): List<Pair<String, Int>> {
@@ -94,9 +95,10 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
         val things = getThings()
         return things.single { it.id == thingId }
     }
-    fun getEffect(effectid: Long): Effect {
-        val effects = getEffects()
-        return effects.single { it.id == effectid }
+    fun getEffect(effectid: String): Effect {
+//        val effects = getEffects()
+//        return effects.single { it.id == effectid }
+        App.instance.effectStorage.get(effectid)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup): View {
@@ -242,11 +244,8 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
     }
 
     override fun addCharacterAttachEffectDiff(character: GameCharacter, effect: Effect) {
-        effect.lastUsed = Calendar.getInstance().time
-        db.effectDao().update(effect)
-        val effectDiff = EffectDiff(true, Calendar.getInstance().time, character.id, effect.id, session.id, game.id, world.id)
-        val id = db.effectDiffDao().insert(effectDiff)
-        effectDiff.id = id
+
+        val effectDiff = App.instance.effectDiffStorage.attachEffect(character, effect, session, game, world)
 
         val skillToValue = skillNamesToValue(effectDiff)
         val item = SessionItem(effectDiff.id, effectDiff.time, SessionItemType.ITEM_EFFECT, effect.name, character.name, 1, character.id, effectSkills = skillToValue)
@@ -255,15 +254,17 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
     }
 
     override fun addCharacterDetachEffectDiff(character: Int, effect: Int) {
-        // TODO Update Attach/Detach while updating on Session screen
+
         val selectedCharacter = getCharacters()[character]
         val usedEffects = getUsedEffects().getValue(selectedCharacter.name)
         val selectedEffect = usedEffects[effect]
         selectedEffect.lastUsed = Calendar.getInstance().time
         db.effectDao().update(selectedEffect)
-        val effectDiff = EffectDiff(false, Calendar.getInstance().time, selectedCharacter.id, selectedEffect.id, session.id, game.id, world.id)
-        val id = db.effectDiffDao().insert(effectDiff)
-        effectDiff.id = id
+
+//        val effectDiff = EffectDiff(false, Calendar.getInstance().time, selectedCharacter.id, selectedEffect.id, session.id, game.id, world.id)
+//        val id = db.effectDiffDao().insert(effectDiff)
+//        effectDiff.id = id
+        val effectDiff = App.instance.effectDiffStorage.detachEffect(character, selectedEffect, session, game, world)
 
         val skillToValue = skillNamesToValue(effectDiff)
         val item = SessionItem(effectDiff.id, effectDiff.time, SessionItemType.ITEM_EFFECT, selectedEffect.name, selectedCharacter.name, -1, selectedCharacter.id, effectSkills = skillToValue)
@@ -274,7 +275,7 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
     override fun getAvailableSkillsForEffect(pos: Int): List<Skill> {
         val effectDiff = getEffectDiffAt(pos)
         val effect = db.effectDao().get(effectDiff.effectGroup)
-        return effect.getAvailableSkills(db)
+        return effect.getAvailableSkills(App.instance.skillStorage)
     }
 
     override fun attachSkillForEffect(pos: Int, skill: Skill) {
@@ -296,7 +297,8 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
 
     private fun getEffectDiffAt(pos: Int): EffectDiff {
         val effectDiffId = itemsWrapper.toList()[pos].id
-        val effectDiff = db.effectDiffDao().get(effectDiffId)
+//        val effectDiff = db.effectDiffDao().get(effectDiffId)
+        val effectDiff = App.instance.effectDiffStorage.get(effectDiffId)
         return effectDiff
     }
 

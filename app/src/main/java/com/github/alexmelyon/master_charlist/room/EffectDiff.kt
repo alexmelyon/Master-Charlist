@@ -7,9 +7,9 @@ import java.util.*
 data class EffectDiff(
     var value: Boolean,
     var time: Date,
-    var characterGroup: Long,
+    var characterGroup: String,
     var effectGroup: String,
-    var sessionGroup: Long,
+    var sessionGroup: String,
     var gameGroup: String,
     var worldGroup: String,
     var archived: Boolean = false
@@ -35,4 +35,37 @@ interface EffectDiffDao {
 
     @Insert
     fun insert(effectDiff: EffectDiff): Long
+}
+
+class EffectDiffStorage {
+    fun attachEffect(
+        character: GameCharacter,
+        effect: Effect,
+        session: GameSession,
+        game: Game,
+        world: World
+    ): EffectDiff {
+
+//        effect.lastUsed = Calendar.getInstance().time
+//        db.effectDao().update(effect)
+//        val effectDiff = EffectDiff(true, Calendar.getInstance().time, character.id, effect.id, session.id, game.id, world.id)
+//        val id = db.effectDiffDao().insert(effectDiff)
+//        effectDiff.id = id
+        return EffectDiff(true, Calendar.getInstance().time, character.firestoreId, effect.firestoreId, session.firestoreId, game.firestoreId, world.firestoreId)
+    }
+
+    fun detachEffect(
+        character: Int,
+        effect: Effect,
+        session: GameSession,
+        game: Game,
+        world: World
+    ): EffectDiff {
+
+    }
+
+    fun get(effectDiffId: String): EffectDiff {
+        return fire
+    }
+
 }

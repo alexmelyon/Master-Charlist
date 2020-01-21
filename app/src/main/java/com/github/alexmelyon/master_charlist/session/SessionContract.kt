@@ -57,4 +57,4 @@ enum class SessionItemType {
     ITEM_COMMENT
 }
 
-class SessionItem(val id: Long, val time: Date, val type: SessionItemType, val title: String, val desc: String, var value: Int, val characterId: Long, var comment: String = "", var effectSkills: List<Pair<String, Int>> = listOf(), var index: Int = -1)
+class SessionItem(val id: String, val time: Date, val type: SessionItemType, val title: String, val desc: String, var value: Int, val characterId: Long, var comment: String = "", var effectSkills: List<Pair<String, Int>> = listOf(), var index: Int = -1)

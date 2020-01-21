@@ -3,10 +3,7 @@ package com.github.alexmelyon.master_charlist.room
 import androidx.room.*
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
 import java.util.*
 
@@ -173,6 +170,16 @@ fun Effect.getAvailableSkills(skillStorage: SkillStorage, onSuccess: (List<Skill
     }
 }
 
+fun Effect.getAvailableSkills(skillStorage: SkillStorage): List<Skill> {
+    val skills = mutableListOf<Skill>()
+    runBlocking {
+        getAvailableSkills(skillStorage) { res ->
+            skills.addAll(res)
+        }
+    }
+    return skills
+}
+
 data class SkillnameToEffectskill(val skillName: String, val effectSkill: EffectSkill)
 fun Effect.getUsedEffectSkills(skillStorage: SkillStorage, onSuccess: (List<SkillnameToEffectskill>) -> Unit) {
     val effect = this
@@ -194,4 +201,14 @@ fun Effect.getSkillToValue(skillStorage: SkillStorage, onSuccess: (List<SkillToV
             SkillToValue(skill, effectSkill.value)
         }.sortedBy { it.skill.name }
     }
+}
+
+fun Effect.getSkillToValue(skillStorage: SkillStorage): List<SkillToValue> {
+    val res = mutableListOf<SkillToValue>()
+    runBlocking {
+        getSkillToValue(skillStorage) { skillsToValue ->
+            res.addAll(skillsToValue)
+        }
+    }
+    return res
 }

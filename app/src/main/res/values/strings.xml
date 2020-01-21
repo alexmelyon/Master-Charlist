@@ -78,4 +78,5 @@
     <string name="login">Login…</string>
     <string name="logout">Logout</string>
     <string name="error">Error</string>
+    <string name="hp">Health points</string>
 </resources>

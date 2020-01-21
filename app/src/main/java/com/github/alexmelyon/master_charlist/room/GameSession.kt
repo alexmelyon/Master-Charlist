@@ -4,7 +4,19 @@ import androidx.room.*
 import java.util.*
 
 @Entity
-class GameSession(var name: String, val gameGroup: Long, val worldGroup: Long, val startTime: Date, var open: Boolean, var endTime: Date, var archived: Boolean = false) {
+class GameSession(
+    origin: String,
+    deviceId: String,
+    useruid: String,
+    var name: String,
+    val gameGroup: Long,
+    val worldGroup: Long,
+    val startTime: Date,
+    var open: Boolean,
+    var endTime: Date,
+    var archived: Boolean = false
+): FirestoreDoc(origin, deviceId, name) {
+    @Deprecated("")
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
 
@@ -30,4 +42,16 @@ interface GameSessionDao {
 
     @Update
     fun update(gameSession: GameSession)
+}
+
+class SessionStorage {
+    fun attactEffect(character: GameCharacter, effect: Effect): EffectDiff {
+//        effect.lastUsed = Calendar.getInstance().time
+//        db.effectDao().update(effect)
+//        val effectDiff = EffectDiff(true, Calendar.getInstance().time, character.id, effect.id, session.id, game.id, world.id)
+//        val id = db.effectDiffDao().insert(effectDiff)
+//        effectDiff.id = id
+        return EffectDiff(true, Calendar.getInstance().time, character, effect, session, game, world)
+    }
+
 }
