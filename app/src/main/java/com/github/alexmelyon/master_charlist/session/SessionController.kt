@@ -74,13 +74,13 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
             .map { SessionItem(it.id, it.time, SessionItemType.ITEM_COMMENT, "", "", 0, -1, it.comment) })
     }
 
-    private fun skillToValue(effectDiff: EffectDiff): List<Pair<Skill, Int>> {
+    private fun skillToValue(effectDiff: EffectDiff): List<SkillToValue> {
         val effect = db.effectDao().get(effectDiff.effectGroup)
         return effect.getSkillToValue(db)
     }
 
     private fun skillNamesToValue(effectDiff: EffectDiff): List<Pair<String, Int>> {
-        return skillToValue(effectDiff).map { it.first.name to it.second }
+        return skillToValue(effectDiff).map { it.skill.name to it.value }
     }
 
     fun getCharacter(characterId: Long): GameCharacter {
@@ -311,7 +311,7 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
 
     override fun onEffectSkillChanged(pos: Int, subPos: Int, value: Int) {
         val effectDiff = getEffectDiffAt(pos)
-        val skill = skillToValue(effectDiff)[subPos].first
+        val skill = skillToValue(effectDiff)[subPos].skill
         val effectSkill = db.effectSkillDao().get(world.id, effectDiff.effectGroup, skill.id)
         effectSkill.value += value
         db.effectSkillDao().update(effectSkill)

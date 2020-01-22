@@ -15,7 +15,11 @@ import com.github.alexmelyon.master_charlist.room.Skill
 class ListEffectsAdapter : RecyclerView.Adapter<ListEffectsAdapter.ViewHolder>() {
 
     lateinit var layoutManager: RecyclerView.LayoutManager
-    lateinit var items: MutableList<EffectRow>
+    var items: MutableList<EffectRow> = mutableListOf()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
     var onItemClickListener: (Int, EffectRow) -> Unit = { pos, item -> }
     var onItemLongclickListener: (Int, EffectRow) -> Unit = { pos, item -> }
     var onSubitemPlus = { pos: Int, effect: Effect, skill: Skill -> }

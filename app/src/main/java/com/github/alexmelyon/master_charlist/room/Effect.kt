@@ -5,7 +5,7 @@ import kotlinx.coroutines.Deferred
 import java.util.*
 
 @Entity
-class Effect(var name: String, var worldGroup: String) : FirestoreDoc() {
+class Effect(var name: String = "", var worldGroup: String = "") : FirestoreDoc() {
 
     @Deprecated("")
     @PrimaryKey(autoGenerate = true)
@@ -51,19 +51,39 @@ fun Effect.getUsedEffectSkills(db: AppDatabase): List<Pair<String, EffectSkill>>
     return used
 }
 
-fun Effect.getSkillToValue(db: AppDatabase): List<Pair<Skill, Int>> {
+data class SkillToValue(val skill: Skill, val value: Int)
+fun Effect.getSkillToValue(db: AppDatabase): List<SkillToValue> {
     val effect = this
     return db.effectSkillDao().getAllByEffect(effect.worldGroup, effect.id)
-        .map { db.skillDao().get(it.skillGroup) to it.value }
-        .sortedBy { it.first.name }
+        .map { SkillToValue(db.skillDao().get(it.skillGroup), it.value) }
+        .sortedBy { it.skill.name }
 }
 
 class EffectStorage : FirestoreCollection<Effect>("effects") {
 
     fun create(name: String, world: World): Deferred<Effect> {
-        return super.create {
+        return super.create(Effect()) {
             this.name = name
             this.worldGroup = world.firestoreId
         }
+    }
+
+    fun getAll(world: World, onSuccess: (List<Effect>) -> Unit) {
+//        val origins = mutableListOf(deviceService.deviceId)
+//        userService.currentUserUid?.let { origins.add(it) }
+//        collection.whereIn(FIELD_ORIGIN, origins)
+//            .whereEqualTo(WORLD_GROUP, world.firestoreId)
+//            .whereEqualTo(FIELD_ARCHIVED, false)
+//            .get(firestoreService.source)
+//            .addOnSuccessListener { querySnapshot ->
+//                val effects = querySnapshot.map { docShapshot ->
+//                    docShapshot.toObject(Effect::class.java).apply {
+//                        firestoreId = docShapshot.id
+//                    }
+//                }
+//                onSuccess(effects)
+//            }
+
+        super.getAll({ query -> query.whereEqualTo(WORLD_GROUP, world.firestoreId)}, onSuccess)
     }
 }

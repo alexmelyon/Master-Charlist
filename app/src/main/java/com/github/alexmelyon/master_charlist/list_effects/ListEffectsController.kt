@@ -12,7 +12,6 @@ import com.github.alexmelyon.master_charlist.list_games.WORLD_KEY
 import com.github.alexmelyon.master_charlist.room.*
 import kotlinx.coroutines.runBlocking
 import ru.napoleonit.talan.di.ControllerInjector
-import java.util.*
 import javax.inject.Inject
 
 class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContract.Controller {
@@ -25,7 +24,7 @@ class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContrac
     lateinit var db: AppDatabase
 
     lateinit var world: World
-    lateinit var effectItems: MutableList<EffectRow>
+    val effectItems: MutableList<EffectRow> = mutableListOf()
 
     constructor(world: World) : this(Bundle().apply {
         putParcelable(WORLD_KEY, world)
@@ -44,15 +43,21 @@ class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContrac
 
     override fun onAttach(view: View) {
         super.onAttach(view)
-        effectItems = db.effectDao().getAll(world.id)
-            .sortedWith(compareByDescending<Effect> { it.lastUsed }
-                .thenBy { it.name }
-            ).map { effect ->
+
+        updateData()
+    }
+
+    fun updateData() {
+        effectStorage.getAll(world) { effects ->
+            effectItems.clear()
+            val effectRows = effects.map { effect ->
                 val effectSkills = effect.getSkillToValue(db)
-                    .map { EffectSkillRow(it.first.name, it.second, it.first) }
+                    .map { EffectSkillRow(it.skill.name, it.value, it.skill) }
                 EffectRow(effect.name, effectSkills, effect)
             }.toMutableList()
-        this.view.setData(effectItems)
+            effectItems.addAll(effectRows)
+            this.view.setData(effectItems)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -70,12 +75,7 @@ class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContrac
         return super.onOptionsItemSelected(item)
     }
 
-    // TODO Don't create skills in ListEffectsController
     override fun createSkill(name: String, onSuccess: (Skill) -> Unit) {
-//        val skill = Skill(name, world.id, Calendar.getInstance().time)
-//        val id = db.skillDao().insert(skill)
-//        skill.id = id
-//        return skill
         App.instance.skillStorage.create(name, world) { skill ->
             onSuccess(skill)
         }
@@ -114,7 +114,7 @@ class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContrac
         effectSkill.id = id
 
         effectItems[pos].effectSkills = effect.getSkillToValue(db)
-            .map { EffectSkillRow(it.first.name, it.second, it.first) }
+            .map { EffectSkillRow(it.skill.name, it.value, it.skill) }
         view.itemChangedAt(pos)
     }
 
@@ -125,7 +125,7 @@ class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContrac
     override fun detachSkillForEffect(pos: Int, effect: Effect, effectSkill: EffectSkill) {
         db.effectSkillDao().delete(effectSkill)
         effectItems[pos].effectSkills = effect.getSkillToValue(db)
-            .map { EffectSkillRow(it.first.name, it.second, it.first) }
+            .map { EffectSkillRow(it.skill.name, it.value, it.skill) }
 
         view.itemChangedAt(pos)
     }
@@ -136,7 +136,7 @@ class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContrac
         db.effectSkillDao().update(effectSkill)
 
         effectItems[pos].effectSkills = effect.getSkillToValue(db)
-            .map { EffectSkillRow(it.first.name, it.second, it.first) }
+            .map { EffectSkillRow(it.skill.name, it.value, it.skill) }
         view.itemChangedAt(pos)
     }
 }
