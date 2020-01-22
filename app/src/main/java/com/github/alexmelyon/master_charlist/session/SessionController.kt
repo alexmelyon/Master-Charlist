@@ -11,6 +11,7 @@ import com.github.alexmelyon.master_charlist.list_games.WORLD_KEY
 import com.github.alexmelyon.master_charlist.list_sessions.GAME_KEY
 import com.github.alexmelyon.master_charlist.list_sessions.ListSessionsDelegate
 import com.github.alexmelyon.master_charlist.room.*
+import kotlinx.coroutines.runBlocking
 import ru.napoleonit.talan.di.ControllerInjector
 import java.lang.ref.WeakReference
 import java.util.*
@@ -28,6 +29,8 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
     val SESSION_ADD_EFFECT = 4
     val SESSION_REMOVE_EFFECT = 5
     val SESSION_ADD_COMMENT = 6
+
+    var effectStorage = App.instance.effectStorage
 
     @Inject
     lateinit var view: SessionContract.View
@@ -355,9 +358,12 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
     }
 
     override fun createEffect(name: String): Effect {
-        val effect = Effect(name, world.id, Calendar.getInstance().time)
-        val id = db.effectDao().insert(effect)
-        effect.id = id
+//        val effect = Effect(name, world.id, Calendar.getInstance().time)
+//        val id = db.effectDao().insert(effect)
+//        effect.id = id
+
+        val effect = effectStorage.create(name, world)
+            .let { runBlocking { it.await() }}
         return effect
     }
 
@@ -367,7 +373,7 @@ class SessionController(args: Bundle) : Controller(args), SessionContract.Contro
     }
 
     private fun getSkills(): List<Skill> {
-        return db.skillDao().getAll(world.id)
+        return db.skillDao().getAll(world.firestoreId)
             .sortedBy { it.name }
     }
 

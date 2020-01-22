@@ -10,11 +10,14 @@ import com.github.alexmelyon.master_charlist.App
 import com.github.alexmelyon.master_charlist.R
 import com.github.alexmelyon.master_charlist.list_games.WORLD_KEY
 import com.github.alexmelyon.master_charlist.room.*
+import kotlinx.coroutines.runBlocking
 import ru.napoleonit.talan.di.ControllerInjector
 import java.util.*
 import javax.inject.Inject
 
 class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContract.Controller {
+
+    var effectStorage = App.instance.effectStorage
 
     @Inject
     lateinit var view: ListEffectsContract.View
@@ -79,9 +82,8 @@ class ListEffectsController(args: Bundle) : Controller(args), ListEffectsContrac
     }
 
     override fun createEffect(effectName: String) {
-        val effect = Effect(effectName, world.id, Calendar.getInstance().time)
-        val id = db.effectDao().insert(effect)
-        effect.id = id
+        val effect = effectStorage.create(effectName, world)
+            .let { runBlocking { it.await() } }
 
         val effectRow = EffectRow(effect.name, listOf(), effect)
         view.itemAddedAt(0, effectRow)

@@ -1,10 +1,13 @@
 package com.github.alexmelyon.master_charlist.room
 
 import androidx.room.*
+import kotlinx.coroutines.Deferred
 import java.util.*
 
 @Entity
-class Effect(var name: String, val worldGroup: Long, var lastUsed: Date, var archived: Boolean = false) {
+class Effect(var name: String, var worldGroup: String) : FirestoreDoc() {
+
+    @Deprecated("")
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
 
@@ -53,4 +56,14 @@ fun Effect.getSkillToValue(db: AppDatabase): List<Pair<Skill, Int>> {
     return db.effectSkillDao().getAllByEffect(effect.worldGroup, effect.id)
         .map { db.skillDao().get(it.skillGroup) to it.value }
         .sortedBy { it.first.name }
+}
+
+class EffectStorage : FirestoreCollection<Effect>("effects") {
+
+    fun create(name: String, world: World): Deferred<Effect> {
+        return super.create {
+            this.name = name
+            this.worldGroup = world.firestoreId
+        }
+    }
 }

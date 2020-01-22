@@ -96,14 +96,14 @@ class ListCharactersController(args: Bundle) : Controller(args), ListCharactersC
                 .groupBy { it.first }
                 .map { it.key to it.value.sumBy { it.second } }
                 .flatMap { (effectId, amount) ->
-                    val effectSkills = db.effectSkillDao().getAllByEffect(world.id, effectId)
+                    val effectSkills = db.effectSkillDao().getAllByEffect(world.firestoreId, effectId)
                         .map { db.skillDao().get(it.skillGroup) to it.value }
                     effectSkills.map { it.first to it.second * amount }
                 }.groupBy { it.first }
                 .map { it.key.id to it.value.sumBy { it.second } }
                 .toMap()
 
-            val skills = db.skillDao().getAll(world.id)
+            val skills = db.skillDao().getAll(world.firestoreId)
             data class SkillToValue(val skill: Skill, val value: Int)
             val skillDiffs = db.skillDiffDao().getAllByCharacter(world.id, game.id, character.id)
                 .asSequence()
